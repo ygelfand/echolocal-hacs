@@ -27,6 +27,25 @@ export class EchoLocalGroups extends LitElement {
   @state() private known: HassLabel[] = [];
   @state() private asked = false;
   @state() private naming = "";
+  @state() private busy = false;
+
+  private stop?: () => void;
+
+  connectedCallback() {
+    super.connectedCallback();
+
+    // Labels change from the device page and from other tabs too, so follow the registry rather than only
+    // reacting to what happens here.
+    this.hass?.connection
+      ?.subscribeEvents(() => this.load(), "label_registry_updated")
+      .then((off) => (this.stop = off))
+      .catch(() => {});
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.stop?.();
+  }
 
   protected updated() {
     if (this.asked || !this.hass) return;
@@ -52,7 +71,9 @@ export class EchoLocalGroups extends LitElement {
           @input=${(e: Event) => (this.naming = (e.target as HTMLInputElement).value)}
           @keydown=${(e: KeyboardEvent) => e.key === "Enter" && this.make()}
         />
-        <button class="make" ?disabled=${!this.naming.trim()} @click=${this.make}>Add</button>
+        <button class="make" ?disabled=${!this.naming.trim() || this.busy} @click=${this.make}>
+          ${this.busy ? "Adding…" : "Add"}
+        </button>
       </div>
 
       ${devices.length
@@ -114,26 +135,35 @@ export class EchoLocalGroups extends LitElement {
     </tr>`;
   }
 
+  // Home Assistant hands back the label it made, so the column appears with the round trip rather than
+  // after a second one to list them all again.
   private async make() {
     const name = this.naming.trim();
-    if (!name) return;
+    if (!name || this.busy) return;
 
+    this.busy = true;
     this.naming = "";
-    await createLabel(this.hass, name);
-    await this.load();
+
+    const made = await createLabel(this.hass, name);
+    if (made) this.known = [...this.known, made].sort((a, b) => a.name.localeCompare(b.name));
+
+    this.busy = false;
+    if (!made) await this.load();
   }
 
   private async rename(label: HassLabel, name: string) {
     if (!name.trim() || name === label.name) return;
 
+    this.known = this.known.map((one) =>
+      one.label_id === label.label_id ? { ...one, name: name.trim() } : one
+    );
     await renameLabel(this.hass, label.label_id, name.trim());
-    await this.load();
   }
 
   private async discard(label: HassLabel) {
     // Deleting the label is what deletes the group; Home Assistant takes it off every device itself.
+    this.known = this.known.filter((one) => one.label_id !== label.label_id);
     await deleteLabel(this.hass, label.label_id);
-    await this.load();
   }
 
   private async set(device: HassDevice, id: string, wanted: boolean) {

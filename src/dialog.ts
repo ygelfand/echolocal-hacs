@@ -12,6 +12,7 @@ import "./bubble";
 import styles from "./dialog.css";
 import "./appearance";
 import { helpFor, helpForWidget } from "./help";
+import { keys } from "./keys";
 import type { Widget } from "./layout";
 import "./history";
 import "./playback";
@@ -61,9 +62,13 @@ export class EchoLocalDialog extends LitElement {
     const rows = groups.reduce((n, g) => n + g.entities.length, 0);
     const width = rows > 3 || this.widgets.some((w) => w.place !== "header") ? 820 : 460;
 
+    // ha-dialog caps its own surface, so the width has to be set on the dialog's variables. Sizing the
+    // sheet inside it only overflows the surface, which clips the right-hand column.
+    const sizing = `--mdc-dialog-min-width:min(94vw,${width}px);--mdc-dialog-max-width:min(94vw,${width}px)`;
+
     return html`
-      <ha-dialog open hideActions @closed=${this.dismiss}>
-        <div class="sheet" style=${`width:min(88vw,${width}px)`}>
+      <ha-dialog open hideActions style=${sizing} @closed=${this.dismiss}>
+        <div class="sheet">
           <div class="head">
             <div class="crest"><ha-icon .icon=${this.icon}></ha-icon></div>
             <div class="titles">
@@ -411,13 +416,15 @@ export class EchoLocalDialog extends LitElement {
     </div>`;
   }
 
-  // The device and the component are already in the heading, so they come off the front of every row.
+  // The name the integration gave the entity, which carries no device or component prefix — so there is
+  // nothing to strip. The friendly name is the fallback, and that one does need stripping.
   private name(entityId: string): string {
-    let label = this.hass.states[entityId].attributes.friendly_name ?? entityId;
-    const prefixes = this.strip.filter(Boolean);
+    const known = keys(this.hass)?.get(entityId);
+    if (known) return known.name;
 
-    // Repeatedly, because they nest: "Kitchen Microphone mute" has to lose both words, and which one
-    // comes off first depends on the order they were given in.
+    let label = this.hass.states[entityId]?.attributes.friendly_name ?? entityId;
+    const prefixes = this.strip.filter(Boolean).sort((a, b) => b.length - a.length);
+
     for (let peeled = true; peeled; ) {
       peeled = false;
 
@@ -425,6 +432,7 @@ export class EchoLocalDialog extends LitElement {
         if (label.toLowerCase().startsWith(`${prefix.toLowerCase()} `)) {
           label = label.slice(prefix.length + 1);
           peeled = true;
+          break;
         }
       }
     }

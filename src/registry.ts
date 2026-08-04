@@ -2,7 +2,8 @@
 // a card sees does not carry them at all. Finding them means asking the entity registry itself, which is
 // an administrator's call — anyone else gets no offer rather than an error.
 
-import { SEGMENTS, segmentNumber } from "./satellite";
+import { KEY } from "./keys";
+import { SEGMENTS } from "./satellite";
 import type { HomeAssistant } from "./types";
 
 interface RegistryEntry {
@@ -10,9 +11,8 @@ interface RegistryEntry {
   device_id: string | null;
   disabled_by: string | null;
   platform: string;
+  unique_id: string;
 }
-
-const SEGMENT = /_led_ring_segment_\d+$/;
 
 // Indexed by segment number the same way the enabled ones are, so segment seven is looked up at six
 // whether it exists yet or not.
@@ -28,9 +28,12 @@ export async function disabledSegments(
 
     for (const entry of all) {
       if (!entry.disabled_by || !entry.device_id || !devices.has(entry.device_id)) continue;
-      if (!SEGMENT.test(entry.entity_id)) continue;
 
-      const at = segmentNumber(entry.entity_id) - 1;
+      // The number comes off the unique id, which is echod's, since a disabled entity has no entity id
+      // worth trusting and may not have one at all.
+      const key = entry.unique_id.replace(/^(?:[0-9a-f]{2}:){5}[0-9a-f]{2}-?/i, "").split("@")[0];
+      const at = Number(key.match(KEY.segment)?.[1] ?? 0) - 1;
+
       if (at >= 0 && at < SEGMENTS) found[at] = entry.entity_id;
     }
   } catch {

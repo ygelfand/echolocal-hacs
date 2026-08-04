@@ -1,16 +1,13 @@
 // Finding our devices, and working out what their entities are for.
 //
-// Home Assistant gives every ESPHome entity the platform "esphome", so that tells ours apart from
-// nothing. What identifies them is the device registry: echod reports its own manufacturer, which core's
-// esphome integration writes onto the device and onto every sub-device, and which cannot be edited in
-// the UI.
-//
-// Roles come from structure: exactly one assist_satellite and one media_player in a device tree, one
-// enabled light (the twelve segments ship disabled), one switch with no entity category — the mute.
+// Roles come from the registry keys in keys.ts, which echod owns. Nothing here reads an entity id.
 
-import type { HassDevice, HassEntity, HomeAssistant, Kind } from "./types";
+import { KEY, tag, type Tagged } from "./keys";
+import type { HassDevice, HomeAssistant, Kind } from "./types";
 
 export const MANUFACTURER = "EchoLocal";
+
+const ESPHOME = "esphome";
 
 // The ring has twelve segments whether or not Home Assistant has entities for them, so anything indexed
 // by segment is this long and sparse: position eleven is segment twelve, enabled or not.
@@ -19,7 +16,7 @@ export const SEGMENTS = 12;
 export interface Satellite {
   device: HassDevice;
   parts: HassDevice[];
-  entities: HassEntity[];
+  entities: Tagged[];
   satellite?: string;
   player?: string;
   update?: string;
@@ -30,11 +27,23 @@ export interface Satellite {
   mute?: string;
 }
 
+function esphomeMade(device?: HassDevice): boolean {
+  return !!device?.identifiers?.some(([domain]) => domain === ESPHOME);
+}
+
+function partsOf(hass: HomeAssistant, deviceId: string): HassDevice[] {
+  return Object.values(hass.devices ?? {})
+    .filter((d) => d.via_device_id === deviceId && !d.disabled_by)
+    .sort((a, b) => deviceName(a).localeCompare(deviceName(b)));
+}
+
 export function findSatellites(hass?: HomeAssistant): HassDevice[] {
   if (!hass) return [];
 
   return Object.values(hass.devices ?? {})
-    .filter((d) => d.manufacturer === MANUFACTURER && !d.via_device_id && !d.disabled_by)
+    .filter(
+      (d) => isSatellite(hass, d.id) && !d.via_device_id && !d.disabled_by,
+    )
     .sort((a, b) => deviceName(a).localeCompare(deviceName(b)));
 }
 
@@ -42,36 +51,39 @@ export function deviceName(device?: HassDevice | null): string {
   return device?.name_by_user || device?.name || "";
 }
 
-export function isSatellite(hass: HomeAssistant | undefined, deviceId: string): boolean {
-  return hass?.devices?.[deviceId]?.manufacturer === MANUFACTURER;
+export function isSatellite(
+  hass: HomeAssistant | undefined,
+  deviceId: string,
+): boolean {
+  if (hass?.devices?.[deviceId]?.manufacturer !== MANUFACTURER) return false;
+  return partsOf(hass, deviceId).some(esphomeMade);
 }
 
-export function resolve(hass?: HomeAssistant, deviceId?: string): Satellite | null {
+export function resolve(
+  hass?: HomeAssistant,
+  deviceId?: string,
+): Satellite | null {
   if (!hass || !deviceId) return null;
 
   const device = hass.devices?.[deviceId];
   if (!device) return null;
 
-  const parts = Object.values(hass.devices)
-    .filter((d) => d.via_device_id === deviceId && !d.disabled_by)
-    .sort((a, b) => deviceName(a).localeCompare(deviceName(b)));
+  const parts = partsOf(hass, deviceId);
 
   const own = new Set([deviceId, ...parts.map((d) => d.id)]);
-  const entities = Object.values(hass.entities ?? {}).filter(
-    (e) => e.device_id && own.has(e.device_id) && !e.hidden
+  const entities = tag(
+    hass,
+    Object.values(hass.entities ?? {}).filter(
+      (e) => e.device_id && own.has(e.device_id) && !e.hidden,
+    ),
   );
 
-  const of = (domain: string, plain = false) =>
-    entities.filter(
-      (e) => e.entity_id.startsWith(`${domain}.`) && (!plain || !e.entity_category)
-    );
+  const one = (pattern: RegExp) => entities.find((e) => pattern.test(e.key))?.entity_id;
 
-  const lights = of("light", true);
-  const numbered = (e: HassEntity) => /_\d+$/.test(e.entity_id);
-
+  // Indexed by segment number taken from the key, so a renamed segment stays where it belongs.
   const segments: (string | undefined)[] = new Array(SEGMENTS).fill(undefined);
-  for (const light of lights.filter(numbered)) {
-    const at = segmentNumber(light.entity_id) - 1;
+  for (const light of entities) {
+    const at = Number(light.key.match(KEY.segment)?.[1] ?? 0) - 1;
     if (at >= 0 && at < SEGMENTS) segments[at] = light.entity_id;
   }
 
@@ -79,33 +91,39 @@ export function resolve(hass?: HomeAssistant, deviceId?: string): Satellite | nu
     device,
     parts,
     entities,
-    satellite: of("assist_satellite")[0]?.entity_id,
-    player: of("media_player")[0]?.entity_id,
-    update: of("update")[0]?.entity_id,
-    ring: (lights.find((e) => !numbered(e)) ?? lights[0])?.entity_id,
+    // assist_satellite is Home Assistant's own, so its key has no platform segment.
+    satellite: entities.find((e) => e.key === "assist_satellite")?.entity_id,
+    player: one(KEY.player),
+    update: one(KEY.firmware),
+    ring: one(KEY.ring),
     segments,
-    mute: of("switch", true)[0]?.entity_id,
+    mute: one(KEY.mute),
   };
 }
 
-export function segmentNumber(entityId: string): number {
-  return Number.parseInt(entityId.match(/_(\d+)$/)?.[1] ?? "0", 10);
-}
+// What a sub-device is, from a key only that component has. The media_player is no use for playback: it is
+// the device's speaker and sits on the device itself, which is why playback used to come out as an
+// assistant. Anything unpinned is an assistant, one sub-device per wake word slot.
+export function kindOf(state: Satellite, part: HassDevice): Kind {
+  const holds = (pattern: RegExp) =>
+    state.entities.some((e) => e.device_id === part.id && pattern.test(e.key));
 
-// What a sub-device is, from what it holds. Ring, playback and microphone are each pinned by one entity;
-// anything left is an assistant, one per wake word slot.
-export function kindOf(hass: HomeAssistant, state: Satellite, part: HassDevice): Kind {
-  const holds = (entityId?: string) =>
-    !!entityId && hass.entities?.[entityId]?.device_id === part.id;
-
-  if (holds(state.ring)) return "ring";
-  if (holds(state.player)) return "playback";
-  if (holds(state.mute)) return "microphone";
+  if (holds(KEY.ring) || holds(KEY.segment)) return "ring";
+  if (holds(KEY.mute) || holds(KEY.gain)) return "microphone";
+  if (holds(KEY.noise) || holds(KEY.headphones)) return "playback";
   return "assistant";
 }
 
-export function partEntities(state: Satellite, partId: string): HassEntity[] {
+export function partEntities(state: Satellite, partId: string): Tagged[] {
   return state.entities.filter((e) => e.device_id === partId);
+}
+
+// One per wake word slot, in slot order, which is what the action button presses.
+export function wakeButtons(state: Satellite): string[] {
+  return state.entities
+    .filter((e) => KEY.wake.test(e.key))
+    .sort((a, b) => a.key.localeCompare(b.key))
+    .map((e) => e.entity_id);
 }
 
 export interface Lit {
@@ -115,7 +133,10 @@ export interface Lit {
 
 // lit reports what a light is showing, or null when it is off: Home Assistant only carries the colour
 // and brightness while a light is on.
-export function lit(hass: HomeAssistant | undefined, entityId?: string): Lit | null {
+export function lit(
+  hass: HomeAssistant | undefined,
+  entityId?: string,
+): Lit | null {
   const state = entityId ? hass?.states?.[entityId] : undefined;
   if (!state || state.state !== "on") return null;
 
@@ -125,10 +146,18 @@ export function lit(hass: HomeAssistant | undefined, entityId?: string): Lit | n
   };
 }
 
-export function isOn(hass: HomeAssistant | undefined, entityId?: string): boolean {
+export function isOn(
+  hass: HomeAssistant | undefined,
+  entityId?: string,
+): boolean {
   return !!entityId && hass?.states?.[entityId]?.state === "on";
 }
 
-export function activity(hass: HomeAssistant | undefined, entityId?: string): string {
-  return (entityId ? hass?.states?.[entityId]?.state : undefined) ?? "unavailable";
+export function activity(
+  hass: HomeAssistant | undefined,
+  entityId?: string,
+): string {
+  return (
+    (entityId ? hass?.states?.[entityId]?.state : undefined) ?? "unavailable"
+  );
 }

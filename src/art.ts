@@ -19,18 +19,26 @@ export interface ArtState {
   glow: number;
   muted: boolean;
 
+  // The action button is lit once a press has become a hold, so which assistant it will wake is visible
+  // before letting go.
+  holding: boolean;
+
   // Which segment is being given a colour, if any, and whether any of them can be: the twelve entities
   // ship disabled, so on most devices the ring is not divisible and tapping it opens its light instead.
   picked: number | null;
   divisible: boolean;
 }
 
+// How long a press has to last to count as a hold, as on the device: a quick press wakes the first
+// assistant, a hold the second. The card keeps the timer, since a re-render here would lose it.
+export const HOLD = 500;
+
 export function art(
   state: ArtState,
   tap: {
     ring: () => void;
     segment: (i: number) => void;
-    action: () => void;
+    action: (phase: "down" | "up" | "cancel") => void;
     mute: () => void;
     volume: (step: number) => void;
   }
@@ -84,7 +92,21 @@ export function art(
       ${button(CX, CY - 46, svg`<path d="M-4.5 0h9M0 -4.5v9"></path>`, "Volume up", () =>
         tap.volume(1)
       )}
-      ${button(CX + 46, CY, svg`<circle cx="0" cy="0" r="4.5"></circle>`, "Action", tap.action)}
+      <g
+        class="btn"
+        data-lit=${String(state.holding)}
+        transform="translate(${CX + 46} ${CY})"
+        role="button"
+        tabindex="0"
+        aria-label=${state.holding ? "Wake the second assistant" : "Wake"}
+        @pointerdown=${() => tap.action("down")}
+        @pointerup=${() => tap.action("up")}
+        @pointerleave=${() => tap.action("cancel")}
+        @pointercancel=${() => tap.action("cancel")}
+      >
+        <circle class="face" cx="0" cy="0" r="13"></circle>
+        <g class="glyph"><circle cx="0" cy="0" r="4.5"></circle></g>
+      </g>
       ${button(CX, CY + 46, svg`<path d="M-4.5 0h9"></path>`, "Volume down", () => tap.volume(-1))}
       ${button(
         CX - 46,

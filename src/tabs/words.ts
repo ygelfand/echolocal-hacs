@@ -3,6 +3,7 @@
 import { LitElement, html, nothing, unsafeCSS } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
+import { KEYS_READY, keys } from "../keys";
 import { register } from "../nav";
 import { deviceName, findSatellites, resolve } from "../satellite";
 import type { HomeAssistant } from "../types";
@@ -10,6 +11,8 @@ import { listWakeWords, type WakeWord } from "../wakewords";
 
 import "../wakewords";
 import styles from "./words.css";
+
+const WAKE_WORD = /^wake_word(_\d+)?$/;
 
 register({
   path: "wake-words",
@@ -28,6 +31,18 @@ export class EchoLocalWords extends LitElement {
 
   @state() private words: WakeWord[] = [];
   @state() private asked = false;
+
+  private again = () => this.requestUpdate();
+
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener(KEYS_READY, this.again);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener(KEYS_READY, this.again);
+  }
 
   protected updated() {
     if (this.asked || !this.hass) return;
@@ -53,9 +68,7 @@ export class EchoLocalWords extends LitElement {
     );
 
     return html`
-      <echolocal-wake-words .hass=${this.hass}></echolocal-wake-words>
-
-      <h2>Listening for</h2>
+      <h2 class="first">Listening for</h2>
       ${chosen.length
         ? html`<div class="listening">
             ${chosen.map(
@@ -75,24 +88,29 @@ export class EchoLocalWords extends LitElement {
           </div>`
         : html`<div class="spare">No devices have picked a wake word yet.</div>`}
 
+      <h2>The library</h2>
+      <echolocal-wake-words .hass=${this.hass}></echolocal-wake-words>
+
       ${spare.length
-        ? html`<h2>In the library, unused</h2>
-            <div class="spare">
-              ${spare.map((word) => word.wake_word).join(", ")} — offered to every satellite, picked by
-              none of them.
-            </div>`
+        ? html`<div class="spare">
+            Unused: ${spare.map((word) => word.wake_word).join(", ")} — offered to every satellite, picked
+            by none of them.
+          </div>`
         : nothing}
     `;
   }
 
-  // What each device has selected, read off its wake word selects rather than asked for: the selects are
-  // the same entities somebody would change by hand.
+  // What each device has selected. Home Assistant makes these selects itself for an assist satellite, so
+  // their key is exactly wake_word or wake_word_N — matching the entity id instead catches wake_word_effect
+  // and wake_word_tone, which are a ring animation and a chime.
   private chosen(): { name: string; words: string[] }[] {
+    const known = keys(this.hass);
+
     return findSatellites(this.hass)
       .map((device) => {
         const state = resolve(this.hass, device.id);
         const words = (state?.entities ?? [])
-          .filter((entity) => /select\..*_wake_word/.test(entity.entity_id))
+          .filter((entity) => WAKE_WORD.test(known?.get(entity.entity_id)?.key ?? ""))
           .map((entity) => this.hass.states[entity.entity_id]?.state)
           .filter((word): word is string => !!word && word !== "unknown" && word !== "None");
 

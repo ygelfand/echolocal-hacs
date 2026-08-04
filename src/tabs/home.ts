@@ -51,21 +51,24 @@ export class EchoLocalHome extends LitElement {
 
     const groups = group(found, this.known);
 
-    // Nothing grouped is not a grouping, so it is drawn as a plain grid with no heading over it and the
-    // choice of views is not offered — a toggle between two identical screens is worse than no toggle.
-    if (groups.length === 1 && groups[0].id === UNGROUPED) {
-      return html`<div class="grid">${found.map((device) => this.card(UNGROUPED, device.id))}</div>`;
-    }
+    // Everything on screen gets a header, because the controls in it apply to everything on screen. The
+    // flat view is the whole fleet as one group; the choice of views is only offered when there is one.
+    const any = groups.some((one) => one.id !== UNGROUPED);
+    const shown = this.grouped && any ? groups : [{ id: "all", name: "All devices", devices: found }];
 
     return html`
-      <div class="view">
-        <div class="pair">
-          ${this.button(true, "mdi:group", "Grouped")}${this.button(false, "mdi:view-grid-outline", "All")}
-        </div>
-      </div>
-      ${this.grouped
-        ? groups.map((one) => this.group(one))
-        : html`<div class="grid">${found.map((device) => this.card("all", device.id))}</div>`}
+      ${any
+        ? html`<div class="view">
+            <div class="pair">
+              ${this.button(true, "mdi:group", "Grouped")}${this.button(
+                false,
+                "mdi:view-grid-outline",
+                "All"
+              )}
+            </div>
+          </div>`
+        : nothing}
+      ${shown.map((one) => this.group(one))}
     `;
   }
 

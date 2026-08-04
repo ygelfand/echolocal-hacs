@@ -2,6 +2,10 @@
   display: block;
 }
 
+h2.first {
+  margin-top: 0;
+}
+
 h2 {
   margin: 26px 0 10px;
   font-size: 0.72rem;

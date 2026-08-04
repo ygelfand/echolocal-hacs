@@ -18,6 +18,10 @@ export interface HassDevice {
   // How the device is reached, as [kind, value] pairs. The esphome integration puts the mac here, which is
   // the only place it appears — echod publishes no sensor for it.
   connections?: [string, string][];
+
+  // [domain, id] pairs from whichever integration created the entry. Sub-devices get one; the device
+  // above them gets none.
+  identifiers?: [string, string][];
 }
 
 export interface HassLabel {

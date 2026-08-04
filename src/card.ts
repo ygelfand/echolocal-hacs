@@ -6,7 +6,7 @@
 import { LitElement, html, nothing, unsafeCSS } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
-import { SEGMENTS, art, type Segment } from "./art";
+import { HOLD, SEGMENTS, art, type Segment } from "./art";
 import styles from "./card.css";
 import "./dialog";
 import { helpForKind } from "./help";
@@ -21,6 +21,7 @@ import {
   lit,
   partEntities,
   resolve,
+  wakeButtons,
   type Satellite,
 } from "./satellite";
 import type { CardConfig, HassDevice, HomeAssistant, Kind, Section, Shell } from "./types";
@@ -81,6 +82,10 @@ export class EchoLocalSatelliteCard extends LitElement {
   // the foot of the card turns into the palette while one is picked.
   @state() private picked: number | null = null;
 
+  // Whether the action button's press has become a hold, which is what decides the assistant it wakes.
+  @state() private holding = false;
+  private timer = 0;
+
   // Segments that exist in the registry but are switched off, indexed by segment number, and which one
   // is being offered. Looked up once per card.
   @state() private hiddenSegments: (string | undefined)[] = [];
@@ -135,13 +140,14 @@ export class EchoLocalSatelliteCard extends LitElement {
                 segments: this.segments(state),
                 glow: this.glow(state),
                 muted: isOn(this.hass, state.mute),
+                holding: this.holding,
                 picked: this.picked,
                 divisible: [...state.segments, ...this.hiddenSegments].some(Boolean),
               },
               {
                 ring: () => this.moreInfo(state.ring),
                 segment: (i) => this.tapped(state, i),
-                action: () => this.moreInfo(state.satellite),
+                action: (phase) => this.pressed(state, phase),
                 mute: () => this.toggle("switch", state.mute),
                 volume: (step) => this.volume(state, step),
               }
@@ -271,11 +277,11 @@ export class EchoLocalSatelliteCard extends LitElement {
   // One square per sub-device. Assistants come one per wake word slot, so they are numbered — two of the
   // same icon would say nothing.
   private kinds(state: Satellite): Record<string, Kind> {
-    return Object.fromEntries(state.parts.map((part) => [part.id, kindOf(this.hass, state, part)]));
+    return Object.fromEntries(state.parts.map((part) => [part.id, kindOf(state, part)]));
   }
 
   private side(state: Satellite) {
-    const kinds = state.parts.map((part) => kindOf(this.hass, state, part));
+    const kinds = state.parts.map((part) => kindOf(state, part));
     const assistants = kinds.filter((k) => k === "assistant").length;
     let seen = 0;
 
@@ -342,6 +348,29 @@ export class EchoLocalSatelliteCard extends LitElement {
 
   private open(opened: Opened) {
     this.opened = opened;
+  }
+
+  // The device's own action button: a press wakes the first assistant, a hold the second. Held on the card
+  // rather than in the artwork, so a re-render partway through a press does not lose the timer.
+  private pressed(state: Satellite, phase: "down" | "up" | "cancel") {
+    if (phase === "down") {
+      this.holding = false;
+      this.timer = window.setTimeout(() => (this.holding = true), HOLD);
+      return;
+    }
+
+    clearTimeout(this.timer);
+    const held = this.holding;
+    this.holding = false;
+
+    if (phase === "cancel") return;
+
+    // With one assistant a hold has nowhere else to go, so it wakes the only one there is.
+    const wake = wakeButtons(state);
+    const press = wake[held && wake.length > 1 ? 1 : 0];
+
+    if (press) this.hass.callService("button", "press", { entity_id: press });
+    else this.moreInfo(state.satellite);
   }
 
   private toggle(domain: string, entityId?: string) {

@@ -141,5 +141,5 @@ function entityOf(hass: HomeAssistant, device: HassDevice, match: RegExp): strin
   const state: Satellite | null = resolve(hass, device.id);
   if (!state) return undefined;
 
-  return state.entities.map((entity) => entity.entity_id).find((id) => match.test(id));
+  return state.entities.find((entity) => match.test(entity.key))?.entity_id;
 }

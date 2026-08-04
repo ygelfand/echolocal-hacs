@@ -1,11 +1,11 @@
 // What each popup shows, and in what order.
 //
-// Rows are matched on the tail of the entity id, and the match only decides position. Anything a layout
-// does not claim is listed after it under More, so a component this firmware does not have is fewer
-// rows, and a renamed entity moves down rather than vanishing.
+// Rows are matched on the registry key, and the match only decides position. Anything a layout does not
+// claim is listed after it under More, so a component this firmware does not have is fewer rows.
 
+import { KEY, type Tagged } from "./keys";
 import { deviceName, type Satellite } from "./satellite";
-import type { HassDevice, HassEntity, Kind, Section } from "./types";
+import type { HassDevice, Kind, Section } from "./types";
 
 interface Group {
   title: string | null;
@@ -13,65 +13,57 @@ interface Group {
 }
 
 const LAYOUTS: Partial<Record<Kind, Group[]>> = {
-  ring: [{ title: null, rows: [/_led_ring$/] }, { title: "Segments", rows: [/_led_ring_segment_\d+$/] }],
+  ring: [{ title: null, rows: [KEY.ring] }, { title: "Segments", rows: [KEY.segment] }],
 
   microphone: [
-    { title: null, rows: [/_microphone_mute$/] },
-    {
-      title: "Capture",
-      rows: [
-        /_microphone_gain$/,
-        /_microphone_mixing$/,
-        /_microphone_leveling$/,
-        /_microphone_echo_cancellation$/,
-      ],
-    },
-    { title: "The room", rows: [/_room_sensitivity$/, /_room_level$/, /_room_floor$/] },
-    { title: "Indicator", rows: [/_mute_led_brightness$/] },
+    { title: null, rows: [KEY.mute] },
+    { title: "Capture", rows: [KEY.gain, KEY.mixing, KEY.leveling, KEY.echo] },
+    { title: "The room", rows: [KEY.sensitivity, KEY.roomLevel, KEY.roomFloor, KEY.stopWord] },
+    { title: "Indicator", rows: [KEY.muteLamp] },
   ],
 
   playback: [
-    { title: null, rows: [/^media_player\./, /_headphones$/] },
-    { title: "Generated sound", rows: [/_white_noise_layer_\d+$/] },
-    { title: "During a turn", rows: [/_music_during_a_turn$/, /_music_ducking$/] },
-    { title: "Voice", rows: [/_voice_resampling$/] },
+    { title: null, rows: [KEY.headphones] },
+    { title: "Generated sound", rows: [KEY.noise] },
+    { title: "During a turn", rows: [KEY.musicOnTurn, KEY.ducking] },
+    { title: "Voice", rows: [KEY.resampling] },
   ],
 
+  // The wake word select is Home Assistant's own and lives on the device, not here, so this is what an
+  // assistant sub-device actually holds.
   assistant: [
-    { title: null, rows: [/_wake_word/, /_sensitivity/, /_threshold/] },
-    { title: "Timing", rows: [/_follow_up/] },
-    { title: "Feedback", rows: [/_effect/, /_tone/] },
-    { title: "Reply", rows: [/_reply_buffer/, /_reply_delivery/] },
+    { title: null, rows: [KEY.threshold] },
+    { title: "Timing", rows: [KEY.maxListen, KEY.maxThink, KEY.followUp] },
+    { title: "Feedback", rows: [KEY.wakeEffect, KEY.wakeTone] },
+    { title: "Reply", rows: [KEY.replyBuffer, KEY.replyDelivery] },
   ],
 
   device: [
     {
       title: null,
-      rows: [/^update\./, /_update_channel$/, /_check_for_updates$/, /_update_status$/],
+      rows: [KEY.firmware, KEY.wakeWord, KEY.pipeline, KEY.updateChannel, KEY.checkUpdates],
     },
-    { title: "Bluetooth", rows: [/_bluetooth_proxy$/, /_ble_advertisements$/] },
-    {
-      title: "Maintenance",
-      rows: [/_metrics_interval$/, /_purge_cache$/, /_cached_data$/, /_test_playback$/],
-    },
+    { title: "Listening", rows: [KEY.vad] },
+    { title: "Bluetooth", rows: [KEY.bluetooth, KEY.advertisements] },
+    { title: "Maintenance", rows: [KEY.metrics, KEY.purge, KEY.cached, KEY.testPlayback] },
   ],
 
   diagnostics: [
-    { title: "Network", rows: [/_ip_address$/, /_wifi_signal$/, /_wifi_sent$/, /_wifi_received$/] },
+    { title: "Network", rows: [KEY.ip, KEY.wifiSignal, KEY.wifiSent, KEY.wifiReceived] },
     {
       title: "Hardware",
       rows: [
-        /_cpu_temperature$/,
-        /_radio_temperature$/,
-        /_cpu_cores/,
-        /_load_average$/,
-        /_memory_available$/,
-        /_free_space$/,
+        KEY.cpuTemperature,
+        KEY.radioTemperature,
+        KEY.cores,
+        KEY.load,
+        KEY.memory,
+        KEY.disk,
       ],
     },
-    { title: "The room", rows: [/_room_level$/, /_room_floor$/] },
-    { title: "Last turn", rows: [/_last_wake_word$/, /_last_heard$/, /_last_reply$/] },
-    { title: "Access", rows: [/_remote_adb$/, /_update_outcome$/] },
+    { title: "The room", rows: [KEY.roomLevel, KEY.roomFloor] },
+    { title: "Last turn", rows: [KEY.lastWakeWord, KEY.lastHeard, KEY.lastReply] },
+    { title: "Access", rows: [KEY.adb, KEY.updateStatus, KEY.updateOutcome] },
   ],
 };
 
@@ -79,49 +71,43 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
 // resolve or the widget is skipped and its entities fall back to ordinary rows.
 const WIDGETS: Partial<Record<Kind, Spec[]>> = {
   ring: [
-    { widget: "power", place: "header", roles: { light: /_led_ring$/ } },
+    { widget: "power", place: "header", roles: { light: KEY.ring } },
 
     // The segments are claimed so they do not each become a row: they are edited on the card, on the
     // artwork, twelve rows being no way to color a ring.
     {
       widget: "appearance",
-      roles: { light: /_led_ring$/ },
+      roles: { light: KEY.ring },
       lists: {
-        segments: /_led_ring_segment_\d+$/,
-        muted: /_ring_while_muted$/,
-        failure: /_ring_on_failure$/,
-        room: /_ring_follows_the_room$/,
+        segments: KEY.segment,
+        muted: KEY.whileMuted,
+        failure: KEY.onFailure,
+        room: KEY.followsRoom,
       },
     },
   ],
 
-  assistant: [{ widget: "turn", roles: { listen: /_max_listen/, think: /_max_think/ } }],
+  assistant: [{ widget: "turn", roles: { listen: KEY.maxListen, think: KEY.maxThink } }],
 
+  // The speaker is the device's, not the playback sub-device's, so these two are composed against the
+  // whole tree rather than one component's entities.
   playback: [
-    { widget: "player", place: "header", roles: { player: /^media_player\./ } },
-    { widget: "volume", roles: { player: /^media_player\./ }, lists: { jack: /_headphones$/ } },
-    {
-      widget: "noise",
-      roles: { first: /_white_noise_layer_1$/ },
-      lists: { layers: /_white_noise_layer_\d+$/ },
-    },
+    { widget: "player", place: "header", roles: { player: KEY.player } },
+    { widget: "volume", roles: { player: KEY.player }, lists: { jack: KEY.headphones } },
+    { widget: "noise", roles: { first: KEY.noise }, lists: { layers: KEY.noise } },
   ],
 
   microphone: [
     // The mute is what the microphone is, so it sits in the popup's header with its indicator rather
     // than taking a row below it. The header has the room for it.
-    {
-      widget: "mute",
-      place: "header",
-      roles: { mute: /_microphone_mute$/, lamp: /_mute_led_brightness$/ },
-    },
+    { widget: "mute", place: "header", roles: { mute: KEY.mute, lamp: KEY.muteLamp } },
     {
       widget: "array",
       roles: {
-        level: /_room_level$/,
-        floor: /_room_floor$/,
-        gate: /_room_sensitivity$/,
-        mode: /_microphone_mixing$/,
+        level: KEY.roomLevel,
+        floor: KEY.roomFloor,
+        gate: KEY.sensitivity,
+        mode: KEY.mixing,
       },
     },
   ],
@@ -158,8 +144,7 @@ export interface Composed {
   sections: Section[];
 }
 
-export function compose(kind: Kind, entities: HassEntity[]): Composed {
-  const ids = entities.map((e) => e.entity_id);
+export function compose(kind: Kind, entities: Tagged[]): Composed {
   const widgets: Widget[] = [];
   const taken = new Set<string>();
 
@@ -169,15 +154,18 @@ export function compose(kind: Kind, entities: HassEntity[]): Composed {
     const roles: Record<string, string> = {};
 
     for (const [role, pattern] of Object.entries(spec.roles)) {
-      const found = ids.find((id) => pattern.test(id));
-      if (found) roles[role] = found;
+      const found = entities.find((e) => pattern.test(e.key));
+      if (found) roles[role] = found.entity_id;
     }
 
     if (Object.keys(roles).length !== Object.keys(spec.roles).length) continue;
 
     const lists: Record<string, string[]> = {};
     for (const [name, pattern] of Object.entries(spec.lists ?? {})) {
-      lists[name] = ids.filter((id) => pattern.test(id)).sort(byNumber);
+      lists[name] = entities
+        .filter((e) => pattern.test(e.key))
+        .sort(byNumber)
+        .map((e) => e.entity_id);
     }
 
     widgets.push({ widget: spec.widget, place: spec.place ?? "body", roles, lists });
@@ -188,16 +176,13 @@ export function compose(kind: Kind, entities: HassEntity[]): Composed {
     widgets,
     sections: order(
       LAYOUTS[kind],
-      ids.filter((id) => !taken.has(id))
+      entities.filter((e) => !taken.has(e.entity_id))
     ),
   };
 }
 
-export function sections(kind: Kind, entities: HassEntity[]): Section[] {
-  return order(
-    LAYOUTS[kind],
-    entities.map((e) => e.entity_id)
-  );
+export function sections(kind: Kind, entities: Tagged[]): Section[] {
+  return order(LAYOUTS[kind], entities);
 }
 
 // Settings belong to a component, so they stay grouped by one, the device itself first and each part
@@ -210,13 +195,11 @@ export function settings(state: Satellite, kinds: Record<string, Kind>): Section
   ];
 
   for (const [device, main] of all) {
-    const mine = state.entities
-      .filter(
-        (e) =>
-          e.device_id === device.id &&
-          (e.entity_category === "config" || (main && !e.entity_category))
-      )
-      .map((e) => e.entity_id);
+    const mine = state.entities.filter(
+      (e) =>
+        e.device_id === device.id &&
+        (e.entity_category === "config" || (main && !e.entity_category))
+    );
 
     if (!mine.length) continue;
 
@@ -229,18 +212,16 @@ export function settings(state: Satellite, kinds: Record<string, Kind>): Section
 // Grouped by subject across the whole device, not by which sub-device a reading hangs off. The three
 // last-heard sensors become one history, whose first row is what they each show anyway.
 export function diagnostics(state: Satellite): Composed {
-  const ids = state.entities
-    .filter((e) => e.entity_category === "diagnostic")
-    .map((e) => e.entity_id);
+  const mine = state.entities.filter((e) => e.entity_category === "diagnostic");
 
   const roles: Record<string, string> = {};
   for (const [role, pattern] of Object.entries({
-    wake: /_last_wake_word$/,
-    heard: /_last_heard$/,
-    reply: /_last_reply$/,
+    wake: KEY.lastWakeWord,
+    heard: KEY.lastHeard,
+    reply: KEY.lastReply,
   })) {
-    const found = ids.find((id) => pattern.test(id));
-    if (found) roles[role] = found;
+    const found = mine.find((e) => pattern.test(e.key));
+    if (found) roles[role] = found.entity_id;
   }
 
   const widgets: Widget[] = roles.wake
@@ -248,35 +229,43 @@ export function diagnostics(state: Satellite): Composed {
     : [];
 
   const taken = new Set(Object.values(roles));
-  return { widgets, sections: order(LAYOUTS.diagnostics, ids.filter((id) => !taken.has(id))) };
+  return {
+    widgets,
+    sections: order(LAYOUTS.diagnostics, mine.filter((e) => !taken.has(e.entity_id))),
+  };
 }
 
 // byNumber keeps segment 2 before segment 10, which sorting as text does not.
-function byNumber(a: string, b: string): number {
-  const at = (id: string) => Number.parseInt(id.match(/_(\d+)$/)?.[1] ?? "0", 10);
+function byNumber(a: Tagged, b: Tagged): number {
+  const at = (e: Tagged) => Number.parseInt(e.key.match(/_(\d+)$/)?.[1] ?? "0", 10);
   return at(a) - at(b);
 }
 
 // order walks a layout's patterns in turn, taking what each one claims, and puts whatever is left at the
 // end so nothing is dropped.
-function order(layout: Group[] | undefined, entityIds: string[]): Section[] {
-  const left = new Set(entityIds);
+function order(layout: Group[] | undefined, entities: Tagged[]): Section[] {
+  const left = new Set(entities);
   const out: Section[] = [];
 
   for (const group of layout ?? []) {
     const found: string[] = [];
 
     for (const pattern of group.rows) {
-      for (const entityId of [...left].sort()) {
-        if (pattern.test(entityId)) {
-          found.push(entityId);
-          left.delete(entityId);
+      for (const entity of [...left].sort(byNumber)) {
+        if (pattern.test(entity.key)) {
+          found.push(entity.entity_id);
+          left.delete(entity);
         }
       }
     }
     if (found.length) out.push({ title: group.title, entities: found });
   }
 
-  if (left.size) out.push({ title: out.length ? "More" : null, entities: [...left].sort() });
+  if (left.size) {
+    out.push({
+      title: out.length ? "More" : null,
+      entities: [...left].sort((a, b) => a.label.localeCompare(b.label)).map((e) => e.entity_id),
+    });
+  }
   return out;
 }
