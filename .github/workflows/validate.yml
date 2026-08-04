@@ -8,11 +8,13 @@ on:
   workflow_dispatch:
 
 jobs:
+  # These two stay on moving refs: both validate against current requirements, and both have abandoned
+  # their tags — hacs/action last tagged in 2022, home-assistant/actions has one tag from 2021.
   hacs:
     name: HACS
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: HACS validation
         uses: hacs/action@main
         with:
@@ -22,7 +24,7 @@ jobs:
     name: Hassfest
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Hassfest validation
         uses: home-assistant/actions/hassfest@master
 
@@ -30,8 +32,8 @@ jobs:
     name: Python
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       - run: pipx install ruff
@@ -43,8 +45,8 @@ jobs:
     name: Frontend
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm

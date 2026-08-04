@@ -16,8 +16,14 @@ version: ## Print the manifest version
 	@echo $(VERSION)
 
 .PHONY: deps
-deps: ## Install the frontend build dependencies
+deps: hooks ## Install the frontend build dependencies and the git hooks
 	npm ci
+
+.PHONY: hooks
+hooks: ## Point git at .githooks, so the bundle rebuilds on commit
+	git config core.hooksPath .githooks
+	@chmod +x .githooks/*
+	@echo "hooks: core.hooksPath = .githooks"
 
 node_modules: package-lock.json
 	npm ci
@@ -47,8 +53,10 @@ fmt: ## Format the Python
 
 .PHONY: fresh
 fresh: build ## Fail if the committed bundle is not what the sources build
-	@git diff --quiet -- $(BUNDLE) || { \
-		echo "$(BUNDLE) is out of date — run make build and commit it"; exit 1; }
+	@git ls-files --error-unmatch $(BUNDLE) >/dev/null 2>&1 \
+		|| { echo "$(BUNDLE) is untracked — git add it, or this check means nothing"; exit 1; }
+	@git diff --quiet -- $(BUNDLE) \
+		|| { echo "$(BUNDLE) is out of date — run make build and commit it"; exit 1; }
 	@echo "bundle is current"
 
 .PHONY: check
