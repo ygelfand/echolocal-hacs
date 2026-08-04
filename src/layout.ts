@@ -4,8 +4,8 @@
 // claim is listed after it under More, so a component this firmware does not have is fewer rows.
 
 import { KEY, type Tagged } from "./keys";
-import { deviceName, type Satellite } from "./satellite";
-import type { HassDevice, Kind, Section } from "./types";
+import type { Satellite } from "./satellite";
+import type { Kind, Section } from "./types";
 
 interface Group {
   title: string | null;
@@ -185,28 +185,14 @@ export function sections(kind: Kind, entities: Tagged[]): Section[] {
   return order(LAYOUTS[kind], entities);
 }
 
-// Settings belong to a component, so they stay grouped by one, the device itself first and each part
-// ordered by its own layout.
-export function settings(state: Satellite, kinds: Record<string, Kind>): Section[] {
-  const out: Section[] = [];
-  const all: [HassDevice, boolean][] = [
-    [state.device, true],
-    ...state.parts.map((part): [HassDevice, boolean] => [part, false]),
-  ];
+// The device's own settings, and only those: every sub-device has a popup of its own, so repeating their
+// rows here made this a second copy of all four.
+export function settings(state: Satellite): Section[] {
+  const mine = state.entities.filter(
+    (e) => e.device_id === state.device.id && (e.entity_category === "config" || !e.entity_category)
+  );
 
-  for (const [device, main] of all) {
-    const mine = state.entities.filter(
-      (e) =>
-        e.device_id === device.id &&
-        (e.entity_category === "config" || (main && !e.entity_category))
-    );
-
-    if (!mine.length) continue;
-
-    const grouped = order(LAYOUTS[main ? "device" : kinds[device.id]], mine);
-    out.push({ title: deviceName(device), entities: grouped.flatMap((g) => g.entities) });
-  }
-  return out;
+  return order(LAYOUTS.device, mine);
 }
 
 // Grouped by subject across the whole device, not by which sub-device a reading hangs off. The three

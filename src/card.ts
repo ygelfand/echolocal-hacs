@@ -24,6 +24,7 @@ import {
   wakeButtons,
   type Satellite,
 } from "./satellite";
+import { SWATCHES } from "./swatches";
 import type { CardConfig, HassDevice, HomeAssistant, Kind, Section, Shell } from "./types";
 
 const ICON: Record<Kind | "follow" | "close", string> = {
@@ -36,21 +37,6 @@ const ICON: Record<Kind | "follow" | "close", string> = {
   follow: "mdi:backup-restore",
   close: "mdi:check",
 };
-
-// A handful of colors worth reaching for on a card. The full wheel is a tap away in Home Assistant's
-// own dialog for that segment.
-const SWATCHES: [string, [number, number, number]][] = [
-  ["White", [255, 255, 255]],
-  ["Warm", [255, 190, 120]],
-  ["Red", [255, 40, 40]],
-  ["Orange", [255, 130, 20]],
-  ["Yellow", [250, 230, 60]],
-  ["Green", [60, 220, 90]],
-  ["Teal", [40, 220, 200]],
-  ["Blue", [60, 140, 255]],
-  ["Violet", [150, 90, 255]],
-  ["Pink", [255, 90, 200]],
-];
 
 const ACTIVITY: Record<string, string> = {
   idle: "Idle",
@@ -276,10 +262,6 @@ export class EchoLocalSatelliteCard extends LitElement {
 
   // One square per sub-device. Assistants come one per wake word slot, so they are numbered — two of the
   // same icon would say nothing.
-  private kinds(state: Satellite): Record<string, Kind> {
-    return Object.fromEntries(state.parts.map((part) => [part.id, kindOf(state, part)]));
-  }
-
   private side(state: Satellite) {
     const kinds = state.parts.map((part) => kindOf(state, part));
     const assistants = kinds.filter((k) => k === "assistant").length;
@@ -317,7 +299,7 @@ export class EchoLocalSatelliteCard extends LitElement {
     const strip = [deviceName(state.device)];
 
     if (cross === "settings") {
-      list = settings(state, this.kinds(state));
+      list = settings(state);
       title = "Settings";
     } else if (cross === "diagnostics") {
       ({ widgets, sections: list } = diagnostics(state));

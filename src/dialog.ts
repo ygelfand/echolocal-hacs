@@ -355,19 +355,22 @@ export class EchoLocalDialog extends LitElement {
       });
     }
 
-    return this.tile(entityId, label, icon, false, {
-      under: html`<div class="options">
-        ${choices.map(
-          (option) => html`<button
-            class="chip"
-            data-on=${String(option === state.state)}
-            @click=${() => pick(option)}
-          >
-            ${option}
-          </button>`
-        )}
-      </div>`,
-    });
+    const chips = html`<div class="options">
+      ${choices.map(
+        (option) => html`<button
+          class="chip"
+          data-on=${String(option === state.state)}
+          @click=${() => pick(option)}
+        >
+          ${option}
+        </button>`
+      )}
+    </div>`;
+
+    // Short ones sit beside the label; a row of its own for two words is a wasted line. What counts as
+    // short is the text, not the count: "Whole file" and "Streamed" fit where four long names would not.
+    const room = choices.join("").length <= 22 && choices.length <= 3;
+    return this.tile(entityId, label, icon, false, room ? { trail: chips } : { under: chips });
   }
 
   private press(entityId: string, label: string, icon: string | undefined) {
@@ -401,7 +404,7 @@ export class EchoLocalDialog extends LitElement {
     parts: { trail?: unknown; under?: unknown }
   ) {
     const alert = active && icon?.includes("mic") && icon.includes("off");
-    const said = this.help ? helpFor(entityId) : undefined;
+    const said = this.help ? helpFor(keys(this.hass)?.get(entityId)?.key ?? "") : undefined;
 
     return html`<div class="tile" data-active=${String(active && !alert)} data-alert=${String(!!alert)}>
       <div class="top">

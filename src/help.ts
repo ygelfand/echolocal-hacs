@@ -1,177 +1,184 @@
-// What each setting does, for the "?" beside it. Matched on the tail of an entity id, as layout.ts does.
+// What each setting does, for the "?" beside it. Matched on the registry key, as layout.ts does.
 // A setting with nothing written about it gets no "?".
+
+import { KEY } from "./keys";
 
 const HELP: [RegExp, string][] = [
   // The microphone
   [
-    /_microphone_mute$/,
+    KEY.mute,
     "Cuts the microphones in hardware. The device cannot hear anything at all while this is on, including its wake word — it is a switch on the power to the capsules, not a software mute.",
   ],
   [
-    /_microphone_gain$/,
+    KEY.gain,
     "How much the capsules are amplified before anything else happens. Raise it in a large or quiet room; lower it if speech close to the device clips and comes out distorted.",
   ],
   [
-    /_microphone_mixing$/,
+    KEY.mixing,
     "How the seven capsules are combined into the one channel the speech engine hears. Beamforming favours whichever direction someone is talking from and rejects the rest of the room; averaging treats every direction equally and is steadier when several people talk.",
   ],
   [
-    /_microphone_leveling$/,
+    KEY.leveling,
     "Evens out loud and quiet talkers so a whisper across the room and a shout beside it arrive at similar volume. Helps transcription, and costs a little dynamic range.",
   ],
   [
-    /_microphone_echo_cancellation$/,
+    KEY.echo,
     "Subtracts what the speaker is playing from what the microphones hear, so the device can be interrupted while it is talking and does not answer its own reply.",
   ],
   [
-    /_room_sensitivity$/,
+    KEY.sensitivity,
     "How much louder than the room's own noise floor a sound has to be before the device treats it as somebody talking. Raise it in a noisy room to stop the device reacting to the room itself; lower it if quiet speech is missed.",
   ],
   [
-    /_room_level$/,
+    KEY.roomLevel,
     "How loud the room is right now, in decibels below full scale. Nothing to set — it is what the sensitivity is measured against, and watching it is how you pick a sensible one.",
   ],
   [
-    /_room_floor$/,
+    KEY.roomFloor,
     "The quietest the room has been recently, which is the baseline the device compares against. It drifts with the room, so a fridge switching on raises it rather than fooling the device.",
   ],
   [
-    /_mute_led_brightness$/,
+    KEY.muteLamp,
     "How bright the red ring is while the microphones are cut. Dim is enough to see in a dark room without lighting it up.",
+  ],
+  [
+    KEY.stopWord,
+    "How sure the device has to be before it takes an interruption as the word stop. Lower it if saying stop over a reply does not land.",
   ],
 
   // The ring
   [
-    /_led_ring$/,
+    KEY.ring,
     "The whole ring, as one light. Turning it off leaves the device working normally and silent about it.",
   ],
   [
-    /_led_ring_segment_\d+$/,
+    KEY.segment,
     "One of the twelve segments, addressable on its own. They ship switched off in Home Assistant because twelve extra lights in every list is rarely what anyone wants — enable one and it can be coloured individually from the card.",
   ],
   [
-    /_ring_while_muted$/,
+    KEY.whileMuted,
     "What the ring does while the microphones are cut. Something visible is worth choosing: a muted device that looks identical to a listening one is how people end up talking to a device that cannot hear them.",
   ],
   [
-    /_ring_on_failure$/,
+    KEY.onFailure,
     "What the ring does when a turn fails — no network, no pipeline, nothing understood. Distinct from the normal colours on purpose.",
   ],
   [
-    /_ring_follows_the_room$/,
+    KEY.followsRoom,
     "Lets the ring track how loud the room is while the device is listening, so somebody can see that it is hearing them before it answers.",
   ],
 
   // Playback
   [
-    /_headphones$/,
+    KEY.headphones,
     "Sends audio out of the jack instead of the speaker. The speaker goes quiet while this is on.",
   ],
   [
-    /_white_noise_layer_\d+$/,
+    KEY.noise,
     "Plays a generated sound the device makes itself — rain, a fan, a brook. Nothing is streamed and nothing is stored: it is synthesised as it plays, so it never loops or runs out. Two layers can overlap, so rain over a fan is one choice in each.",
   ],
   [
-    /_music_during_a_turn$/,
+    KEY.musicOnTurn,
     "What happens to music when someone says the wake word. Ducking drops the volume and keeps playing, which resumes on the same note; stopping does not.",
   ],
   [
-    /_music_ducking$/,
+    KEY.ducking,
     "How far the volume drops while the device is listening or talking. Far enough that the microphones are not fighting the music, not so far that the room goes silent.",
   ],
   [
-    /_voice_resampling$/,
+    KEY.resampling,
     "How the reply's audio is resampled to what the speaker wants. Better quality costs a little more work on a device that has four small cores.",
   ],
 
   // The assistant
   [
-    /_wake_word/,
+    KEY.wakeWord,
     "What this assistant listens for. The list is what the device has on disk plus whatever Home Assistant is offering from its custom_wake_words directory.",
   ],
   [
-    /_(?:wake_)?threshold$/,
+    KEY.threshold,
     "How sure the device has to be before it decides it heard its wake word. Lower it if it misses you; raise it if the television sets it off.",
   ],
   [
-    /_follow_up$/,
+    KEY.followUp,
     "Keeps listening for a moment after a reply, so a second question needs no second wake word.",
   ],
   [
-    /_max_listen/,
+    KEY.maxListen,
     "How long the device will wait for someone to finish talking before giving up on the turn.",
   ],
   [
-    /_max_think/,
+    KEY.maxThink,
     "How long to wait for Home Assistant's pipeline to answer. Generous is usually right — a slow answer beats a turn that dies just before it arrives.",
   ],
   [
-    /_effect$/,
+    KEY.wakeEffect,
     "What the ring does at this point in a turn. Cosmetic, but it is how somebody knows the device heard them.",
   ],
   [
-    /_tone$/,
+    KEY.wakeTone,
     "A short sound at this point in a turn. Some people want the confirmation; some find it grating.",
   ],
   [
-    /_reply_buffer/,
+    KEY.replyBuffer,
     "How much of a reply to collect before starting to play it. More is steadier on a poor network, at the cost of answering a beat later.",
   ],
   [
-    /_reply_delivery/,
+    KEY.replyDelivery,
     "Whether a reply starts playing as it arrives or once all of it has. Streaming is faster to start and stutters on a bad connection.",
   ],
 
   // The device
   [
-    /_update_channel$/,
+    KEY.updateChannel,
     "Which releases this device is offered. Stable only, or the ones that are still being tried out.",
   ],
   [
-    /_check_for_updates$/,
+    KEY.checkUpdates,
     "Looks now rather than waiting for the next scheduled check. Nothing is installed by pressing it.",
   ],
   [
-    /_bluetooth_proxy$/,
+    KEY.bluetooth,
     "Forwards nearby Bluetooth advertisements to Home Assistant, so this device extends Bluetooth coverage into its room. It costs some radio time it would otherwise spend on wifi.",
   ],
   [
-    /_metrics_interval$/,
+    KEY.metrics,
     "How often the device reports its own temperature, memory and load. Often enough to be useful; every report is work the device does instead of listening.",
   ],
   [
-    /_purge_cache$/,
+    KEY.purge,
     "Deletes what Android's runtime has cached. It comes back on its own, so this buys disk space for a while rather than permanently.",
   ],
   [
-    /_test_playback$/,
+    KEY.testPlayback,
     "Plays a short sound, which is the quickest way to find out whether the speaker, the volume and the output route are all what you think they are.",
   ],
   [
-    /_remote_adb$/,
+    KEY.adb,
     "Opens Android's debugging port over the network. Off by default, and worth leaving off: it is an unauthenticated way onto the device for anything on the same network.",
+  ],
+  [
+    KEY.vad,
+    "How readily the device decides somebody has stopped talking. Tighter ends a turn sooner and can cut you off mid-sentence.",
   ],
 
   // Diagnostics
   [
-    /_wifi_signal$/,
+    KEY.wifiSignal,
     "How strong the connection to the access point is. Above about -70 dBm is comfortable; below -80 dBm is where audio starts arriving late.",
   ],
   [
-    /_cpu_temperature$/,
+    KEY.cpuTemperature,
     "The chip's own temperature. These run warm by design — it is a sustained climb rather than a number that matters.",
   ],
   [
-    /_load_average$/,
+    KEY.load,
     "How much work is queued across the cores. Listening for a wake word is continuous work, so this is never zero.",
   ],
+  [KEY.memory, "How much memory is free. Wake models and the audio path are what use it."],
+  [KEY.disk, "Disk left. Wake models and saved recordings are what fill it."],
   [
-    /_memory_available$/,
-    "How much memory is free. Wake models and the audio path are what use it.",
-  ],
-  [/_free_space$/, "Disk left. Wake models and saved recordings are what fill it."],
-  [
-    /_update_status$/,
+    KEY.updateStatus,
     "What the last self-update did. Worth reading when a device is on an older version than the rest.",
   ],
 ];
@@ -180,10 +187,10 @@ const HELP: [RegExp, string][] = [
 const WIDGETS: Record<string, string> = {
   array:
     "The seven capsules and what the room sounds like to them. The arc is how loud the room is right now; the notch is how far above the room's own noise floor something has to be before the device treats it as speech. Drag the notch, then talk from where you normally would and watch whether the arc crosses it.",
-  appearance:
-    "Everything the ring does, in one place. Brightness applies to all of it; the four situations below are what colour it takes when the device is idle, muted, has failed, or is showing how loud the room is.",
+  appearance: "Ring controls, current brighness and color, active and conditional effects.",
   turn: "A turn's budget, end to end. The two grips are how long the device will wait for someone to finish talking, and how long it will wait for Home Assistant to answer. The band is what a slow turn would spend.",
-  noise: "Sounds the device generates itself, mixed live rather than played from a file, so nothing loops. Two layers overlap — pick rain in one and a fan in the other.",
+  noise:
+    "Sounds the device generates itself, mixed live rather than played from a file, so nothing loops. Two layers overlap — pick rain in one and a fan in the other.",
   volume:
     "The speaker's volume, in the same thirty steps the buttons on the device move it through, so this dial and the device agree.",
   history:
@@ -194,8 +201,7 @@ const WIDGETS: Record<string, string> = {
 const KINDS: Record<string, string> = {
   microphone:
     "The seven microphones and how the room sounds to them. Everything here changes what the device hears before a word of it reaches Home Assistant, so it is the first place to look when it mishears or does not wake at all.",
-  ring:
-    "The twelve-segment light. None of it changes what the device does — it changes what somebody in the room can tell about it, which is why the muted and failed colours are worth setting.",
+  ring: "The twelve-segment light. None of it changes what the device does — it changes what somebody in the room can tell about it, which is why the muted and failed colours are worth setting.",
   playback:
     "The speaker: what comes out of it, how loud, and what happens to music when somebody talks to the device.",
   assistant:
@@ -206,8 +212,9 @@ const KINDS: Record<string, string> = {
     "What the device reports about itself. Nothing here is a setting — it is the evidence, and it is what to read before changing anything else.",
 };
 
-export function helpFor(entityId: string): string | undefined {
-  return HELP.find(([match]) => match.test(entityId))?.[1];
+export function helpFor(key: string): string | undefined {
+  if (!key) return undefined;
+  return HELP.find(([match]) => match.test(key))?.[1];
 }
 
 export function helpForWidget(widget: string): string | undefined {
