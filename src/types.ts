@@ -106,9 +106,18 @@ export interface CardConfig {
   help?: boolean;
 }
 
+// The card names its own rows, since every name in Home Assistant belongs to the user.
+export interface Row {
+  entityId: string;
+  label: string;
+
+  // echod's name for it, which is what the "?" text is written against.
+  name: string;
+}
+
 export interface Section {
   title: string | null;
-  entities: string[];
+  rows: Row[];
 }
 
 export type Kind = "ring" | "microphone" | "playback" | "assistant" | "device" | "diagnostics";

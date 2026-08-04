@@ -3,7 +3,7 @@
 import { LitElement, html, nothing, unsafeCSS } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
-import { KEYS_READY, keys } from "../keys";
+import { KEYS_READY } from "../keys";
 import { register } from "../nav";
 import { deviceName, findSatellites, resolve } from "../satellite";
 import type { HomeAssistant } from "../types";
@@ -11,8 +11,6 @@ import { listWakeWords, type WakeWord } from "../wakewords";
 
 import "../wakewords";
 import styles from "./words.css";
-
-const WAKE_WORD = /^wake_word(_\d+)?$/;
 
 register({
   path: "wake-words",
@@ -100,17 +98,14 @@ export class EchoLocalWords extends LitElement {
     `;
   }
 
-  // What each device has selected. Home Assistant makes these selects itself for an assist satellite, so
-  // their key is exactly wake_word or wake_word_N — matching the entity id instead catches wake_word_effect
-  // and wake_word_tone, which are a ring animation and a chime.
+  // What each device has selected. Home Assistant makes these selects itself for an assist satellite, and
+  // names them wake_word — matching the entity id instead catches the ring animation and the chime, which
+  // are named for the wake word but are not one.
   private chosen(): { name: string; words: string[] }[] {
-    const known = keys(this.hass);
-
     return findSatellites(this.hass)
       .map((device) => {
         const state = resolve(this.hass, device.id);
-        const words = (state?.entities ?? [])
-          .filter((entity) => WAKE_WORD.test(known?.get(entity.entity_id)?.key ?? ""))
+        const words = (state?.by.get("wake_word") ?? [])
           .map((entity) => this.hass.states[entity.entity_id]?.state)
           .filter((word): word is string => !!word && word !== "unknown" && word !== "None");
 

@@ -5,12 +5,11 @@ import { customElement, property, state } from "lit/decorators.js";
 
 import styles from "./groupbar.css";
 import { fanOut, reading, type Group } from "./groups";
-import { KEY } from "./keys";
 import type { HomeAssistant } from "./types";
 
-const MUTE = KEY.mute;
-const RING = KEY.ring;
-const PLAYER = KEY.player;
+const MUTE = "mic_mute";
+const RING = "ring";
+const PLAYER = "speaker";
 
 @customElement("echolocal-groupbar")
 export class EchoLocalGroupBar extends LitElement {
@@ -65,17 +64,17 @@ export class EchoLocalGroupBar extends LitElement {
     </button>`;
   }
 
-  private has(match: RegExp): boolean {
-    return reading(this.hass, this.group.devices, match).entities.length > 0;
+  private has(name: string): boolean {
+    return reading(this.hass, this.group.devices, name).entities.length > 0;
   }
 
-  // A write that reached only some of the group has to say so: entities are matched by name, so a renamed
-  // one is simply not found, and a silent two-of-three is worse than no button.
-  private async write(match: RegExp, domain: string, service: string) {
+  // A write that reached only some of the group has to say so: a device on an older firmware may not have
+  // the thing at all, and a silent two-of-three is worse than no button.
+  private async write(name: string, domain: string, service: string) {
     const { done, failed, missing } = await fanOut(
       this.hass,
       this.group.devices,
-      match,
+      name,
       (entityId) => this.hass.callService(domain, service, { entity_id: entityId })
     );
 

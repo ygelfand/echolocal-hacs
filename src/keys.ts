@@ -1,97 +1,24 @@
 // Entity identity that survives a rename.
 //
-// entity_id and friendly_name are both the user's to change, and the display registry a card sees carries
-// nothing else. config/entity_registry/list carries unique_id, original_name and platform, and is open to
-// every user — only writing to the registry needs an administrator.
+// entity_id and friendly_name both belong to the user, and the display registry a card sees carries nothing
+// else. config/entity_registry/list carries unique_id, and is open to every user — only writing to the
+// registry needs an administrator.
 //
-// An esphome unique_id is <mac>-<platform>-<key>[@<sub-device>], where key is what echod declared. HA makes
-// some entities of its own for an assist satellite — wake_word, pipeline, vad_sensitivity — and those have
-// neither a platform segment nor a sub-device.
+// An esphome unique_id is <mac>-<platform>-<name>[_<slot>][@<sub-device>]. What is left after taking those
+// apart is the name echod gave the thing, which is what the card looks a row up by.
 
 import type { HassEntity, HomeAssistant } from "./types";
 
-// echod's own keys, which are what the frontend matches on. The platform segment is included where it
-// disambiguates: sensor-room_level and select-room_reaction are different things on the same component.
-export const KEY = {
-  // The device
-  firmware: /^update-firmware$/,
-  updateChannel: /^select-update_channel$/,
-  checkUpdates: /^button-check_for_updates$/,
-  updateStatus: /^text_sensor-update_status$/,
-  updateOutcome: /^event-update_outcome$/,
-  bluetooth: /^switch-bluetooth_proxy$/,
-  advertisements: /^sensor-ble_advertisements$/,
-  metrics: /^number-metrics_interval$/,
-  purge: /^button-purge_cache$/,
-  cached: /^sensor-cached_data$/,
-  testPlayback: /^button-test_playback$/,
-  adb: /^switch-remote_adb$/,
-  player: /^media_player-speaker$/,
-
-  // Home Assistant's own, for the assist satellite. No platform segment and no sub-device.
-  wakeWord: /^wake_word(_\d+)?$/,
-  pipeline: /^pipeline(_\d+)?$/,
-  vad: /^vad_sensitivity$/,
-
-  // The ring
-  ring: /^light-ring$/,
-  segment: /^light-segment_(\d+)$/,
-  whileMuted: /^select-ring_muted$/,
-  onFailure: /^select-failure_effect$/,
-  followsRoom: /^select-room_reaction$/,
-
-  // The microphone
-  mute: /^switch-mic_mute$/,
-  gain: /^number-microphone_gain$/,
-  sensitivity: /^number-microphone_sensitivity$/,
-  stopWord: /^number-stop_word_sensitivity$/,
-  mixing: /^select-microphone_mixing$/,
-  muteLamp: /^select-mute_led_brightness$/,
-  leveling: /^switch-microphone_leveling$/,
-  echo: /^switch-microphone_cancel_echo$/,
-  roomLevel: /^sensor-room_level$/,
-  roomFloor: /^sensor-room_floor$/,
-
-  // Playback
-  noise: /^select-noise_layer_(\d+)$/,
-  headphones: /^binary_sensor-headphones$/,
-  musicOnTurn: /^select-media_on_turn$/,
-  ducking: /^number-media_duck_level$/,
-  resampling: /^select-voice_resampling$/,
-
-  // An assistant, one sub-device per wake word slot
-  wake: /^button-wake_assistant_\d+$/,
-  threshold: /^number-wake_threshold_\d+$/,
-  maxListen: /^number-max_listen_\d+$/,
-  maxThink: /^number-max_think_\d+$/,
-  followUp: /^number-follow_up_\d+$/,
-  replyBuffer: /^number-reply_buffer_\d+$/,
-  replyDelivery: /^select-reply_delivery_\d+$/,
-  wakeEffect: /^select-wake_effect_\d+$/,
-  wakeTone: /^select-wake_tone_\d+$/,
-
-  // Diagnostics
-  ip: /^text_sensor-ip_address$/,
-  wifiSignal: /^sensor-wifi_signal$/,
-  wifiSent: /^sensor-wifi_sent$/,
-  wifiReceived: /^sensor-wifi_received$/,
-  cpuTemperature: /^sensor-cpu_temperature$/,
-  radioTemperature: /^sensor-radio_temperature$/,
-  cores: /^sensor-cpu_cores(_online)?$/,
-  load: /^sensor-load_average$/,
-  memory: /^sensor-memory_available$/,
-  disk: /^sensor-free_space$/,
-  lastWakeWord: /^text_sensor-last_wake_word$/,
-  lastHeard: /^text_sensor-last_heard$/,
-  lastReply: /^text_sensor-last_reply$/,
-} as const;
-
-// An entity with its stable identity attached. key is empty until the registry answers, which makes every
-// pattern miss rather than match the wrong thing.
 export interface Tagged extends HassEntity {
-  key: string;
+  // echod's own name, or Home Assistant's for the entities it invents for an assist satellite. Empty until
+  // the registry answers, so a lookup misses rather than finding the wrong thing.
+  name: string;
+
+  // One per assistant, noise layer or ring segment. Zero when there is only one of the thing.
+  slot: number;
+
+  // Which sub-device declared it, or 0 for the device itself.
   part: number;
-  label: string;
 }
 
 export function tag(hass: HomeAssistant, entities: HassEntity[]): Tagged[] {
@@ -99,27 +26,34 @@ export function tag(hass: HomeAssistant, entities: HassEntity[]): Tagged[] {
 
   return entities.map((entity) => {
     const found = known?.get(entity.entity_id);
-    return {
-      ...entity,
-      key: found?.key ?? "",
-      part: found?.part ?? 0,
-      label: found?.name ?? hass.states[entity.entity_id]?.attributes.friendly_name ?? entity.entity_id,
-    };
+    return { ...entity, name: found?.name ?? "", slot: found?.slot ?? 0, part: found?.part ?? 0 };
   });
+}
+
+// Built once, then every row is a direct lookup. Each name's entities are in slot order, so the twelve
+// segments and the two noise layers come out numbered.
+export type Index = Map<string, Tagged[]>;
+
+export function index(entities: Tagged[]): Index {
+  const out: Index = new Map();
+
+  for (const entity of entities) {
+    const mine = out.get(entity.name);
+    if (mine) mine.push(entity);
+    else out.set(entity.name, [entity]);
+  }
+
+  for (const mine of out.values()) mine.sort((a, b) => a.slot - b.slot);
+  return out;
 }
 
 export interface Known {
   entityId: string;
   deviceId: string;
-
-  // echod's own key, or HA's own name for the entities it invents. Never the user's.
-  key: string;
-
-  // Which sub-device declared it, or 0 for the device itself.
-  part: number;
-
-  platform: string;
   name: string;
+  slot: number;
+  part: number;
+  platform: string;
   disabled: boolean;
 }
 
@@ -129,12 +63,8 @@ interface Entry {
   disabled_by: string | null;
   platform: string;
   unique_id: string;
-  original_name: string | null;
-  name: string | null;
 }
 
-// One fetch per page, shared by every card and tab. The registry only changes when somebody renames or
-// enables something, and it says so.
 export const KEYS_READY = "echolocal-keys";
 
 let cache: Promise<Map<string, Known>> | null = null;
@@ -154,35 +84,46 @@ async function load(hass: HomeAssistant): Promise<Map<string, Known>> {
   const out = new Map<string, Known>();
 
   try {
-    const all = await hass.callWS<Entry[]>({ type: "config/entity_registry/list" });
+    const found = await hass.callWS<Entry[]>({ type: "config/entity_registry/list" });
 
-    for (const entry of all) {
+    for (const entry of found) {
       if (!entry.device_id) continue;
       out.set(entry.entity_id, {
         entityId: entry.entity_id,
         deviceId: entry.device_id,
         ...split(entry.unique_id),
         platform: entry.platform,
-        name: entry.name || entry.original_name || entry.entity_id,
         disabled: !!entry.disabled_by,
       });
     }
   } catch {
-    // No registry, so every lookup misses and the card falls back to what the display registry gives it.
+    // No registry, so the card shows only what it can work out without one.
   }
 
   ready = out;
   return out;
 }
 
-// The mac is stripped because it says nothing a device id does not, and the sub-device is separated because
-// it is what says which component an entity belongs to.
-function split(uniqueId: string): { key: string; part: number } {
+export function split(uniqueId: string): { name: string; slot: number; part: number } {
   const withoutMac = uniqueId.replace(/^(?:[0-9a-f]{2}:){5}[0-9a-f]{2}-?/i, "");
-  const at = withoutMac.lastIndexOf("@");
 
-  if (at < 0) return { key: withoutMac, part: 0 };
-  return { key: withoutMac.slice(0, at), part: Number(withoutMac.slice(at + 1)) || 0 };
+  const at = withoutMac.lastIndexOf("@");
+  const part = at < 0 ? 0 : Number(withoutMac.slice(at + 1)) || 0;
+  const whole = at < 0 ? withoutMac : withoutMac.slice(0, at);
+
+  // Home Assistant's own have no platform in front; echod's do.
+  const dash = whole.indexOf("-");
+  const named = dash < 0 ? whole : whole.slice(dash + 1);
+
+  const cut = named.lastIndexOf("_");
+  const tail = cut < 0 ? "" : named.slice(cut + 1);
+  const numbered = /^\d+$/.test(tail);
+
+  return {
+    name: numbered ? named.slice(0, cut) : named,
+    slot: numbered ? Number(tail) : 0,
+    part,
+  };
 }
 
 function listen(hass: HomeAssistant): void {

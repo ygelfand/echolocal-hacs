@@ -10,22 +10,20 @@ import { HOLD, SEGMENTS, art, type Segment } from "./art";
 import styles from "./card.css";
 import "./dialog";
 import { helpForKind } from "./help";
-import { compose, diagnostics, settings, type Widget } from "./layout";
+import { components, compose, diagnostics, settings, type Widget } from "./layout";
 import { disabledSegments, enable } from "./registry";
 import {
   activity,
   deviceName,
   findSatellites,
   isOn,
-  kindOf,
   lit,
-  partEntities,
   resolve,
   wakeButtons,
   type Satellite,
 } from "./satellite";
 import { SWATCHES } from "./swatches";
-import type { CardConfig, HassDevice, HomeAssistant, Kind, Section, Shell } from "./types";
+import type { CardConfig, HomeAssistant, Kind, Section, Shell } from "./types";
 
 const ICON: Record<Kind | "follow" | "close", string> = {
   ring: "mdi:record-circle-outline",
@@ -47,13 +45,10 @@ const ACTIVITY: Record<string, string> = {
   unknown: "Unknown",
 };
 
+// Which assistant a popup is for, when it is one of several. Zero everywhere else.
 type Opened = {
   kind: Kind;
-  part?: HassDevice;
-  cross?: "settings" | "diagnostics";
-
-  // Which assistant, when the part is one: the popup's uploads go to a slot.
-  slot?: number;
+  slot: number;
 };
 
 @customElement("echolocal-satellite-card")
@@ -102,9 +97,7 @@ export class EchoLocalSatelliteCard extends LitElement {
     if (!state || state.segments.some(Boolean)) return;
 
     this.asked = true;
-    disabledSegments(this.hass, new Set([state.device.id, ...state.parts.map((p) => p.id)])).then(
-      (found) => (this.hiddenSegments = found)
-    );
+    disabledSegments(this.hass, state).then((found) => (this.hiddenSegments = found));
   }
 
   render() {
@@ -131,7 +124,7 @@ export class EchoLocalSatelliteCard extends LitElement {
                 divisible: [...state.segments, ...this.hiddenSegments].some(Boolean),
               },
               {
-                ring: () => this.moreInfo(state.ring),
+                ring: () => this.open({ kind: "ring", slot: 0 }),
                 segment: (i) => this.tapped(state, i),
                 action: (phase) => this.pressed(state, phase),
                 mute: () => this.toggle("switch", state.mute),
@@ -161,11 +154,9 @@ export class EchoLocalSatelliteCard extends LitElement {
         <div class="status">${ACTIVITY[doing] ?? doing}</div>
       </div>
       <div class="tail">
-        ${this.square(ICON.device, "Settings", () =>
-          this.open({ kind: "device", cross: "settings" })
-        )}
+        ${this.square(ICON.device, "Settings", () => this.open({ kind: "device", slot: 0 }))}
         ${this.square(ICON.diagnostics, "Diagnostics", () =>
-          this.open({ kind: "diagnostics", cross: "diagnostics" })
+          this.open({ kind: "diagnostics", slot: 0 })
         )}
       </div>
     </div>`;
@@ -180,7 +171,7 @@ export class EchoLocalSatelliteCard extends LitElement {
       this.offering = i;
       return;
     }
-    this.moreInfo(state.ring);
+    this.open({ kind: "ring", slot: 0 });
   }
 
   // A segment with no entity behind it cannot be colored, and a tap that does nothing explains nothing.
@@ -260,25 +251,35 @@ export class EchoLocalSatelliteCard extends LitElement {
     return anything ? 0.55 : 0;
   }
 
-  // One square per sub-device. Assistants come one per wake word slot, so they are numbered — two of the
+  // One square per component. Assistants come one per wake word slot, so they are numbered — two of the
   // same icon would say nothing.
   private side(state: Satellite) {
-    const kinds = state.parts.map((part) => kindOf(state, part));
-    const assistants = kinds.filter((k) => k === "assistant").length;
-    let seen = 0;
+    const found = components(state);
+    const many = found.filter((c) => c.kind === "assistant").length > 1;
 
-    return state.parts.map((part, i) => {
-      const kind = kinds[i];
-      const slot = kind === "assistant" ? ++seen : undefined;
-      const badge = kind === "assistant" && assistants > 1 ? slot! : null;
-
-      return this.square(
+    return found.map(({ kind, slot }) =>
+      this.square(
         ICON[kind],
-        deviceName(part),
-        () => this.open({ kind, part, slot }),
-        badge
-      );
-    });
+        this.titled(kind, slot),
+        () => this.open({ kind, slot }),
+        many && kind === "assistant" ? slot : null
+      )
+    );
+  }
+
+  // The card names its components, since it decides what is in each one. A device's own names belong to
+  // whoever renamed them and say nothing about which popup this is.
+  private titled(kind: Kind, slot: number): string {
+    const said = {
+      ring: "Ring",
+      microphone: "Microphone",
+      playback: "Playback",
+      assistant: "Assistant",
+      device: "Settings",
+      diagnostics: "Diagnostics",
+    }[kind];
+
+    return slot ? `${said} ${slot}` : said;
   }
 
   private square(icon: string, label: string, tap: () => void, badge: number | null = null) {
@@ -292,34 +293,25 @@ export class EchoLocalSatelliteCard extends LitElement {
   private popup(state: Satellite) {
     if (!this.opened) return nothing;
 
-    const { kind, part, cross } = this.opened;
+    const { kind, slot } = this.opened;
     let list: Section[];
     let widgets: Widget[] = [];
-    let title: string;
-    const strip = [deviceName(state.device)];
 
-    if (cross === "settings") {
+    if (kind === "device") {
       list = settings(state);
-      title = "Settings";
-    } else if (cross === "diagnostics") {
+    } else if (kind === "diagnostics") {
       ({ widgets, sections: list } = diagnostics(state));
-      title = "Diagnostics";
-    } else if (part) {
-      ({ widgets, sections: list } = compose(kind, partEntities(state, part.id)));
-      title = deviceName(part);
-      strip.push(title);
     } else {
-      return nothing;
+      ({ widgets, sections: list } = compose(kind, state, slot));
     }
 
     return html`<echolocal-dialog
       .hass=${this.hass}
-      .heading=${title}
+      .heading=${this.titled(kind, slot)}
       .subtitle=${deviceName(state.device)}
       .icon=${ICON[kind]}
       .sections=${list}
       .widgets=${widgets}
-      .strip=${strip}
       .device=${deviceName(state.device)}
       .mac=${state.device.connections?.find(([kind]) => kind === "mac")?.[1] ?? ""}
       .help=${this.config.help !== false}

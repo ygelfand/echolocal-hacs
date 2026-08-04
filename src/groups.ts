@@ -92,7 +92,7 @@ export async function leave(hass: HomeAssistant, device: HassDevice, id: string)
 export async function fanOut(
   hass: HomeAssistant,
   devices: HassDevice[],
-  match: RegExp,
+  name: string,
   write: (entityId: string) => Promise<unknown>
 ): Promise<{ done: number; failed: number; missing: number }> {
   let done = 0;
@@ -101,7 +101,7 @@ export async function fanOut(
 
   await Promise.all(
     devices.map(async (device) => {
-      const found = entityOf(hass, device, match);
+      const found = entityOf(hass, device, name);
       if (!found) {
         missing += 1;
         return;
@@ -124,10 +124,10 @@ export async function fanOut(
 export function reading(
   hass: HomeAssistant,
   devices: HassDevice[],
-  match: RegExp
+  name: string
 ): { value: string | null; mixed: boolean; entities: string[] } {
   const entities = devices
-    .map((device) => entityOf(hass, device, match))
+    .map((device) => entityOf(hass, device, name))
     .filter((id): id is string => !!id);
 
   const values = [...new Set(entities.map((id) => hass.states[id]?.state).filter(Boolean))];
@@ -136,10 +136,8 @@ export function reading(
 }
 
 // A satellite's settings hang off its sub-devices, not off the device the card names, so finding one
-// means walking the tree the same way the card does.
-function entityOf(hass: HomeAssistant, device: HassDevice, match: RegExp): string | undefined {
+// means gathering the tree the same way the card does.
+function entityOf(hass: HomeAssistant, device: HassDevice, name: string): string | undefined {
   const state: Satellite | null = resolve(hass, device.id);
-  if (!state) return undefined;
-
-  return state.entities.find((entity) => match.test(entity.key))?.entity_id;
+  return state?.by.get(name)?.[0]?.entity_id;
 }

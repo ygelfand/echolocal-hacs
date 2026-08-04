@@ -12,12 +12,11 @@ import "./bubble";
 import styles from "./dialog.css";
 import "./appearance";
 import { helpFor, helpForWidget } from "./help";
-import { keys } from "./keys";
 import type { Widget } from "./layout";
 import "./history";
 import "./playback";
 import "./turn";
-import type { HomeAssistant, Section } from "./types";
+import type { HomeAssistant, Row, Section } from "./types";
 
 @customElement("echolocal-dialog")
 export class EchoLocalDialog extends LitElement {
@@ -29,7 +28,6 @@ export class EchoLocalDialog extends LitElement {
   @property() icon = "";
   @property({ attribute: false }) sections: Section[] = [];
   @property({ attribute: false }) widgets: Widget[] = [];
-  @property({ attribute: false }) strip: string[] = [];
 
   // The device's own name, which the actions it offers are named after — not its registry id.
   @property() device = "";
@@ -53,13 +51,13 @@ export class EchoLocalDialog extends LitElement {
     const groups = this.sections
       .map((section) => ({
         ...section,
-        entities: section.entities.filter((entityId) => this.hass.states?.[entityId]),
+        rows: section.rows.filter((row) => this.hass.states?.[row.entityId]),
       }))
-      .filter((section) => section.entities.length);
+      .filter((section) => section.rows.length);
 
     // Only the width; the stylesheet decides how many columns fit. A couple of rows gets the narrow
     // sheet so it reads as a panel.
-    const rows = groups.reduce((n, g) => n + g.entities.length, 0);
+    const rows = groups.reduce((n, g) => n + g.rows.length, 0);
     const width = rows > 3 || this.widgets.some((w) => w.place !== "header") ? 820 : 460;
 
     // ha-dialog caps its own surface, so the width has to be set on the dialog's variables. Sizing the
@@ -256,38 +254,35 @@ export class EchoLocalDialog extends LitElement {
   private group(section: Section) {
     return html`<section class="group">
       ${section.title ? html`<div class="section">${section.title}</div>` : nothing}
-      ${section.entities.map((entityId) => this.row(entityId))}
+      ${section.rows.map((row) => this.row(row))}
     </section>`;
   }
 
-  private row(entityId: string): TemplateResult | typeof nothing {
-    const state = this.hass.states?.[entityId];
-    if (!state) return nothing;
+  private row(row: Row): TemplateResult | typeof nothing {
+    if (!this.hass.states?.[row.entityId]) return nothing;
 
-    const domain = entityId.split(".")[0];
-    const label = this.name(entityId);
-    const icon = state.attributes.icon;
-
-    switch (domain) {
+    switch (row.entityId.split(".")[0]) {
       case "switch":
+        return this.toggle(row, "switch");
       case "light":
-        return this.toggle(entityId, label, icon, domain);
+        return this.toggle(row, "light");
       case "number":
-        return this.slider(entityId, label, icon);
+        return this.slider(row);
       case "select":
-        return this.options(entityId, label, icon);
+        return this.options(row);
       case "button":
-        return this.press(entityId, label, icon);
+        return this.press(row);
       default:
-        return this.reading(entityId, label, icon);
+        return this.reading(row);
     }
   }
 
-  private toggle(entityId: string, label: string, icon: string | undefined, domain: string) {
+  private toggle(row: Row, domain: string) {
+    const { entityId, label } = row;
     const value = this.hass.states[entityId].state;
     const on = value === "unavailable" ? "unavailable" : String(value === "on");
 
-    return this.tile(entityId, label, icon, on === "true", {
+    return this.tile(row, on === "true", {
       trail: html`<button
         class="toggle"
         data-on=${on}
@@ -297,7 +292,8 @@ export class EchoLocalDialog extends LitElement {
     });
   }
 
-  private slider(entityId: string, label: string, icon: string | undefined) {
+  private slider(row: Row) {
+    const { entityId } = row;
     const state = this.hass.states[entityId];
     const attrs = state.attributes;
     const min = attrs.min ?? 0;
@@ -305,7 +301,7 @@ export class EchoLocalDialog extends LitElement {
     const value = this.held[entityId] ?? Number(state.state);
     const fill = max > min ? ((value - min) / (max - min)) * 100 : 0;
 
-    return this.tile(entityId, label, icon, false, {
+    return this.tile(row, false, {
       trail: html`<span class="reading">${Number.isNaN(value) ? "—" : value}</span>
         ${attrs.unit_of_measurement
           ? html`<span class="unit">${attrs.unit_of_measurement}</span>`
@@ -333,7 +329,8 @@ export class EchoLocalDialog extends LitElement {
 
   // Chips while there are few enough to see at once. A long list stays a dropdown: eleven noise sounds
   // as chips would be a wall.
-  private options(entityId: string, label: string, icon: string | undefined) {
+  private options(row: Row) {
+    const { entityId } = row;
     const state = this.hass.states[entityId];
     const choices = state.attributes.options ?? [];
     const pick = (option: string) =>
@@ -342,7 +339,7 @@ export class EchoLocalDialog extends LitElement {
     // A long list stays a dropdown, under its label rather than beside it: in a column half a popup wide
     // there is no room next to the name, and a clipped option reads as a broken control.
     if (choices.length > 4) {
-      return this.tile(entityId, label, icon, false, {
+      return this.tile(row, false, {
         under: html`<select
           ?disabled=${state.state === "unavailable"}
           @change=${(e: Event) => pick((e.target as HTMLSelectElement).value)}
@@ -370,26 +367,26 @@ export class EchoLocalDialog extends LitElement {
     // Short ones sit beside the label; a row of its own for two words is a wasted line. What counts as
     // short is the text, not the count: "Whole file" and "Streamed" fit where four long names would not.
     const room = choices.join("").length <= 22 && choices.length <= 3;
-    return this.tile(entityId, label, icon, false, room ? { trail: chips } : { under: chips });
+    return this.tile(row, false, room ? { trail: chips } : { under: chips });
   }
 
-  private press(entityId: string, label: string, icon: string | undefined) {
-    return this.tile(entityId, label, icon, false, {
+  private press(row: Row) {
+    return this.tile(row, false, {
       trail: html`<button
         class="press"
-        @click=${() => this.hass.callService("button", "press", { entity_id: entityId })}
+        @click=${() => this.hass.callService("button", "press", { entity_id: row.entityId })}
       >
         Run
       </button>`,
     });
   }
 
-  private reading(entityId: string, label: string, icon: string | undefined) {
-    const state = this.hass.states[entityId];
+  private reading(row: Row) {
+    const state = this.hass.states[row.entityId];
     const unit = state.attributes.unit_of_measurement;
 
-    return this.tile(entityId, label, icon, false, {
-      trail: html`<button class="reading" @click=${() => this.moreInfo(entityId)}>
+    return this.tile(row, false, {
+      trail: html`<button class="reading" @click=${() => this.moreInfo(row.entityId)}>
           ${state.state}
         </button>
         ${unit ? html`<span class="unit">${unit}</span>` : nothing}`,
@@ -397,14 +394,13 @@ export class EchoLocalDialog extends LitElement {
   }
 
   private tile(
-    entityId: string,
-    label: string,
-    icon: string | undefined,
+    { entityId, label, name }: Row,
     active: boolean,
     parts: { trail?: unknown; under?: unknown }
   ) {
+    const icon = this.hass.states[entityId].attributes.icon;
     const alert = active && icon?.includes("mic") && icon.includes("off");
-    const said = this.help ? helpFor(keys(this.hass)?.get(entityId)?.key ?? "") : undefined;
+    const said = this.help ? helpFor(name) : undefined;
 
     return html`<div class="tile" data-active=${String(active && !alert)} data-alert=${String(!!alert)}>
       <div class="top">
@@ -417,29 +413,6 @@ export class EchoLocalDialog extends LitElement {
       </div>
       ${parts.under ?? nothing}
     </div>`;
-  }
-
-  // The name the integration gave the entity, which carries no device or component prefix — so there is
-  // nothing to strip. The friendly name is the fallback, and that one does need stripping.
-  private name(entityId: string): string {
-    const known = keys(this.hass)?.get(entityId);
-    if (known) return known.name;
-
-    let label = this.hass.states[entityId]?.attributes.friendly_name ?? entityId;
-    const prefixes = this.strip.filter(Boolean).sort((a, b) => b.length - a.length);
-
-    for (let peeled = true; peeled; ) {
-      peeled = false;
-
-      for (const prefix of prefixes) {
-        if (label.toLowerCase().startsWith(`${prefix.toLowerCase()} `)) {
-          label = label.slice(prefix.length + 1);
-          peeled = true;
-          break;
-        }
-      }
-    }
-    return label.charAt(0).toUpperCase() + label.slice(1);
   }
 
   private moreInfo(entityId: string) {

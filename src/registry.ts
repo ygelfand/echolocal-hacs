@@ -2,8 +2,8 @@
 // a card sees does not carry them at all. Finding them means asking the entity registry itself, which is
 // an administrator's call — anyone else gets no offer rather than an error.
 
-import { KEY } from "./keys";
-import { SEGMENTS } from "./satellite";
+import { split } from "./keys";
+import { SEGMENTS, type Satellite } from "./satellite";
 import type { HomeAssistant } from "./types";
 
 interface RegistryEntry {
@@ -18,10 +18,14 @@ interface RegistryEntry {
 // whether it exists yet or not.
 export async function disabledSegments(
   hass: HomeAssistant,
-  devices: Set<string>
+  state: Satellite
 ): Promise<(string | undefined)[]> {
   const found: (string | undefined)[] = new Array(SEGMENTS).fill(undefined);
   if (!hass.user?.is_admin) return found;
+
+  // The sub-device the segments hang off has plenty of enabled entities besides them, so the devices this
+  // satellite is made of are the ones its own entities name.
+  const devices = new Set(state.entities.map((e) => e.device_id));
 
   try {
     const all = await hass.callWS<RegistryEntry[]>({ type: "config/entity_registry/list" });
@@ -31,10 +35,10 @@ export async function disabledSegments(
 
       // The number comes off the unique id, which is echod's, since a disabled entity has no entity id
       // worth trusting and may not have one at all.
-      const key = entry.unique_id.replace(/^(?:[0-9a-f]{2}:){5}[0-9a-f]{2}-?/i, "").split("@")[0];
-      const at = Number(key.match(KEY.segment)?.[1] ?? 0) - 1;
+      const { name, slot } = split(entry.unique_id);
+      if (name !== "segment") continue;
 
-      if (at >= 0 && at < SEGMENTS) found[at] = entry.entity_id;
+      if (slot >= 1 && slot <= SEGMENTS) found[slot - 1] = entry.entity_id;
     }
   } catch {
     // Not an administrator, or the registry said no: then there is nothing to offer.

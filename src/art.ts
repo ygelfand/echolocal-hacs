@@ -86,8 +86,6 @@ export function art(
       <circle cx=${CX} cy=${CY} r="79" fill="url(#top)"></circle>
       <circle cx=${CX} cy=${CY} r="79" fill="none" stroke="var(--el-edge)" stroke-width="1"></circle>
 
-      <circle class="hit" cx=${CX} cy=${CY} r="93" fill="none" stroke="transparent"
-        stroke-width="12" @click=${tap.ring}></circle>
 
       ${button(CX, CY - 46, svg`<path d="M-4.5 0h9M0 -4.5v9"></path>`, "Volume up", () =>
         tap.volume(1)

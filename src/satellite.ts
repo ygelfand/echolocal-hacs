@@ -1,9 +1,9 @@
 // Finding our devices, and working out what their entities are for.
 //
-// Roles come from the registry keys in keys.ts, which echod owns. Nothing here reads an entity id.
+// Roles come from the registry names in keys.ts, which echod owns. Nothing here reads an entity id.
 
-import { KEY, tag, type Tagged } from "./keys";
-import type { HassDevice, HomeAssistant, Kind } from "./types";
+import { index, tag, type Index, type Tagged } from "./keys";
+import type { HassDevice, HomeAssistant } from "./types";
 
 export const MANUFACTURER = "EchoLocal";
 
@@ -15,8 +15,11 @@ export const SEGMENTS = 12;
 
 export interface Satellite {
   device: HassDevice;
-  parts: HassDevice[];
   entities: Tagged[];
+
+  // Every entity under echod's own name for it, built once, so anything looking for one does a get.
+  by: Index;
+
   satellite?: string;
   player?: string;
   update?: string;
@@ -68,9 +71,9 @@ export function resolve(
   const device = hass.devices?.[deviceId];
   if (!device) return null;
 
-  const parts = partsOf(hass, deviceId);
-
-  const own = new Set([deviceId, ...parts.map((d) => d.id)]);
+  // Sub-devices are how echod groups its entities in Home Assistant's own UI. The card gathers them all
+  // and works from names, so which sub-device declared a thing never decides anything here.
+  const own = new Set([deviceId, ...partsOf(hass, deviceId).map((d) => d.id)]);
   const entities = tag(
     hass,
     Object.values(hass.entities ?? {}).filter(
@@ -78,52 +81,32 @@ export function resolve(
     ),
   );
 
-  const one = (pattern: RegExp) => entities.find((e) => pattern.test(e.key))?.entity_id;
+  const by = index(entities);
+  const one = (name: string) => by.get(name)?.[0]?.entity_id;
 
-  // Indexed by segment number taken from the key, so a renamed segment stays where it belongs.
+  // Indexed by the segment's own slot, so a renamed segment stays where it belongs.
   const segments: (string | undefined)[] = new Array(SEGMENTS).fill(undefined);
-  for (const light of entities) {
-    const at = Number(light.key.match(KEY.segment)?.[1] ?? 0) - 1;
+  for (const light of by.get("segment") ?? []) {
+    const at = light.slot - 1;
     if (at >= 0 && at < SEGMENTS) segments[at] = light.entity_id;
   }
 
   return {
     device,
-    parts,
     entities,
-    // assist_satellite is Home Assistant's own, so its key has no platform segment.
-    satellite: entities.find((e) => e.key === "assist_satellite")?.entity_id,
-    player: one(KEY.player),
-    update: one(KEY.firmware),
-    ring: one(KEY.ring),
+    by,
+    satellite: one("assist_satellite"),
+    player: one("speaker"),
+    update: one("firmware"),
+    ring: one("ring"),
     segments,
-    mute: one(KEY.mute),
+    mute: one("mic_mute"),
   };
 }
 
-// What a sub-device is, from a key only that component has. The media_player is no use for playback: it is
-// the device's speaker and sits on the device itself, which is why playback used to come out as an
-// assistant. Anything unpinned is an assistant, one sub-device per wake word slot.
-export function kindOf(state: Satellite, part: HassDevice): Kind {
-  const holds = (pattern: RegExp) =>
-    state.entities.some((e) => e.device_id === part.id && pattern.test(e.key));
-
-  if (holds(KEY.ring) || holds(KEY.segment)) return "ring";
-  if (holds(KEY.mute) || holds(KEY.gain)) return "microphone";
-  if (holds(KEY.noise) || holds(KEY.headphones)) return "playback";
-  return "assistant";
-}
-
-export function partEntities(state: Satellite, partId: string): Tagged[] {
-  return state.entities.filter((e) => e.device_id === partId);
-}
-
-// One per wake word slot, in slot order, which is what the action button presses.
+// One per assistant, in slot order, which is what the action button presses.
 export function wakeButtons(state: Satellite): string[] {
-  return state.entities
-    .filter((e) => KEY.wake.test(e.key))
-    .sort((a, b) => a.key.localeCompare(b.key))
-    .map((e) => e.entity_id);
+  return (state.by.get("wake_assistant") ?? []).map((e) => e.entity_id);
 }
 
 export interface Lit {
