@@ -1,0 +1,139 @@
+:host {
+  display: block;
+}
+
+.caption {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--secondary-text-color);
+}
+
+.caption span {
+  margin-left: auto;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+  font-size: 0.75rem;
+}
+
+.turns {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 300px;
+  overflow: auto;
+  mask-image: linear-gradient(to bottom, black calc(100% - 16px), transparent);
+}
+
+.turn {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 4px 10px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--primary-text-color) 5%, transparent);
+}
+
+.when {
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--secondary-text-color);
+  white-space: nowrap;
+}
+
+.wake {
+  font-size: 0.78rem;
+  color: var(--primary-color);
+}
+
+.right {
+  grid-column: 3;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.outcome {
+  font-size: 0.72rem;
+  color: var(--secondary-text-color);
+  white-space: nowrap;
+}
+
+.outcome[data-bad="true"] {
+  color: var(--error-color, #db4437);
+}
+
+.said,
+.said-back,
+.bar {
+  grid-column: 2 / span 2;
+}
+
+.said {
+  font-size: 0.85rem;
+  color: var(--primary-text-color);
+}
+
+.said-back {
+  font-size: 0.85rem;
+  color: var(--secondary-text-color);
+}
+
+.said-back::before {
+  content: "↳ ";
+  opacity: 0.6;
+}
+
+/* One turn's phases, to scale against each other. */
+.bar {
+  display: flex;
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--primary-text-color) 8%, transparent);
+}
+
+.slice {
+  min-width: 2px;
+}
+
+.slice[data-phase="wake_ms"] {
+  background: var(--primary-color);
+}
+
+.slice[data-phase="listen_ms"] {
+  background: color-mix(in srgb, var(--primary-color) 55%, transparent);
+}
+
+.slice[data-phase="think_ms"] {
+  background: color-mix(in srgb, var(--primary-text-color) 30%, transparent);
+}
+
+.slice[data-phase="speak_ms"] {
+  background: var(--success-color, #43a047);
+}
+
+.legend {
+  grid-column: 2 / span 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 5px;
+  font-size: 0.7rem;
+  color: var(--secondary-text-color);
+  font-variant-numeric: tabular-nums;
+}
+
+.none {
+  padding: 10px 0;
+  font-size: 0.82rem;
+  color: var(--secondary-text-color);
+}

@@ -1,0 +1,54 @@
+:host {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+  vertical-align: middle;
+}
+
+button {
+  width: 15px;
+  height: 15px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--primary-text-color) 26%, transparent);
+  border-radius: 50%;
+  background: none;
+  color: var(--secondary-text-color);
+  font: inherit;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: help;
+  opacity: 0.65;
+}
+
+button:hover,
+button[data-open="true"] {
+  opacity: 1;
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.said {
+  position: absolute;
+  top: calc(100% + 7px);
+  right: -4px;
+  z-index: 20;
+  width: max-content;
+  max-width: min(300px, 70vw);
+  padding: 11px 13px;
+  border-radius: 11px;
+  border: 1px solid color-mix(in srgb, var(--primary-text-color) 12%, transparent);
+  background: var(--card-background-color, var(--primary-background-color));
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  color: var(--primary-text-color);
+  font-size: 0.79rem;
+  font-weight: 400;
+  line-height: 1.45;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: normal;
+  white-space: normal;
+}
+

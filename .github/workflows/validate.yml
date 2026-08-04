@@ -1,0 +1,61 @@
+name: Validate
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  hacs:
+    name: HACS
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: HACS validation
+        uses: hacs/action@main
+        with:
+          category: integration
+
+  hassfest:
+    name: Hassfest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Hassfest validation
+        uses: home-assistant/actions/hassfest@master
+
+  python:
+    name: Python
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pipx install ruff
+      - run: ruff check custom_components/echolocal
+      - run: ruff format --check custom_components/echolocal
+      - run: python -m compileall -q custom_components/echolocal
+
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+
+      # The bundle is committed because HACS installs the repository as it is and never builds anything, so
+      # a source change without a rebuild ships the old frontend. Rebuilding here and diffing is the only
+      # thing that catches it.
+      - run: npm run build
+      - name: Bundle is current
+        run: |
+          git diff --exit-code -- custom_components/echolocal/frontend/echolocal.js \
+            || { echo "::error::the committed bundle is stale — run make build and commit it"; exit 1; }

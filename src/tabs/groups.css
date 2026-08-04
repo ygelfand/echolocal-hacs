@@ -1,0 +1,136 @@
+:host {
+  display: block;
+}
+
+.make {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+input.new {
+  flex: 1;
+  max-width: 280px;
+  padding: 9px 12px;
+  border: 1px solid color-mix(in srgb, var(--primary-text-color) 18%, transparent);
+  border-radius: 10px;
+  background: none;
+  color: var(--primary-text-color);
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+input.new:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+button.make {
+  padding: 9px 16px;
+  border: none;
+  border-radius: 10px;
+  background: var(--primary-color);
+  color: var(--text-primary-color, #fff);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin: 0;
+}
+
+button.make:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+th {
+  padding: 8px 10px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--secondary-text-color);
+  white-space: nowrap;
+}
+
+th.who {
+  text-align: left;
+}
+
+th .label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+/* The header cell is the input. Width comes from the value; a fixed one clips longer names. */
+th input {
+  padding: 2px 0;
+  border: none;
+  border-bottom: 1px solid transparent;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: center;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+th input:hover {
+  border-bottom-color: color-mix(in srgb, var(--primary-text-color) 25%, transparent);
+}
+
+th input:focus {
+  outline: none;
+  border-bottom-color: var(--primary-color);
+  color: var(--primary-text-color);
+}
+
+th button {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--secondary-text-color);
+  cursor: pointer;
+  display: flex;
+}
+
+th button:hover {
+  color: var(--error-color, #db4437);
+}
+
+th button ha-icon {
+  --mdc-icon-size: 15px;
+  display: flex;
+}
+
+td {
+  padding: 10px;
+  border-top: 1px solid color-mix(in srgb, var(--primary-text-color) 10%, transparent);
+  text-align: center;
+}
+
+td.who {
+  text-align: left;
+  color: var(--primary-text-color);
+}
+
+input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--primary-color);
+  cursor: pointer;
+}
+
+.none {
+  color: var(--secondary-text-color);
+  max-width: 52ch;
+  line-height: 1.5;
+}

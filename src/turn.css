@@ -1,0 +1,110 @@
+:host {
+  display: block;
+  padding: 14px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--primary-text-color) 5%, transparent);
+}
+
+.top {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.caption {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--secondary-text-color);
+}
+
+.total {
+  margin-left: auto;
+  font-size: 0.8rem;
+  color: var(--secondary-text-color);
+}
+
+.total b {
+  color: var(--primary-text-color);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.band {
+  position: relative;
+  display: flex;
+  height: 44px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--primary-text-color) 8%, transparent);
+  touch-action: none;
+}
+
+.phase {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  font-size: 0.78rem;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: flex-basis 0.15s ease;
+}
+
+.phase.wake {
+  flex: 0 0 64px;
+  background: color-mix(in srgb, var(--primary-color) 30%, transparent);
+  color: var(--primary-text-color);
+}
+
+.phase.listen {
+  background: color-mix(in srgb, var(--primary-color) 18%, transparent);
+  color: var(--primary-color);
+}
+
+.phase.think {
+  background: color-mix(in srgb, var(--primary-text-color) 12%, transparent);
+  color: var(--secondary-text-color);
+}
+
+.phase.reply {
+  flex: 1 1 auto;
+  color: var(--secondary-text-color);
+}
+
+.grip {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 12px;
+  margin-left: -6px;
+  cursor: col-resize;
+  display: grid;
+  place-items: center;
+}
+
+.grip::before {
+  content: "";
+  width: 2px;
+  height: 60%;
+  border-radius: 1px;
+  background: var(--primary-text-color);
+  opacity: 0.6;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 10px;
+  font-size: 0.78rem;
+  color: var(--secondary-text-color);
+}
+
+.legend b {
+  color: var(--primary-text-color);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}

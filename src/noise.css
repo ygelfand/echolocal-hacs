@@ -1,0 +1,72 @@
+:host {
+  display: block;
+  padding: 14px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--primary-text-color) 5%, transparent);
+}
+
+.caption {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--secondary-text-color);
+}
+
+.caption span {
+  margin-left: auto;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+  font-size: 0.75rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(78px, 1fr));
+  gap: 6px;
+}
+
+.sound {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 6px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--primary-text-color) 6%, transparent);
+  color: var(--secondary-text-color);
+  font: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.sound:hover {
+  background: color-mix(in srgb, var(--primary-text-color) 12%, transparent);
+}
+
+.sound[data-on="true"] {
+  border-color: color-mix(in srgb, var(--primary-color) 45%, transparent);
+  background: color-mix(in srgb, var(--primary-color) 15%, transparent);
+  color: var(--primary-color);
+}
+
+.sound ha-icon {
+  --mdc-icon-size: 22px;
+  display: flex;
+}
+
+/* Which of the two layers a sound is on, when there is more than one. */
+.layer {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  font-size: 0.62rem;
+  line-height: 1;
+}

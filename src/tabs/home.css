@@ -1,0 +1,60 @@
+:host {
+  display: block;
+}
+
+.group {
+  margin-bottom: 26px;
+}
+
+.view {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 14px;
+}
+
+.pair {
+  display: flex;
+  border: 1px solid color-mix(in srgb, var(--primary-text-color) 16%, transparent);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.pair button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 13px;
+  border: none;
+  background: none;
+  color: var(--secondary-text-color);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.pair button:hover {
+  color: var(--primary-text-color);
+}
+
+.pair button[data-on="true"] {
+  color: var(--primary-color);
+  background: color-mix(in srgb, var(--primary-color) 14%, transparent);
+}
+
+.pair button ha-icon {
+  --mdc-icon-size: 16px;
+  display: flex;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.empty {
+  color: var(--secondary-text-color);
+  max-width: 46ch;
+  line-height: 1.5;
+}

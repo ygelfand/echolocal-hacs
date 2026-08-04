@@ -1,0 +1,133 @@
+:host {
+  display: block;
+}
+
+.filters {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.filters button {
+  padding: 5px 12px;
+  border: 1px solid color-mix(in srgb, var(--primary-text-color) 16%, transparent);
+  border-radius: 999px;
+  background: none;
+  color: var(--secondary-text-color);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.filters button[data-on="true"] {
+  color: var(--primary-color);
+  border-color: color-mix(in srgb, var(--primary-color) 50%, transparent);
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+}
+
+.turns {
+  display: grid;
+  gap: 8px;
+}
+
+.turn {
+  display: grid;
+  grid-template-columns: auto 9ch 1fr auto;
+  gap: 3px 12px;
+  align-items: center;
+  padding: 11px 14px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--primary-text-color) 5%, transparent);
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.when {
+  font-size: 0.78rem;
+  color: var(--secondary-text-color);
+  font-variant-numeric: tabular-nums;
+}
+
+.who {
+  font-size: 0.88rem;
+  color: var(--primary-text-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.said {
+  font-size: 0.88rem;
+  color: var(--secondary-text-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.took {
+  font-size: 0.8rem;
+  color: var(--secondary-text-color);
+  font-variant-numeric: tabular-nums;
+}
+
+.took[data-bad="true"] {
+  color: var(--error-color, #db4437);
+}
+
+.bar {
+  grid-column: 2 / -1;
+  display: flex;
+  height: 7px;
+  margin-top: 4px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--primary-text-color) 8%, transparent);
+}
+
+.slice[data-phase="wake_ms"] {
+  background: var(--info-color, #039be5);
+}
+
+.slice[data-phase="listen_ms"] {
+  background: color-mix(in srgb, var(--info-color, #039be5) 55%, var(--primary-text-color));
+}
+
+.slice[data-phase="think_ms"] {
+  background: var(--secondary-text-color);
+}
+
+.slice[data-phase="speak_ms"] {
+  background: var(--success-color, #43a047);
+}
+
+.none {
+  color: var(--secondary-text-color);
+  max-width: 56ch;
+  line-height: 1.5;
+}
+
+.legend {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  font-size: 0.72rem;
+  color: var(--secondary-text-color);
+}
+
+.key {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+}

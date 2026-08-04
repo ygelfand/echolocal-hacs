@@ -1,0 +1,33 @@
+:host {
+  display: flex;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+button {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--primary-color) 40%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+  cursor: pointer;
+}
+
+button.keep {
+  border-color: color-mix(in srgb, var(--primary-text-color) 18%, transparent);
+  background: color-mix(in srgb, var(--primary-text-color) 5%, transparent);
+}
+
+button ha-icon {
+  --mdc-icon-size: 16px;
+  color: var(--primary-color);
+  display: flex;
+}
+
+button.keep ha-icon {
+  color: var(--secondary-text-color);
+}

@@ -1,0 +1,414 @@
+.sheet {
+  transition: width 0.2s ease;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.crest {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--primary-color) 16%, transparent);
+}
+
+.crest ha-icon {
+  --mdc-icon-size: 24px;
+  color: var(--primary-color);
+  display: flex;
+}
+
+.titles {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* The header's right hand side: a component's primary control, which is dead space otherwise. */
+.crown {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 0 0 auto;
+}
+
+.lamp {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px 4px 6px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--primary-text-color) 6%, transparent);
+}
+
+.lamp ha-icon {
+  --mdc-icon-size: 16px;
+  color: var(--secondary-text-color);
+  display: flex;
+}
+
+.pip {
+  padding: 3px 8px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--secondary-text-color);
+  font: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.pip[data-on="true"] {
+  background: color-mix(in srgb, var(--primary-color) 20%, transparent);
+  color: var(--primary-color);
+}
+
+.toggle.big {
+  width: 52px;
+  height: 30px;
+  border-radius: 15px;
+}
+
+.toggle.big::after {
+  width: 24px;
+  height: 24px;
+}
+
+/* Mute reads as a warning when it is on; every other header switch is just on. */
+.toggle.big[data-on="true"] {
+  background: var(--error-color, #db4437);
+}
+
+.toggle.big.power[data-on="true"] {
+  background: var(--primary-color);
+}
+
+.round {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--primary-color) 45%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+  cursor: pointer;
+}
+
+.round ha-icon {
+  --mdc-icon-size: 22px;
+  color: var(--primary-color);
+  display: flex;
+}
+
+.round:hover {
+  background: color-mix(in srgb, var(--primary-color) 20%, transparent);
+}
+
+.toggle.big[data-on="true"]::after {
+  transform: translateX(22px);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--primary-text-color);
+  line-height: 1.2;
+}
+
+/* A widget's own "?" sits in its top corner. The room for it is reserved rather than overlapped: every
+   one of these puts something at the top right of itself, and a "?" over a reading is worse than none. */
+.explained {
+  position: relative;
+}
+
+.explained > :not(echolocal-bubble) {
+  padding-right: 21px;
+}
+
+.explained > echolocal-bubble.corner {
+  position: absolute;
+  top: 1px;
+  right: 0;
+  z-index: 3;
+}
+
+.subtitle {
+  font-size: 0.8rem;
+  color: var(--secondary-text-color);
+}
+
+.hero {
+  margin-bottom: 16px;
+}
+
+/* Columns rather than a grid: sections are different heights, and a grid strands the short ones next to
+   a tall one instead of packing them. */
+.groups {
+  columns: 2 300px;
+  column-gap: 24px;
+}
+
+.group {
+  break-inside: avoid;
+  margin-bottom: 14px;
+}
+
+.section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px 2px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--secondary-text-color);
+}
+
+.section::before {
+  content: "";
+  width: 3px;
+  height: 12px;
+  border-radius: 2px;
+  background: var(--primary-color);
+  opacity: 0.6;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 10px 14px;
+  margin-bottom: 5px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--primary-text-color) 5%, transparent);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--primary-text-color) 7%, transparent);
+  transition: background 0.2s ease;
+}
+
+.icon ha-icon {
+  --mdc-icon-size: 19px;
+  color: var(--secondary-text-color);
+  display: flex;
+  transition: color 0.2s ease;
+}
+
+.tile[data-active="true"] .icon {
+  background: color-mix(in srgb, var(--primary-color) 20%, transparent);
+}
+
+.tile[data-active="true"] .icon ha-icon {
+  color: var(--primary-color);
+}
+
+.tile[data-alert="true"] .icon {
+  background: color-mix(in srgb, var(--error-color, #db4437) 20%, transparent);
+}
+
+.tile[data-alert="true"] .icon ha-icon {
+  color: var(--error-color, #db4437);
+}
+
+/* The name takes the slack so the reading stays at the right edge, and the "?" travels with the words
+   rather than being pushed across the row to sit against the value. */
+.named {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.name {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--primary-text-color);
+}
+
+.trail {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.reading {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-size: 1.15rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--primary-text-color);
+  cursor: pointer;
+}
+
+.reading:hover {
+  color: var(--primary-color);
+}
+
+.unit {
+  font-size: 0.78rem;
+  color: var(--secondary-text-color);
+}
+
+.toggle {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 26px;
+  padding: 0;
+  border: none;
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--primary-text-color) 18%, transparent);
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s ease;
+}
+
+.toggle::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--card-background-color);
+  transition: transform 0.2s ease;
+}
+
+.toggle[data-on="true"] {
+  background: var(--primary-color);
+}
+
+.toggle[data-on="true"]::after {
+  transform: translateX(18px);
+}
+
+.toggle[data-on="unavailable"] {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* The track is drawn rather than left to the browser, so the filled part reads as the value at a glance
+   and the thumb is big enough to grab on a phone. */
+input[type="range"] {
+  width: 100%;
+  height: 8px;
+  margin: 0;
+  border-radius: 4px;
+  appearance: none;
+  background: linear-gradient(
+    to right,
+    var(--primary-color) 0%,
+    var(--primary-color) var(--fill, 50%),
+    color-mix(in srgb, var(--primary-text-color) 12%, transparent) var(--fill, 50%),
+    color-mix(in srgb, var(--primary-text-color) 12%, transparent) 100%
+  );
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--card-background-color);
+  border: 2px solid var(--primary-color);
+  cursor: grab;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--primary-color);
+  border-radius: 50%;
+  background: var(--card-background-color);
+  cursor: grab;
+}
+
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  padding: 7px 13px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--primary-text-color) 7%, transparent);
+  color: var(--secondary-text-color);
+  font: inherit;
+  font-size: 0.84rem;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.chip:hover {
+  background: color-mix(in srgb, var(--primary-text-color) 12%, transparent);
+}
+
+.chip[data-on="true"] {
+  background: color-mix(in srgb, var(--primary-color) 18%, transparent);
+  border-color: color-mix(in srgb, var(--primary-color) 45%, transparent);
+  color: var(--primary-color);
+}
+
+select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--primary-text-color) 12%, transparent);
+  background: var(--card-background-color);
+  color: var(--primary-text-color);
+  font: inherit;
+}
+
+.press {
+  padding: 7px 14px;
+  border: 1px solid color-mix(in srgb, var(--primary-color) 45%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+  color: var(--primary-color);
+  font: inherit;
+  font-size: 0.84rem;
+  cursor: pointer;
+}
+
+.press:hover {
+  background: color-mix(in srgb, var(--primary-color) 20%, transparent);
+}
+
+.empty {
+  color: var(--secondary-text-color);
+}

@@ -1,0 +1,129 @@
+:host {
+  display: block;
+  padding: 14px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--primary-text-color) 5%, transparent);
+}
+
+.dim {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--primary-text-color) 10%, transparent);
+  font-size: 0.85rem;
+  color: var(--secondary-text-color);
+}
+
+.dim b {
+  font-variant-numeric: tabular-nums;
+  color: var(--primary-text-color);
+  font-weight: 500;
+}
+
+input[type="range"] {
+  flex: 1 1 auto;
+  accent-color: var(--primary-color);
+  min-width: 0;
+}
+
+.when {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.situation {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 11px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--primary-text-color) 6%, transparent);
+  color: var(--secondary-text-color);
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+  min-width: 0;
+}
+
+.situation:hover {
+  background: color-mix(in srgb, var(--primary-text-color) 12%, transparent);
+}
+
+.situation[data-on="true"] {
+  border-color: color-mix(in srgb, var(--primary-color) 45%, transparent);
+  background: color-mix(in srgb, var(--primary-color) 14%, transparent);
+}
+
+.situation ha-icon {
+  --mdc-icon-size: 19px;
+  flex: 0 0 auto;
+  display: flex;
+}
+
+.situation .text {
+  min-width: 0;
+}
+
+.situation .label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.situation .shows {
+  font-size: 0.88rem;
+  color: var(--primary-text-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.situation[data-on="true"] .shows {
+  color: var(--primary-color);
+}
+
+.caption {
+  margin-bottom: 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--secondary-text-color);
+}
+
+/* Scrolls, so forty effects do not push the rest of the popup down. */
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  max-height: 150px;
+  overflow: auto;
+  mask-image: linear-gradient(to bottom, black calc(100% - 18px), transparent);
+}
+
+.option {
+  padding: 6px 11px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--primary-text-color) 6%, transparent);
+  color: var(--secondary-text-color);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.option:hover {
+  background: color-mix(in srgb, var(--primary-text-color) 12%, transparent);
+}
+
+.option[data-on="true"] {
+  border-color: color-mix(in srgb, var(--primary-color) 45%, transparent);
+  background: color-mix(in srgb, var(--primary-color) 15%, transparent);
+  color: var(--primary-color);
+}

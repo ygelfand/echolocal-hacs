@@ -1,0 +1,83 @@
+:host {
+  display: block;
+}
+
+.scroll {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+th {
+  padding: 8px 12px;
+  text-align: right;
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 0.71rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--secondary-text-color);
+  cursor: pointer;
+  user-select: none;
+}
+
+th:first-child {
+  text-align: left;
+}
+
+th:hover {
+  color: var(--primary-text-color);
+}
+
+th[data-by="true"] {
+  color: var(--primary-color);
+}
+
+td {
+  padding: 11px 12px;
+  text-align: right;
+  white-space: nowrap;
+  border-top: 1px solid color-mix(in srgb, var(--primary-text-color) 10%, transparent);
+  font-variant-numeric: tabular-nums;
+  color: var(--secondary-text-color);
+}
+
+td.who {
+  text-align: left;
+  color: var(--primary-text-color);
+}
+
+td.who button {
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+td.who button:hover {
+  color: var(--primary-color);
+}
+
+td[data-wrong="warn"] {
+  color: var(--warning-color, #ffa600);
+}
+
+td[data-wrong="bad"] {
+  color: var(--error-color, #db4437);
+  font-weight: 600;
+}
+
+tr[data-off="true"] td {
+  opacity: 0.5;
+}
+
+.none {
+  color: var(--secondary-text-color);
+}

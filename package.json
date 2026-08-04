@@ -1,0 +1,19 @@
+{
+  "name": "echolocal-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The EchoLocal satellite card and dashboard panel",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "watch": "node build.mjs --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "typescript": "^5.7.0"
+  },
+  "dependencies": {
+    "lit": "^3.2.0"
+  }
+}

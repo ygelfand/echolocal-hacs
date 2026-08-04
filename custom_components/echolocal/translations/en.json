@@ -1,0 +1,26 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "EchoLocal",
+        "description": "Adds the satellite card to your dashboards. Your devices keep working without this.",
+        "data": {
+          "sidebar": "Show the EchoLocal dashboard in the sidebar"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "EchoLocal is already set up."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "EchoLocal",
+        "data": {
+          "sidebar": "Show the EchoLocal dashboard in the sidebar"
+        }
+      }
+    }
+  }
+}

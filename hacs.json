@@ -1,0 +1,6 @@
+{
+  "name": "EchoLocal",
+  "content_in_root": false,
+  "render_readme": true,
+  "homeassistant": "2025.11.0"
+}

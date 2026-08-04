@@ -1,0 +1,52 @@
+:host {
+  display: block;
+}
+
+h2 {
+  margin: 26px 0 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--secondary-text-color);
+}
+
+.listening {
+  display: grid;
+  gap: 8px;
+}
+
+.who {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--primary-text-color) 5%, transparent);
+  font-size: 0.9rem;
+}
+
+.who .name {
+  color: var(--primary-text-color);
+  min-width: 8ch;
+}
+
+.word {
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  background: color-mix(in srgb, var(--primary-color) 16%, transparent);
+  color: var(--primary-color);
+}
+
+.word[data-gone="true"] {
+  background: color-mix(in srgb, var(--error-color, #db4437) 16%, transparent);
+  color: var(--error-color, #db4437);
+}
+
+.spare {
+  font-size: 0.85rem;
+  color: var(--secondary-text-color);
+  line-height: 1.5;
+}

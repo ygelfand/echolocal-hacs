@@ -1,0 +1,61 @@
+:host {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 4px 8px 2px;
+  border-bottom: 1px solid color-mix(in srgb, var(--primary-text-color) 10%, transparent);
+}
+
+.name {
+  font-size: 1.05rem;
+  color: var(--primary-text-color);
+}
+
+.count {
+  font-size: 0.78rem;
+  color: var(--secondary-text-color);
+}
+
+.spacer {
+  flex: 1;
+}
+
+button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border: 1px solid color-mix(in srgb, var(--primary-text-color) 16%, transparent);
+  border-radius: 999px;
+  background: none;
+  color: var(--secondary-text-color);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+button:hover {
+  color: var(--primary-text-color);
+  border-color: color-mix(in srgb, var(--primary-text-color) 34%, transparent);
+}
+
+button[data-on="true"] {
+  color: var(--primary-color);
+  border-color: color-mix(in srgb, var(--primary-color) 50%, transparent);
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+}
+
+button ha-icon {
+  --mdc-icon-size: 16px;
+  display: flex;
+}
+
+.mixed {
+  font-size: 0.7rem;
+  opacity: 0.75;
+}
