@@ -57,10 +57,15 @@
   background: color-mix(in srgb, var(--primary-text-color) 6%, transparent);
 }
 
+.word[data-used="false"] {
+  background: color-mix(in srgb, var(--info-color, #039be5) 10%, transparent);
+  box-shadow: inset 3px 0 0 var(--info-color, #039be5);
+}
+
 /* A broken entry reads as broken whether or not anything picked it. */
 .word[data-used="true"] {
-  background: color-mix(in srgb, var(--primary-color) 10%, transparent);
-  box-shadow: inset 3px 0 0 var(--primary-color);
+  background: color-mix(in srgb, var(--success-color, #43a047) 10%, transparent);
+  box-shadow: inset 3px 0 0 var(--success-color, #43a047);
 }
 
 .word[data-bad="true"],
@@ -76,25 +81,55 @@
 
 .about {
   grid-column: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
   font-size: 0.76rem;
   color: var(--secondary-text-color);
   font-variant-numeric: tabular-nums;
 }
 
-.file {
-  display: flex;
-  gap: 8px;
+/* The id can be long, so it gives up its width first and says the rest on hover. */
+.id {
+  flex: 1 1 6ch;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-family: var(--ha-font-family-code, monospace);
-  word-break: break-all;
 }
 
-.file a {
-  color: var(--primary-color);
+.files {
+  display: flex;
+  gap: 4px;
+  flex: 0 0 auto;
+}
+
+.facts {
+  flex: 0 0 auto;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 7px 1px 5px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary-text-color) 10%, transparent);
+  color: var(--secondary-text-color);
   text-decoration: none;
+  font-size: 0.72rem;
 }
 
-.file a:hover {
-  text-decoration: underline;
+.pill:hover {
+  background: color-mix(in srgb, var(--primary-color) 18%, transparent);
+  color: var(--primary-color);
+}
+
+.pill ha-icon {
+  --mdc-icon-size: 13px;
+  display: flex;
 }
 
 .wrong {

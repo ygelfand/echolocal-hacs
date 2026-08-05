@@ -117,13 +117,20 @@ export class EchoLocalWakeWords extends LitElement {
         ></ha-input>
       </div>
       <div class="about">
-        <span class="file">
+        <div class="id" title=${word.id}>${word.id}</div>
+        <div class="files">
           ${word.model_url
-            ? html`<a href=${word.model_url} download>${word.id}.tflite</a>`
-            : html`${word.id}.tflite`}
-          ${word.config_url ? html`<a href=${word.config_url} download>json</a>` : nothing}
-        </span>
-        ${parts.join(" · ")}
+            ? html`<a class="pill" href=${word.model_url} download title=${`${word.id}.tflite`}>
+                <ha-icon icon="mdi:tray-arrow-down"></ha-icon>tflite
+              </a>`
+            : nothing}
+          ${word.config_url
+            ? html`<a class="pill" href=${word.config_url} download title=${`${word.id}.json`}>
+                <ha-icon icon="mdi:tray-arrow-down"></ha-icon>json
+              </a>`
+            : nothing}
+        </div>
+        <div class="facts">${parts.join(" · ")}</div>
       </div>
       <div class="buttons">
         <ha-icon-button .label=${`Remove ${word.id}`} @click=${() => this.discard(word)}>

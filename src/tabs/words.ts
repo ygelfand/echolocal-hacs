@@ -87,8 +87,8 @@ export class EchoLocalWords extends LitElement {
       <div class="heading">
         <h2>The library</h2>
         <div class="legend">
-          <span class="key"><span class="dot" data-used="true"></span>Listened for</span>
-          <span class="key"><span class="dot" data-used="false"></span>Picked by nobody</span>
+          <span class="key"><span class="dot" data-used="true"></span>Used</span>
+          <span class="key"><span class="dot" data-used="false"></span>Unused</span>
         </div>
       </div>
       <echolocal-wake-words .hass=${this.hass} .inUse=${inUse}></echolocal-wake-words>

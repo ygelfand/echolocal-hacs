@@ -81,9 +81,9 @@ h2 {
   width: 9px;
   height: 9px;
   border-radius: 2px;
-  background: color-mix(in srgb, var(--primary-text-color) 16%, transparent);
+  background: var(--info-color, #039be5);
 }
 
 .dot[data-used="true"] {
-  background: var(--primary-color);
+  background: var(--success-color, #43a047);
 }

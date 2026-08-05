@@ -61,13 +61,7 @@ def _dir(hass: HomeAssistant) -> Path:
 
 @callback
 def async_invalidate(hass: HomeAssistant) -> None:
-    """Drop core's cached listing so the fresh set is read the next time it is asked for.
-
-    Nothing is pushed to the satellites. A library edit changes no device's selection and nothing it
-    is running: a rename is a label, and an add or delete is a file a device only fetches when someone
-    picks it. Core re-reads the directory on its next connect or configuration change, which is the
-    only moment the new set matters.
-    """
+    """Drop core's cached listing. It re-reads on its next connect or set_wake_words."""
     hass.data.pop(CACHE_KEY, None)
 
 
