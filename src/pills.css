@@ -1,0 +1,38 @@
+/* The card's own way of showing a short set of choices, shared by the ring's animations and by any row
+   with two of them. Home Assistant's segmented control is the same idea, but it reads as cramped beside
+   these and the card is mostly pills. */
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.pill {
+  padding: 6px 11px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--primary-text-color) 6%, transparent);
+  color: var(--secondary-text-color);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pill:hover {
+  background: color-mix(in srgb, var(--primary-text-color) 12%, transparent);
+}
+
+.pill[data-on="true"] {
+  border-color: color-mix(in srgb, var(--primary-color) 45%, transparent);
+  background: color-mix(in srgb, var(--primary-color) 15%, transparent);
+  color: var(--primary-color);
+}
+
+.pill:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
