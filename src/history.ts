@@ -1,16 +1,16 @@
 // The last few turns: what woke the device, what it heard, what it said back, how long each phase took,
 // and the recording if there is one.
 //
-// Two sources, deliberately. Home Assistant's recorder already holds the three sensors echod publishes,
-// so a history exists before the device reports anything — a wake word changing is a turn starting, and
-// whatever the other two say before the next one belongs to it. The turns in contract.ts carry what state
-// history cannot: the durations, the outcome, and whether there is audio. A row with one behind it shows
-// its bar and its play button; a row rebuilt from the recorder shows neither.
+// Two sources, deliberately. A turn the device reported carries the durations, the outcome and whether
+// there is audio, and shows its bar and its play button. The three sensors echod publishes are the floor
+// under that: the recorder has them whether or not anything ever read a turn, so a device on a firmware
+// that reports none still says what was said.
 
 import { LitElement, html, nothing, unsafeCSS } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
-import { TURN_EVENT, fromEvent, phases, total, type Turn } from "./contract";
+import { phases, total, type Turn } from "./contract";
+import { streamTurns } from "./turns";
 import styles from "./history.css";
 import "./recording";
 import type { HomeAssistant } from "./types";
@@ -28,11 +28,9 @@ export interface Row {
   turn?: Turn;
 }
 
-const HOURS = 24;
-const MOST = 12;
+const DAYS = 14;
 
-// Two turns within this of each other are the same turn seen twice: once as an event, once as the state
-// changes the event caused.
+// Two turns this close are the same turn seen twice: once as an event, once as the states it caused.
 const SAME_MS = 4000;
 
 @customElement("echolocal-history")
@@ -40,7 +38,6 @@ export class EchoLocalHistory extends LitElement {
   static styles = unsafeCSS(styles);
 
   @property({ attribute: false }) hass!: HomeAssistant;
-  @property() mac = "";
   @property() wake = "";
   @property() heard = "";
   @property() reply = "";
@@ -49,6 +46,9 @@ export class EchoLocalHistory extends LitElement {
   // renamed it to. When the device does not offer that action there is nothing to play, and the buttons
   // stay away.
   @property() device = "";
+
+  // Home Assistant's registry id, which is how the logbook is asked for this device's turns.
+  @property() deviceId = "";
 
   @state() private recorded: Row[] = [];
   @state() private live: Row[] = [];
@@ -74,11 +74,14 @@ export class EchoLocalHistory extends LitElement {
 
     return html`
       <div class="caption">
-        Recent turns ${turns.length ? html`<span>last ${HOURS} hours</span>` : nothing}
+        Recent turns
+        ${turns.length ? html`<span>${turns.length === 1 ? "1 turn" : `${turns.length} turns`}</span>` : nothing}
       </div>
       ${turns.length
         ? html`<div class="turns">${turns.map((turn) => this.row(turn, this.scale(turns)))}</div>`
-        : html`<div class="none">${this.asked ? "Nothing in the last day." : "Looking…"}</div>`}
+        : html`<div class="none">
+            ${this.asked ? "No turns recorded for this device yet." : "Looking…"}
+          </div>`}
     `;
   }
 
@@ -137,12 +140,12 @@ export class EchoLocalHistory extends LitElement {
     for (const row of this.recorded) {
       if (!out.some((seen) => Math.abs(seen.at - row.at) < SAME_MS)) out.push(row);
     }
-    return out.sort((a, b) => b.at - a.at).slice(0, MOST);
+    return out.sort((a, b) => b.at - a.at);
   }
 
   private async load() {
     const ids = [this.wake, this.heard, this.reply].filter(Boolean);
-    const start = new Date(Date.now() - HOURS * 3600_000).toISOString();
+    const start = new Date(Date.now() - DAYS * 86_400_000).toISOString();
 
     try {
       const history = await this.hass.callWS<Record<string, RawPoint[]>>({
@@ -163,22 +166,28 @@ export class EchoLocalHistory extends LitElement {
     }
   }
 
+  // One subscription for what the recorder holds and what happens next, in that order and without
+  // overlapping: the logbook drops a live event older than the history it just sent.
   private async listen() {
-    if (!this.hass.connection) return;
+    const since = new Date(Date.now() - DAYS * 86_400_000);
+    const devices = this.deviceId ? [this.deviceId] : [];
 
     try {
-      this.stop = await this.hass.connection.subscribeEvents<Record<string, string>>((message) => {
-        const turn = fromEvent(message.data);
-        if (!turn) return;
-        if (this.mac && turn.mac && turn.mac !== this.mac) return;
-
+      this.stop = await streamTurns(this.hass, since, devices, (turns) => {
         this.live = [
-          { at: Date.now(), wake: turn.wake_word, heard: turn.heard, reply: turn.reply, turn },
+          ...turns.map(({ at, turn }) => ({
+            at,
+            wake: turn.wake_word,
+            heard: turn.heard,
+            reply: turn.reply,
+            turn,
+          })),
           ...this.live,
-        ].slice(0, MOST);
-      }, TURN_EVENT);
+        ];
+      });
     } catch {
-      // No event bus, or it refused: the recorder's version is still there.
+      // No logbook, or nothing has taught it to read a turn: the recorder's sensors still say what was
+      // said, which is what the rows fall back to.
     }
   }
 

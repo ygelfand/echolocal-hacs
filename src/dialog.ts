@@ -33,8 +33,8 @@ export class EchoLocalDialog extends LitElement {
   // it to, and not its registry id.
   @property() device = "";
 
-  // Its mac, which is how a turn says which device it came from.
-  @property() mac = "";
+  // Its registry id, which is how the logbook is asked for this device's turns.
+  @property() deviceId = "";
 
   // Whether each setting gets a "?" explaining it. On unless the card says otherwise: most of these are
   // not guessable from their names, and somebody who already knows can turn them off once.
@@ -128,7 +128,7 @@ export class EchoLocalDialog extends LitElement {
           .heard=${roles.heard ?? ""}
           .reply=${roles.reply ?? ""}
           .device=${this.device}
-          .mac=${this.mac}
+          .deviceId=${this.deviceId}
         ></echolocal-history>`;
 
       case "volume":

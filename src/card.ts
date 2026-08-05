@@ -322,7 +322,7 @@ export class EchoLocalSatelliteCard extends LitElement {
       .sections=${list}
       .widgets=${widgets}
       .device=${state.device.name ?? ""}
-      .mac=${state.device.connections?.find(([kind]) => kind === "mac")?.[1] ?? ""}
+      .deviceId=${state.device.id}
       .help=${this.config.help !== false}
       .about=${helpForKind(kind)}
       @closed=${() => (this.opened = null)}

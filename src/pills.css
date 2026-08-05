@@ -1,6 +1,5 @@
 /* The card's own way of showing a short set of choices, shared by the ring's animations and by any row
-   with two of them. Home Assistant's segmented control is the same idea, but it reads as cramped beside
-   these and the card is mostly pills. */
+   with two of them. */
 
 .pills {
   display: flex;

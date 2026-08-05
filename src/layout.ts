@@ -344,8 +344,7 @@ function order(groups: Group[], by: Index, slot: number, taken: Set<string>): Se
 }
 
 // Every name any popup names, companions included. What is left over is what no layout mentions at all,
-// which is the only thing a leftovers bucket should hold: everything else already has a home, and showing
-// it twice is how Settings and Diagnostics ended up repeating each other.
+// which is the only thing a leftovers bucket should hold: everything else already has a home.
 const NAMED = new Set(
   Object.values(LAYOUTS).flatMap((groups) =>
     (groups ?? []).flatMap((group) =>

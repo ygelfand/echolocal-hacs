@@ -90,6 +90,13 @@ export interface HomeAssistant {
       callback: (event: { data: T }) => void,
       eventType: string
     ): Promise<() => void>;
+
+    // A subscription that answers with past matches before it starts reporting new ones, which is how
+    // the logbook serves history and live turns down one channel.
+    subscribeMessage<T>(
+      callback: (message: T) => void,
+      request: Record<string, unknown>
+    ): Promise<() => void>;
   };
 }
 

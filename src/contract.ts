@@ -1,4 +1,4 @@
-// What a turn looks like on the wire. A specification: echod does not send these yet.
+// What a turn looks like on the wire.
 //
 // Two channels, with different limits:
 //
@@ -7,7 +7,9 @@
 //   the action  a user-defined action answering with ExecuteServiceResponse.response_data, which Home
 //               Assistant json-decodes into an object. Any shape, so long as it is an object.
 
-export const TURN_EVENT = "echolocal_turn";
+// Home Assistant fires what the device asked for whole, domain included, so the event type carries the
+// esphome prefix. It also adds the device id, which is how a turn says where it came from.
+export const TURN_EVENT = "esphome.echolocal_turn";
 
 // The actions, named as echod will advertise them. Home Assistant prefixes the device: calling one is
 // esphome.<device>_<action>.
@@ -23,9 +25,9 @@ export interface Turn {
   // Bumped when a field changes meaning. A version we do not know is ignored rather than guessed at.
   version: 1;
 
-  // Which device, by the same mac the esphome integration keys its devices on, so a card can tell its
-  // own device's turns from the rest of the house.
-  mac: string;
+  // Which device, as Home Assistant's own registry id. The device never sends this: the esphome
+  // integration adds it when it fires the event, which is why nothing on the wire has to identify itself.
+  device: string;
 
   // Identifies this turn for as long as the device is holding it, which is what asks for its audio.
   id: string;
@@ -44,8 +46,10 @@ export interface Turn {
   think_ms?: number;
   speak_ms?: number;
 
-  // Flat for the same reason the phases are: how long the recording runs, and whether the device still
-  // has it. Absent seconds means there is nothing to play.
+  // How long the recording ran. It says a recording was made, not that there still is one: the device
+  // keeps only the last few, and a past event cannot change its mind. What is still held is answered by
+  // the action that serves the audio, which is the only thing that knows — asking is what finds out, and
+  // a turn whose recording has gone says so when asked.
   audio_seconds?: number;
 
   // What the room measured while it was talking, which is what the arbitration question in #25 needs.
@@ -102,9 +106,7 @@ export function fromEvent(data: unknown): Turn | null {
 
   const turn: Turn = {
     version: 1,
-    // Lower case, because that is how Home Assistant normalises a mac in its device registry and matching
-    // one against the other is the only thing this field is for.
-    mac: (raw.mac ?? "").toLowerCase(),
+    device: raw.device_id ?? "",
     id: raw.id ?? "",
     slot: number(raw.slot) ?? 1,
     wake_word: raw.wake_word,

@@ -1,19 +1,26 @@
-// Activity: every device's turns in one list, from the live event. It fills as turns happen; the recorder
-// holds no timings, so there is no past to load.
+// Activity: every device's turns in one list. The recorder keeps every turn a device reported, so this
+// opens with the past already in it and then follows along.
 
 import { LitElement, html, nothing, unsafeCSS } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
-import { TURN_EVENT, fromEvent, phases, total, type Turn } from "../contract";
+import { phases, total, type Turn } from "../contract";
 import { register } from "../nav";
 import "../recording";
 import { deviceName, findSatellites } from "../satellite";
+import { streamTurns } from "../turns";
 import type { HomeAssistant } from "../types";
 import styles from "./activity.css";
 
 register({ path: "activity", title: "Activity", icon: "mdi:timeline-text-outline", element: "echolocal-activity", order: 20 });
 
-const MOST = 60;
+const DAYS = 14;
+
+// What a device is called, and what it calls itself.
+interface Known {
+  label: string;
+  node: string;
+}
 
 interface Seen {
   at: number;
@@ -48,19 +55,19 @@ export class EchoLocalActivity extends LitElement {
     if (!this.hass) return nothing;
 
     const names = this.names();
-    const shown = this.only ? this.seen.filter((one) => one.turn.mac === this.only) : this.seen;
+    const shown = this.only ? this.seen.filter((one) => one.turn.device === this.only) : this.seen;
     const longest = Math.max(1, ...shown.map((one) => total(one.turn)));
 
     return html`
       ${this.seen.length > 0 && Object.keys(names).length > 1
         ? html`<div class="filters">
             <button data-on=${String(!this.only)} @click=${() => (this.only = "")}>Everything</button>
-            ${[...new Set(this.seen.map((one) => one.turn.mac))].map(
-              (mac) => html`<button
-                data-on=${String(this.only === mac)}
-                @click=${() => (this.only = mac)}
+            ${[...new Set(this.seen.map((one) => one.turn.device))].map(
+              (id) => html`<button
+                data-on=${String(this.only === id)}
+                @click=${() => (this.only = id)}
               >
-                ${names[mac] ?? mac}
+                ${names[id]?.label ?? id}
               </button>`
             )}
           </div>`
@@ -81,17 +88,17 @@ export class EchoLocalActivity extends LitElement {
             </div>
             <div class="turns">${shown.map((one) => this.row(one, names, longest))}</div>`
         : html`<div class="none">
-            Nothing yet. Turns appear here as they happen, across every device — the timings come from the
-            device rather than from the recorder, so there is no past to load.
+            No turns in the last ${DAYS} days. They appear here as they happen, across every device.
           </div>`}
     `;
   }
 
-  private row(one: Seen, names: Record<string, string>, longest: number) {
+  private row(one: Seen, names: Record<string, Known>, longest: number) {
     const spans = phases(one.turn);
     const took = total(one.turn);
     const bad = one.turn.outcome !== "completed";
-    const who = names[one.turn.mac] ?? "elsewhere";
+    const known = names[one.turn.device];
+    const who = known?.label ?? "elsewhere";
 
     return html`<div class="turn">
       <div class="when">${clock(one.at)}</div>
@@ -104,7 +111,7 @@ export class EchoLocalActivity extends LitElement {
         ${one.turn.audio_seconds
           ? html`<echolocal-recording
               .hass=${this.hass}
-              .device=${who}
+              .device=${known?.node ?? ""}
               .turn=${one.turn.id}
               .filename=${filename(one, who)}
             ></echolocal-recording>`
@@ -125,30 +132,27 @@ export class EchoLocalActivity extends LitElement {
     </div>`;
   }
 
-  // A turn names its device by mac, so the display name comes from the registry. Lower case throughout,
-  // which is how Home Assistant normalises one.
-  private names(): Record<string, string> {
-    const out: Record<string, string> = {};
+  // A turn names its device by registry id. What to call it and what the device calls itself are both
+  // needed and are not the same: the second is what its actions are named after, and a rename leaves it.
+  private names(): Record<string, Known> {
+    const out: Record<string, Known> = {};
 
     for (const device of findSatellites(this.hass)) {
-      const mac = device.connections?.find(([kind]) => kind === "mac")?.[1];
-      if (mac) out[mac.toLowerCase()] = deviceName(device);
+      out[device.id] = { label: deviceName(device), node: device.name ?? "" };
     }
     return out;
   }
 
+  // Every device, so a turn from one Home Assistant knows about but this dashboard does not still shows.
   private async listen() {
-    if (!this.hass.connection) return;
+    const since = new Date(Date.now() - DAYS * 86_400_000);
 
     try {
-      this.stop = await this.hass.connection.subscribeEvents<Record<string, string>>((message) => {
-        const turn = fromEvent(message.data);
-        if (!turn) return;
-
-        this.seen = [{ at: Date.now(), turn }, ...this.seen].slice(0, MOST);
-      }, TURN_EVENT);
+      this.stop = await streamTurns(this.hass, since, [], (turns) => {
+        this.seen = [...turns, ...this.seen].sort((a, b) => b.at - a.at);
+      });
     } catch {
-      // No event bus. The empty state already says what that means.
+      // No logbook, or nothing has taught it to read a turn. The empty state says what that means.
     }
   }
 }

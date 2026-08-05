@@ -31,3 +31,14 @@ button ha-icon {
 button.keep ha-icon {
   color: var(--secondary-text-color);
 }
+
+.gone {
+  display: flex;
+  opacity: 0.4;
+}
+
+.gone ha-icon {
+  --mdc-icon-size: 16px;
+  color: var(--secondary-text-color);
+  display: flex;
+}

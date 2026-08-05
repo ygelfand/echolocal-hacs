@@ -17,3 +17,7 @@ FRONTEND_URL = "/echolocal-frontend"
 # One bundle for the card, its editor and the panel. The panel gets the same URL so the browser
 # reuses the module instead of defining every element twice.
 BUNDLE_FILE = "echolocal.js"
+
+# What a device calls a finished turn. The esphome prefix is the device's: Home Assistant fires the
+# name whole, and accepts no other domain from a device.
+TURN_EVENT = "esphome.echolocal_turn"

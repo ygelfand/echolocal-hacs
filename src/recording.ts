@@ -26,6 +26,11 @@ export class EchoLocalRecording extends LitElement {
   @state() private busy = false;
   @state() private playing = false;
 
+  // Set when the device turns out not to have the recording after all. A turn says it had one when it
+  // ended, and that never stops being true — but the device keeps only the last few, so an old row's
+  // audio is gone long before the row is. Asking is the only way to find out.
+  @state() private gone = false;
+
   disconnectedCallback() {
     super.disconnectedCallback();
     if (this.playing) sounding?.audio.pause();
@@ -33,6 +38,12 @@ export class EchoLocalRecording extends LitElement {
 
   render() {
     if (!this.turn || !this.action()) return nothing;
+
+    if (this.gone) {
+      return html`<span class="gone" title="The device no longer has this recording">
+        <ha-icon icon="mdi:playlist-remove"></ha-icon>
+      </span>`;
+    }
 
     return html`
       <button
@@ -97,7 +108,9 @@ export class EchoLocalRecording extends LitElement {
 
     this.busy = true;
     try {
-      return await fetchTurnAudio(this.hass, action, this.turn);
+      const url = await fetchTurnAudio(this.hass, action, this.turn);
+      this.gone = !url;
+      return url;
     } finally {
       this.busy = false;
     }
