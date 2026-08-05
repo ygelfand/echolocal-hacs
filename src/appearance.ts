@@ -9,6 +9,7 @@ import { LitElement, html, nothing, unsafeCSS } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
 import styles from "./appearance.css";
+import pills from "./pills.css";
 import { SWATCHES } from "./swatches";
 import type { HomeAssistant } from "./types";
 
@@ -27,7 +28,7 @@ interface Situation {
 
 @customElement("echolocal-appearance")
 export class EchoLocalAppearance extends LitElement {
-  static styles = unsafeCSS(styles);
+  static styles = [unsafeCSS(pills), unsafeCSS(styles)];
 
   @property({ attribute: false }) hass!: HomeAssistant;
   @property() light = "";
@@ -99,10 +100,10 @@ export class EchoLocalAppearance extends LitElement {
       </div>
 
       <div class="caption">${chosen.label} shows</div>
-      <div class="options">
+      <div class="pills">
         ${this.options(chosen).map(
           (name) => html`<button
-            class="option"
+            class="pill"
             data-on=${String(name === this.showing(chosen))}
             @click=${() => this.choose(chosen, name)}
           >

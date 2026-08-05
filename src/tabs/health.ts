@@ -1,68 +1,91 @@
-// Health: one row per device. Each column is a diagnostic entity found by pattern, and colours itself
-// when the reading is bad. A device missing one gets a dash.
+// Health: one row per device. Each column is one of echod's readings, looked up by name, and colours
+// itself when the value is bad. A device missing one gets a dash.
 
 import { LitElement, html, nothing, unsafeCSS } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
 import { register } from "../nav";
 import { deviceName, findSatellites, resolve } from "../satellite";
-import type { HassDevice, HomeAssistant } from "../types";
+import type { HassDevice, HassState, HomeAssistant } from "../types";
 import styles from "./health.css";
 
 register({ path: "health", title: "Health", icon: "mdi:heart-pulse", element: "echolocal-health", order: 40 });
 
 interface Column {
   title: string;
-  match: RegExp;
 
-  // How wrong a value is, which is what the sort uses and what colors the cell. Nothing means fine.
-  wrong?: (value: number | string) => "warn" | "bad" | undefined;
-  show?: (value: string, unit: string) => string;
+  // echod's name for the entity this column reads.
+  name: string;
+
+  // What to show, and how wrong it is. wrong decides the colour; nothing means fine.
+  show?: (state: HassState) => string;
+  wrong?: (state: HassState) => "warn" | "bad" | undefined;
+
+  // What to sort on, when it is not the state read as a number.
+  sort?: (state: HassState) => number | string;
+}
+
+// Home Assistant converts a temperature to whatever the user's unit system asks for, so a threshold has
+// to know which scale it is being handed: 114 is a cold chip in Fahrenheit and a hot one in Celsius.
+function celsius(state: HassState): number {
+  const value = Number(state.state);
+  return state.attributes.unit_of_measurement === "°F" ? ((value - 32) * 5) / 9 : value;
 }
 
 const COLUMNS: Column[] = [
   {
     title: "Version",
-    match: /_(?:current_version|installed_version)$/,
+    name: "firmware",
+    show: (state) => String(state.attributes.installed_version ?? "—"),
+    sort: (state) => String(state.attributes.installed_version ?? ""),
   },
   {
     title: "Update",
-    match: /^update\./,
-    show: (value) => (value === "on" ? "waiting" : value === "off" ? "current" : value),
-    wrong: (value) => (value === "on" ? "warn" : undefined),
+    name: "firmware",
+    show: (state) => (state.state === "on" ? "waiting" : state.state === "off" ? "current" : state.state),
+    wrong: (state) => (state.state === "on" ? "warn" : undefined),
+    sort: (state) => state.state,
   },
   {
     title: "Wifi",
-    match: /_wifi_signal$/,
-    show: (value, unit) => `${Math.round(Number(value))} ${unit || "dBm"}`,
-    wrong: (value) => (Number(value) < -80 ? "bad" : Number(value) < -70 ? "warn" : undefined),
+    name: "wifi_signal",
+    show: (state) => `${Math.round(Number(state.state))} ${state.attributes.unit_of_measurement || "dBm"}`,
+    wrong: (state) =>
+      Number(state.state) < -80 ? "bad" : Number(state.state) < -70 ? "warn" : undefined,
   },
   {
     title: "CPU",
-    match: /_cpu_temperature$/,
-    show: (value, unit) => `${Math.round(Number(value))}${unit || "°C"}`,
-    wrong: (value) => (Number(value) > 80 ? "bad" : Number(value) > 70 ? "warn" : undefined),
+    name: "cpu_temperature",
+    show: (state) =>
+      `${Math.round(Number(state.state))}${state.attributes.unit_of_measurement || "°C"}`,
+    wrong: (state) => (celsius(state) > 85 ? "bad" : celsius(state) > 70 ? "warn" : undefined),
+    sort: celsius,
   },
   {
     title: "Load",
-    match: /_load_average$/,
-    show: (value) => Number(value).toFixed(2),
+    name: "load_average",
+    show: (state) => Number(state.state).toFixed(2),
   },
   {
     title: "Memory",
-    match: /_memory_available$/,
-    show: (value, unit) => `${Math.round(Number(value))} ${unit || "MB"}`,
-    wrong: (value) => (Number(value) < 40 ? "bad" : Number(value) < 80 ? "warn" : undefined),
+    name: "memory_available",
+    show: (state) => `${Math.round(Number(state.state))} ${state.attributes.unit_of_measurement || "MB"}`,
+    wrong: (state) =>
+      Number(state.state) < 40 ? "bad" : Number(state.state) < 80 ? "warn" : undefined,
   },
   {
     title: "Disk",
-    match: /_free_space$/,
-    show: (value, unit) => `${Math.round(Number(value))} ${unit || "MB"}`,
-    wrong: (value) => (Number(value) < 50 ? "bad" : Number(value) < 150 ? "warn" : undefined),
+    name: "free_space",
+    show: (state) => `${Math.round(Number(state.state))} ${state.attributes.unit_of_measurement || "MB"}`,
+    wrong: (state) =>
+      Number(state.state) < 50 ? "bad" : Number(state.state) < 150 ? "warn" : undefined,
   },
   {
     title: "Address",
-    match: /_ip_address$/,
+    name: "ip_address",
+
+    // Three addresses on one row is unreadable, and the first is the one somebody wants.
+    show: (state) => state.state.split(", ")[0] ?? state.state,
   },
 ];
 
@@ -121,28 +144,32 @@ export class EchoLocalHealth extends LitElement {
   }
 
   private read(device: HassDevice) {
-    const state = resolve(this.hass, device.id);
-    const ids = (state?.entities ?? []).map((entity) => entity.entity_id);
+    const found = resolve(this.hass, device.id);
     const cells: Record<string, { text: string; sort: number | string; wrong?: string }> = {};
 
     let up = false;
 
     for (const column of COLUMNS) {
-      const found = ids.find((id) => column.match.test(id));
-      const reading = found ? this.hass.states[found] : undefined;
-      if (!reading) continue;
-
-      const raw = reading.state;
-      if (raw === "unavailable" || raw === "unknown") continue;
+      const entityId = found?.by.get(column.name)?.[0]?.entity_id;
+      const reading = entityId ? this.hass.states[entityId] : undefined;
+      if (!reading || reading.state === "unavailable" || reading.state === "unknown") continue;
 
       up = true;
+      const number = Number(reading.state);
       const unit = reading.attributes.unit_of_measurement ?? "";
-      const number = Number(raw);
 
       cells[column.title] = {
-        text: column.show ? column.show(raw, unit) : unit ? `${raw} ${unit}` : raw,
-        sort: Number.isFinite(number) && raw !== "" ? number : raw,
-        wrong: column.wrong?.(Number.isFinite(number) ? number : raw),
+        text: column.show
+          ? column.show(reading)
+          : unit
+            ? `${reading.state} ${unit}`
+            : reading.state,
+        sort: column.sort
+          ? column.sort(reading)
+          : Number.isFinite(number) && reading.state !== ""
+            ? number
+            : reading.state,
+        wrong: column.wrong?.(reading),
       };
     }
 

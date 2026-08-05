@@ -252,6 +252,24 @@ ha-control-slider {
   color: var(--secondary-text-color);
 }
 
+.lines {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--primary-text-color);
+  text-align: left;
+  cursor: pointer;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.lines:hover {
+  color: var(--primary-color);
+}
+
 .empty {
   color: var(--secondary-text-color);
 }

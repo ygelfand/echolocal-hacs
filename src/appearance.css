@@ -127,32 +127,7 @@
 }
 
 /* Even columns rather than a ragged wrap: forty names all fit at this width, so nothing has to scroll. */
-.options {
+.pills {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
-  gap: 5px;
-}
-
-.option {
-  padding: 6px 11px;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--primary-text-color) 6%, transparent);
-  color: var(--secondary-text-color);
-  font: inherit;
-  font-size: 0.8rem;
-  cursor: pointer;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.option:hover {
-  background: color-mix(in srgb, var(--primary-text-color) 12%, transparent);
-}
-
-.option[data-on="true"] {
-  border-color: color-mix(in srgb, var(--primary-color) 45%, transparent);
-  background: color-mix(in srgb, var(--primary-color) 15%, transparent);
-  color: var(--primary-color);
 }

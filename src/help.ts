@@ -124,6 +124,8 @@ const KINDS: Record<string, string> = {
     "The device itself rather than anything it hears or says: which releases it takes, what else it does for the network, and the housekeeping.",
   diagnostics:
     "What the device reports about itself. Nothing here is a setting — it is the evidence, and it is what to read before changing anything else.",
+  activity:
+    "The last few turns: what woke the device, what it heard, and what it said back. Rows the device itself reported also show where the time went, and can be played back or saved.",
 };
 
 export function helpFor(name: string): string | undefined {

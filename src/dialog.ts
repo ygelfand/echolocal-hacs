@@ -10,6 +10,7 @@ import { customElement, property, state } from "lit/decorators.js";
 import "./array";
 import "./bubble";
 import styles from "./dialog.css";
+import pills from "./pills.css";
 import "./appearance";
 import { helpFor, helpForWidget } from "./help";
 import type { Widget } from "./layout";
@@ -19,7 +20,7 @@ import type { HomeAssistant, Row, Section } from "./types";
 
 @customElement("echolocal-dialog")
 export class EchoLocalDialog extends LitElement {
-  static styles = unsafeCSS(styles);
+  static styles = [unsafeCSS(pills), unsafeCSS(styles)];
 
   @property({ attribute: false }) hass!: HomeAssistant;
   @property() heading = "";
@@ -28,7 +29,8 @@ export class EchoLocalDialog extends LitElement {
   @property({ attribute: false }) sections: Section[] = [];
   @property({ attribute: false }) widgets: Widget[] = [];
 
-  // The device's own name, which the actions it offers are named after — not its registry id.
+  // What the device calls itself, which the actions it offers are named after — not what anybody renamed
+  // it to, and not its registry id.
   @property() device = "";
 
   // Its mac, which is how a turn says which device it came from.
@@ -368,17 +370,22 @@ export class EchoLocalDialog extends LitElement {
     const disabled = state.state === "unavailable";
 
     // Two choices are a this-or-that and read as one control; three or more is a list, and a list belongs
-    // in a menu whatever its length — segments next to a menu in the same popup look like an accident.
+    // in a menu whatever its length — pills next to a menu in the same popup look like an accident.
     return this.tile(row, false, {
       trail:
         names.length === 2
-          ? html`<ha-control-select
-              .options=${choices}
-              .value=${state.state}
-              .disabled=${disabled}
-              .label=${row.label}
-              @value-changed=${(e: CustomEvent<{ value: string }>) => pick(e.detail.value)}
-            ></ha-control-select>`
+          ? html`<div class="pills">
+              ${names.map(
+                (option) => html`<button
+                  class="pill"
+                  data-on=${String(option === state.state)}
+                  ?disabled=${disabled}
+                  @click=${() => pick(option)}
+                >
+                  ${option}
+                </button>`
+              )}
+            </div>`
           : html`<ha-control-select-menu
               .options=${choices}
               .value=${state.state}
@@ -392,28 +399,43 @@ export class EchoLocalDialog extends LitElement {
     });
   }
 
+  // The reading a button acts on goes on the label's line and the button underneath it, so how much there
+  // is to purge is read before the thing that purges it.
   private press(row: Row) {
-    const beside = row.reading ? this.hass.states[row.reading] : undefined;
+    const above = row.reading ? this.hass.states[row.reading] : undefined;
+
+    const run = html`<ha-button
+      size="small"
+      @click=${() => this.hass.callService("button", "press", { entity_id: row.entityId })}
+    >
+      Run
+    </ha-button>`;
+
+    if (!above) return this.tile(row, false, { trail: run });
 
     return this.tile(row, false, {
-      trail: html`${beside
-        ? html`<span class="reading">${beside.state}</span>
-            ${beside.attributes.unit_of_measurement
-              ? html`<span class="unit">${beside.attributes.unit_of_measurement}</span>`
-              : nothing}`
-        : nothing}
-      <ha-button
-        size="small"
-        @click=${() => this.hass.callService("button", "press", { entity_id: row.entityId })}
-      >
-        Run
-      </ha-button>`,
+      trail: html`<span class="reading">${above.state}</span>
+        ${above.attributes.unit_of_measurement
+          ? html`<span class="unit">${above.attributes.unit_of_measurement}</span>`
+          : nothing}`,
+      under: run,
     });
   }
 
   private reading(row: Row) {
     const state = this.hass.states[row.entityId];
     const unit = state.attributes.unit_of_measurement;
+
+    // A comma-separated reading is a list, and a device with an address on every interface has three of
+    // them: one per line reads, one long line does not.
+    const many = state.state.split(", ").filter((one) => one.length);
+    if (many.length > 1) {
+      return this.tile(row, false, {
+        under: html`<button class="lines" @click=${() => this.moreInfo(row.entityId)}>
+          ${many.map((one) => html`<div>${one}</div>`)}
+        </button>`,
+      });
+    }
 
     return this.tile(row, false, {
       trail: html`<button class="reading" @click=${() => this.moreInfo(row.entityId)}>

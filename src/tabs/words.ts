@@ -105,8 +105,10 @@ export class EchoLocalWords extends LitElement {
     return findSatellites(this.hass)
       .map((device) => {
         const state = resolve(this.hass, device.id);
+        // no_wake_word is how an assistant says it is not listening for anything, not a wake word.
         const words = (state?.by.get("wake_word") ?? [])
           .map((entity) => this.hass.states[entity.entity_id]?.state)
+          .filter((word) => word !== "no_wake_word")
           .filter((word): word is string => !!word && word !== "unknown" && word !== "None");
 
         return { name: deviceName(device), words };

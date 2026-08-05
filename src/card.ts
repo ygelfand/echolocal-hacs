@@ -38,6 +38,7 @@ const ICON: Record<Kind | "follow" | "close", string> = {
   assistant: "mdi:account-voice",
   device: "mdi:cog-outline",
   diagnostics: "mdi:stethoscope",
+  activity: "mdi:timeline-text-outline",
   follow: "mdi:backup-restore",
   close: "mdi:check",
 };
@@ -160,6 +161,7 @@ export class EchoLocalSatelliteCard extends LitElement {
         <div class="status">${ACTIVITY[doing] ?? doing}</div>
       </div>
       <div class="tail">
+        ${this.square(ICON.activity, "Activity", () => this.open({ kind: "activity", slot: 0 }))}
         ${this.square(ICON.device, "Settings", () => this.open({ kind: "device", slot: 0 }))}
         ${this.square(ICON.diagnostics, "Diagnostics", () =>
           this.open({ kind: "diagnostics", slot: 0 })
@@ -283,6 +285,7 @@ export class EchoLocalSatelliteCard extends LitElement {
       assistant: "Assistant",
       device: "Settings",
       diagnostics: "Diagnostics",
+      activity: "Activity",
     }[kind];
 
     return slot ? `${said} ${slot}` : said;
@@ -318,7 +321,7 @@ export class EchoLocalSatelliteCard extends LitElement {
       .icon=${ICON[kind]}
       .sections=${list}
       .widgets=${widgets}
-      .device=${deviceName(state.device)}
+      .device=${state.device.name ?? ""}
       .mac=${state.device.connections?.find(([kind]) => kind === "mac")?.[1] ?? ""}
       .help=${this.config.help !== false}
       .about=${helpForKind(kind)}

@@ -14,16 +14,16 @@ export function cached(id: string): string | undefined {
   return held.get(id);
 }
 
-// The esphome integration names an action <node>_<action>. Slugging the device name usually gives the
-// node, but it is a guess, so it is checked against the registered services.
-export function actionOf(
-  hass: HomeAssistant,
-  deviceName: string,
-  action: string
-): string | undefined {
-  const node = deviceName.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
-  const name = `${node}_${action}`;
+// The esphome integration names an action <node>_<action>, where the node is what the device calls itself.
+// That is the device entry's own name and never the one somebody renamed it to: a rename leaves the node,
+// and so the action, exactly where it was. Confirmed against the registered services either way.
+export function actionOf(hass: HomeAssistant, node: string, action: string): string | undefined {
+  const slug = node
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_|_$/g, "");
 
+  const name = `${slug}_${action}`;
   return hass?.services?.esphome?.[name] ? name : undefined;
 }
 

@@ -124,4 +124,11 @@ export interface Section {
   rows: Row[];
 }
 
-export type Kind = "ring" | "microphone" | "playback" | "assistant" | "device" | "diagnostics";
+export type Kind =
+  | "ring"
+  | "microphone"
+  | "playback"
+  | "assistant"
+  | "device"
+  | "diagnostics"
+  | "activity";

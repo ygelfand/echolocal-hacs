@@ -1,22 +1,22 @@
-var Bi=Object.defineProperty;var Ki=Object.getOwnPropertyDescriptor;var c=(s,i,t,e)=>{for(var r=e>1?void 0:e?Ki(i,t):i,n=s.length-1,o;n>=0;n--)(o=s[n])&&(r=(e?o(i,t,r):o(r))||r);return e&&r&&Bi(i,t,r),r};/**
+var Gi=Object.defineProperty;var Vi=Object.getOwnPropertyDescriptor;var d=(s,i,t,e)=>{for(var r=e>1?void 0:e?Vi(i,t):i,n=s.length-1,o;n>=0;n--)(o=s[n])&&(r=(e?o(i,t,r):o(r))||r);return e&&r&&Gi(i,t,r),r};/**
  * @license
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */var _t=globalThis,St=_t.ShadowRoot&&(_t.ShadyCSS===void 0||_t.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,ye=Symbol(),be=new WeakMap,kt=class{constructor(i,t,e){if(this._$cssResult$=!0,e!==ye)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=i,this.t=t}get styleSheet(){let i=this.o,t=this.t;if(St&&i===void 0){let e=t!==void 0&&t.length===1;e&&(i=be.get(t)),i===void 0&&((this.o=i=new CSSStyleSheet).replaceSync(this.cssText),e&&be.set(t,i))}return i}toString(){return this.cssText}},b=s=>new kt(typeof s=="string"?s:s+"",void 0,ye);var we=(s,i)=>{if(St)s.adoptedStyleSheets=i.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet);else for(let t of i){let e=document.createElement("style"),r=_t.litNonce;r!==void 0&&e.setAttribute("nonce",r),e.textContent=t.cssText,s.appendChild(e)}},Gt=St?s=>s:s=>s instanceof CSSStyleSheet?(i=>{let t="";for(let e of i.cssRules)t+=e.cssText;return b(t)})(s):s;/**
+ */var $t=globalThis,kt=$t.ShadowRoot&&($t.ShadyCSS===void 0||$t.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,xe=Symbol(),we=new WeakMap,_t=class{constructor(i,t,e){if(this._$cssResult$=!0,e!==xe)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=i,this.t=t}get styleSheet(){let i=this.o,t=this.t;if(kt&&i===void 0){let e=t!==void 0&&t.length===1;e&&(i=we.get(t)),i===void 0&&((this.o=i=new CSSStyleSheet).replaceSync(this.cssText),e&&we.set(t,i))}return i}toString(){return this.cssText}},b=s=>new _t(typeof s=="string"?s:s+"",void 0,xe);var $e=(s,i)=>{if(kt)s.adoptedStyleSheets=i.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet);else for(let t of i){let e=document.createElement("style"),r=$t.litNonce;r!==void 0&&e.setAttribute("nonce",r),e.textContent=t.cssText,s.appendChild(e)}},Vt=kt?s=>s:s=>s instanceof CSSStyleSheet?(i=>{let t="";for(let e of i.cssRules)t+=e.cssText;return b(t)})(s):s;/**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */var{is:Gi,defineProperty:Vi,getOwnPropertyDescriptor:Yi,getOwnPropertyNames:Xi,getOwnPropertySymbols:Zi,getPrototypeOf:Ji}=Object,At=globalThis,xe=At.trustedTypes,Qi=xe?xe.emptyScript:"",Li=At.reactiveElementPolyfillSupport,pt=(s,i)=>s,ht={toAttribute(s,i){switch(i){case Boolean:s=s?Qi:null;break;case Object:case Array:s=s==null?s:JSON.stringify(s)}return s},fromAttribute(s,i){let t=s;switch(i){case Boolean:t=s!==null;break;case Number:t=s===null?null:Number(s);break;case Object:case Array:try{t=JSON.parse(s)}catch{t=null}}return t}},Ct=(s,i)=>!Gi(s,i),$e={attribute:!0,type:String,converter:ht,reflect:!1,useDefault:!1,hasChanged:Ct};Symbol.metadata??=Symbol("metadata"),At.litPropertyMetadata??=new WeakMap;var W=class extends HTMLElement{static addInitializer(i){this._$Ei(),(this.l??=[]).push(i)}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(i,t=$e){if(t.state&&(t.attribute=!1),this._$Ei(),this.prototype.hasOwnProperty(i)&&((t=Object.create(t)).wrapped=!0),this.elementProperties.set(i,t),!t.noAccessor){let e=Symbol(),r=this.getPropertyDescriptor(i,e,t);r!==void 0&&Vi(this.prototype,i,r)}}static getPropertyDescriptor(i,t,e){let{get:r,set:n}=Yi(this.prototype,i)??{get(){return this[t]},set(o){this[t]=o}};return{get:r,set(o){let a=r?.call(this);n?.call(this,o),this.requestUpdate(i,a,e)},configurable:!0,enumerable:!0}}static getPropertyOptions(i){return this.elementProperties.get(i)??$e}static _$Ei(){if(this.hasOwnProperty(pt("elementProperties")))return;let i=Ji(this);i.finalize(),i.l!==void 0&&(this.l=[...i.l]),this.elementProperties=new Map(i.elementProperties)}static finalize(){if(this.hasOwnProperty(pt("finalized")))return;if(this.finalized=!0,this._$Ei(),this.hasOwnProperty(pt("properties"))){let t=this.properties,e=[...Xi(t),...Zi(t)];for(let r of e)this.createProperty(r,t[r])}let i=this[Symbol.metadata];if(i!==null){let t=litPropertyMetadata.get(i);if(t!==void 0)for(let[e,r]of t)this.elementProperties.set(e,r)}this._$Eh=new Map;for(let[t,e]of this.elementProperties){let r=this._$Eu(t,e);r!==void 0&&this._$Eh.set(r,t)}this.elementStyles=this.finalizeStyles(this.styles)}static finalizeStyles(i){let t=[];if(Array.isArray(i)){let e=new Set(i.flat(1/0).reverse());for(let r of e)t.unshift(Gt(r))}else i!==void 0&&t.push(Gt(i));return t}static _$Eu(i,t){let e=t.attribute;return e===!1?void 0:typeof e=="string"?e:typeof i=="string"?i.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=!1,this.hasUpdated=!1,this._$Em=null,this._$Ev()}_$Ev(){this._$ES=new Promise(i=>this.enableUpdating=i),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(i=>i(this))}addController(i){(this._$EO??=new Set).add(i),this.renderRoot!==void 0&&this.isConnected&&i.hostConnected?.()}removeController(i){this._$EO?.delete(i)}_$E_(){let i=new Map,t=this.constructor.elementProperties;for(let e of t.keys())this.hasOwnProperty(e)&&(i.set(e,this[e]),delete this[e]);i.size>0&&(this._$Ep=i)}createRenderRoot(){let i=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return we(i,this.constructor.elementStyles),i}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(!0),this._$EO?.forEach(i=>i.hostConnected?.())}enableUpdating(i){}disconnectedCallback(){this._$EO?.forEach(i=>i.hostDisconnected?.())}attributeChangedCallback(i,t,e){this._$AK(i,e)}_$ET(i,t){let e=this.constructor.elementProperties.get(i),r=this.constructor._$Eu(i,e);if(r!==void 0&&e.reflect===!0){let n=(e.converter?.toAttribute!==void 0?e.converter:ht).toAttribute(t,e.type);this._$Em=i,n==null?this.removeAttribute(r):this.setAttribute(r,n),this._$Em=null}}_$AK(i,t){let e=this.constructor,r=e._$Eh.get(i);if(r!==void 0&&this._$Em!==r){let n=e.getPropertyOptions(r),o=typeof n.converter=="function"?{fromAttribute:n.converter}:n.converter?.fromAttribute!==void 0?n.converter:ht;this._$Em=r;let a=o.fromAttribute(t,n.type);this[r]=a??this._$Ej?.get(r)??a,this._$Em=null}}requestUpdate(i,t,e,r=!1,n){if(i!==void 0){let o=this.constructor;if(r===!1&&(n=this[i]),e??=o.getPropertyOptions(i),!((e.hasChanged??Ct)(n,t)||e.useDefault&&e.reflect&&n===this._$Ej?.get(i)&&!this.hasAttribute(o._$Eu(i,e))))return;this.C(i,t,e)}this.isUpdatePending===!1&&(this._$ES=this._$EP())}C(i,t,{useDefault:e,reflect:r,wrapped:n},o){e&&!(this._$Ej??=new Map).has(i)&&(this._$Ej.set(i,o??t??this[i]),n!==!0||o!==void 0)||(this._$AL.has(i)||(this.hasUpdated||e||(t=void 0),this._$AL.set(i,t)),r===!0&&this._$Em!==i&&(this._$Eq??=new Set).add(i))}async _$EP(){this.isUpdatePending=!0;try{await this._$ES}catch(t){Promise.reject(t)}let i=this.scheduleUpdate();return i!=null&&await i,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(let[r,n]of this._$Ep)this[r]=n;this._$Ep=void 0}let e=this.constructor.elementProperties;if(e.size>0)for(let[r,n]of e){let{wrapped:o}=n,a=this[r];o!==!0||this._$AL.has(r)||a===void 0||this.C(r,void 0,n,a)}}let i=!1,t=this._$AL;try{i=this.shouldUpdate(t),i?(this.willUpdate(t),this._$EO?.forEach(e=>e.hostUpdate?.()),this.update(t)):this._$EM()}catch(e){throw i=!1,this._$EM(),e}i&&this._$AE(t)}willUpdate(i){}_$AE(i){this._$EO?.forEach(t=>t.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(i)),this.updated(i)}_$EM(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(i){return!0}update(i){this._$Eq&&=this._$Eq.forEach(t=>this._$ET(t,this[t])),this._$EM()}updated(i){}firstUpdated(i){}};W.elementStyles=[],W.shadowRootOptions={mode:"open"},W[pt("elementProperties")]=new Map,W[pt("finalized")]=new Map,Li?.({ReactiveElement:W}),(At.reactiveElementVersions??=[]).push("2.1.2");/**
+ */var{is:Yi,defineProperty:Xi,getOwnPropertyDescriptor:Zi,getOwnPropertyNames:Ji,getOwnPropertySymbols:Qi,getPrototypeOf:Li}=Object,St=globalThis,_e=St.trustedTypes,tr=_e?_e.emptyScript:"",er=St.reactiveElementPolyfillSupport,pt=(s,i)=>s,ht={toAttribute(s,i){switch(i){case Boolean:s=s?tr:null;break;case Object:case Array:s=s==null?s:JSON.stringify(s)}return s},fromAttribute(s,i){let t=s;switch(i){case Boolean:t=s!==null;break;case Number:t=s===null?null:Number(s);break;case Object:case Array:try{t=JSON.parse(s)}catch{t=null}}return t}},At=(s,i)=>!Yi(s,i),ke={attribute:!0,type:String,converter:ht,reflect:!1,useDefault:!1,hasChanged:At};Symbol.metadata??=Symbol("metadata"),St.litPropertyMetadata??=new WeakMap;var W=class extends HTMLElement{static addInitializer(i){this._$Ei(),(this.l??=[]).push(i)}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(i,t=ke){if(t.state&&(t.attribute=!1),this._$Ei(),this.prototype.hasOwnProperty(i)&&((t=Object.create(t)).wrapped=!0),this.elementProperties.set(i,t),!t.noAccessor){let e=Symbol(),r=this.getPropertyDescriptor(i,e,t);r!==void 0&&Xi(this.prototype,i,r)}}static getPropertyDescriptor(i,t,e){let{get:r,set:n}=Zi(this.prototype,i)??{get(){return this[t]},set(o){this[t]=o}};return{get:r,set(o){let l=r?.call(this);n?.call(this,o),this.requestUpdate(i,l,e)},configurable:!0,enumerable:!0}}static getPropertyOptions(i){return this.elementProperties.get(i)??ke}static _$Ei(){if(this.hasOwnProperty(pt("elementProperties")))return;let i=Li(this);i.finalize(),i.l!==void 0&&(this.l=[...i.l]),this.elementProperties=new Map(i.elementProperties)}static finalize(){if(this.hasOwnProperty(pt("finalized")))return;if(this.finalized=!0,this._$Ei(),this.hasOwnProperty(pt("properties"))){let t=this.properties,e=[...Ji(t),...Qi(t)];for(let r of e)this.createProperty(r,t[r])}let i=this[Symbol.metadata];if(i!==null){let t=litPropertyMetadata.get(i);if(t!==void 0)for(let[e,r]of t)this.elementProperties.set(e,r)}this._$Eh=new Map;for(let[t,e]of this.elementProperties){let r=this._$Eu(t,e);r!==void 0&&this._$Eh.set(r,t)}this.elementStyles=this.finalizeStyles(this.styles)}static finalizeStyles(i){let t=[];if(Array.isArray(i)){let e=new Set(i.flat(1/0).reverse());for(let r of e)t.unshift(Vt(r))}else i!==void 0&&t.push(Vt(i));return t}static _$Eu(i,t){let e=t.attribute;return e===!1?void 0:typeof e=="string"?e:typeof i=="string"?i.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=!1,this.hasUpdated=!1,this._$Em=null,this._$Ev()}_$Ev(){this._$ES=new Promise(i=>this.enableUpdating=i),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(i=>i(this))}addController(i){(this._$EO??=new Set).add(i),this.renderRoot!==void 0&&this.isConnected&&i.hostConnected?.()}removeController(i){this._$EO?.delete(i)}_$E_(){let i=new Map,t=this.constructor.elementProperties;for(let e of t.keys())this.hasOwnProperty(e)&&(i.set(e,this[e]),delete this[e]);i.size>0&&(this._$Ep=i)}createRenderRoot(){let i=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return $e(i,this.constructor.elementStyles),i}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(!0),this._$EO?.forEach(i=>i.hostConnected?.())}enableUpdating(i){}disconnectedCallback(){this._$EO?.forEach(i=>i.hostDisconnected?.())}attributeChangedCallback(i,t,e){this._$AK(i,e)}_$ET(i,t){let e=this.constructor.elementProperties.get(i),r=this.constructor._$Eu(i,e);if(r!==void 0&&e.reflect===!0){let n=(e.converter?.toAttribute!==void 0?e.converter:ht).toAttribute(t,e.type);this._$Em=i,n==null?this.removeAttribute(r):this.setAttribute(r,n),this._$Em=null}}_$AK(i,t){let e=this.constructor,r=e._$Eh.get(i);if(r!==void 0&&this._$Em!==r){let n=e.getPropertyOptions(r),o=typeof n.converter=="function"?{fromAttribute:n.converter}:n.converter?.fromAttribute!==void 0?n.converter:ht;this._$Em=r;let l=o.fromAttribute(t,n.type);this[r]=l??this._$Ej?.get(r)??l,this._$Em=null}}requestUpdate(i,t,e,r=!1,n){if(i!==void 0){let o=this.constructor;if(r===!1&&(n=this[i]),e??=o.getPropertyOptions(i),!((e.hasChanged??At)(n,t)||e.useDefault&&e.reflect&&n===this._$Ej?.get(i)&&!this.hasAttribute(o._$Eu(i,e))))return;this.C(i,t,e)}this.isUpdatePending===!1&&(this._$ES=this._$EP())}C(i,t,{useDefault:e,reflect:r,wrapped:n},o){e&&!(this._$Ej??=new Map).has(i)&&(this._$Ej.set(i,o??t??this[i]),n!==!0||o!==void 0)||(this._$AL.has(i)||(this.hasUpdated||e||(t=void 0),this._$AL.set(i,t)),r===!0&&this._$Em!==i&&(this._$Eq??=new Set).add(i))}async _$EP(){this.isUpdatePending=!0;try{await this._$ES}catch(t){Promise.reject(t)}let i=this.scheduleUpdate();return i!=null&&await i,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(let[r,n]of this._$Ep)this[r]=n;this._$Ep=void 0}let e=this.constructor.elementProperties;if(e.size>0)for(let[r,n]of e){let{wrapped:o}=n,l=this[r];o!==!0||this._$AL.has(r)||l===void 0||this.C(r,void 0,n,l)}}let i=!1,t=this._$AL;try{i=this.shouldUpdate(t),i?(this.willUpdate(t),this._$EO?.forEach(e=>e.hostUpdate?.()),this.update(t)):this._$EM()}catch(e){throw i=!1,this._$EM(),e}i&&this._$AE(t)}willUpdate(i){}_$AE(i){this._$EO?.forEach(t=>t.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(i)),this.updated(i)}_$EM(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(i){return!0}update(i){this._$Eq&&=this._$Eq.forEach(t=>this._$ET(t,this[t])),this._$EM()}updated(i){}firstUpdated(i){}};W.elementStyles=[],W.shadowRootOptions={mode:"open"},W[pt("elementProperties")]=new Map,W[pt("finalized")]=new Map,er?.({ReactiveElement:W}),(St.reactiveElementVersions??=[]).push("2.1.2");/**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */var Lt=globalThis,_e=s=>s,Mt=Lt.trustedTypes,ke=Mt?Mt.createPolicy("lit-html",{createHTML:s=>s}):void 0,He="$lit$",K=`lit$${Math.random().toFixed(9).slice(2)}$`,Re="?"+K,tr=`<${Re}>`,tt=document,mt=()=>tt.createComment(""),gt=s=>s===null||typeof s!="object"&&typeof s!="function",te=Array.isArray,er=s=>te(s)||typeof s?.[Symbol.iterator]=="function",Vt=`[ 	
-\f\r]`,ut=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,Se=/-->/g,Ae=/>/g,Q=RegExp(`>|${Vt}(?:([^\\s"'>=/]+)(${Vt}*=${Vt}*(?:[^ 	
-\f\r"'\`<>=]|("|')|))|$)`,"g"),Ce=/'/g,Me=/"/g,Pe=/^(?:script|style|textarea|title)$/i,ee=s=>(i,...t)=>({_$litType$:s,strings:i,values:t}),l=ee(1),x=ee(2),ms=ee(3),et=Symbol.for("lit-noChange"),p=Symbol.for("lit-nothing"),Te=new WeakMap,L=tt.createTreeWalker(tt,129);function Ee(s,i){if(!te(s)||!s.hasOwnProperty("raw"))throw Error("invalid template strings array");return ke!==void 0?ke.createHTML(i):i}var ir=(s,i)=>{let t=s.length-1,e=[],r,n=i===2?"<svg>":i===3?"<math>":"",o=ut;for(let a=0;a<t;a++){let d=s[a],h,g,f=-1,w=0;for(;w<d.length&&(o.lastIndex=w,g=o.exec(d),g!==null);)w=o.lastIndex,o===ut?g[1]==="!--"?o=Se:g[1]!==void 0?o=Ae:g[2]!==void 0?(Pe.test(g[2])&&(r=RegExp("</"+g[2],"g")),o=Q):g[3]!==void 0&&(o=Q):o===Q?g[0]===">"?(o=r??ut,f=-1):g[1]===void 0?f=-2:(f=o.lastIndex-g[2].length,h=g[1],o=g[3]===void 0?Q:g[3]==='"'?Me:Ce):o===Me||o===Ce?o=Q:o===Se||o===Ae?o=ut:(o=Q,r=void 0);let $=o===Q&&s[a+1].startsWith("/>")?" ":"";n+=o===ut?d+tr:f>=0?(e.push(h),d.slice(0,f)+He+d.slice(f)+K+$):d+K+(f===-2?a:$)}return[Ee(s,n+(s[t]||"<?>")+(i===2?"</svg>":i===3?"</math>":"")),e]},ft=class s{constructor({strings:i,_$litType$:t},e){let r;this.parts=[];let n=0,o=0,a=i.length-1,d=this.parts,[h,g]=ir(i,t);if(this.el=s.createElement(h,e),L.currentNode=this.el.content,t===2||t===3){let f=this.el.content.firstChild;f.replaceWith(...f.childNodes)}for(;(r=L.nextNode())!==null&&d.length<a;){if(r.nodeType===1){if(r.hasAttributes())for(let f of r.getAttributeNames())if(f.endsWith(He)){let w=g[o++],$=r.getAttribute(f).split(K),T=/([.?@])?(.*)/.exec(w);d.push({type:1,index:n,name:T[2],strings:$,ctor:T[1]==="."?Xt:T[1]==="?"?Zt:T[1]==="@"?Jt:rt}),r.removeAttribute(f)}else f.startsWith(K)&&(d.push({type:6,index:n}),r.removeAttribute(f));if(Pe.test(r.tagName)){let f=r.textContent.split(K),w=f.length-1;if(w>0){r.textContent=Mt?Mt.emptyScript:"";for(let $=0;$<w;$++)r.append(f[$],mt()),L.nextNode(),d.push({type:2,index:++n});r.append(f[w],mt())}}}else if(r.nodeType===8)if(r.data===Re)d.push({type:2,index:n});else{let f=-1;for(;(f=r.data.indexOf(K,f+1))!==-1;)d.push({type:7,index:n}),f+=K.length-1}n++}}static createElement(i,t){let e=tt.createElement("template");return e.innerHTML=i,e}};function it(s,i,t=s,e){if(i===et)return i;let r=e!==void 0?t._$Co?.[e]:t._$Cl,n=gt(i)?void 0:i._$litDirective$;return r?.constructor!==n&&(r?._$AO?.(!1),n===void 0?r=void 0:(r=new n(s),r._$AT(s,t,e)),e!==void 0?(t._$Co??=[])[e]=r:t._$Cl=r),r!==void 0&&(i=it(s,r._$AS(s,i.values),r,e)),i}var Yt=class{constructor(i,t){this._$AV=[],this._$AN=void 0,this._$AD=i,this._$AM=t}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(i){let{el:{content:t},parts:e}=this._$AD,r=(i?.creationScope??tt).importNode(t,!0);L.currentNode=r;let n=L.nextNode(),o=0,a=0,d=e[0];for(;d!==void 0;){if(o===d.index){let h;d.type===2?h=new vt(n,n.nextSibling,this,i):d.type===1?h=new d.ctor(n,d.name,d.strings,this,i):d.type===6&&(h=new Qt(n,this,i)),this._$AV.push(h),d=e[++a]}o!==d?.index&&(n=L.nextNode(),o++)}return L.currentNode=tt,r}p(i){let t=0;for(let e of this._$AV)e!==void 0&&(e.strings!==void 0?(e._$AI(i,e,t),t+=e.strings.length-2):e._$AI(i[t])),t++}},vt=class s{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(i,t,e,r){this.type=2,this._$AH=p,this._$AN=void 0,this._$AA=i,this._$AB=t,this._$AM=e,this.options=r,this._$Cv=r?.isConnected??!0}get parentNode(){let i=this._$AA.parentNode,t=this._$AM;return t!==void 0&&i?.nodeType===11&&(i=t.parentNode),i}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(i,t=this){i=it(this,i,t),gt(i)?i===p||i==null||i===""?(this._$AH!==p&&this._$AR(),this._$AH=p):i!==this._$AH&&i!==et&&this._(i):i._$litType$!==void 0?this.$(i):i.nodeType!==void 0?this.T(i):er(i)?this.k(i):this._(i)}O(i){return this._$AA.parentNode.insertBefore(i,this._$AB)}T(i){this._$AH!==i&&(this._$AR(),this._$AH=this.O(i))}_(i){this._$AH!==p&&gt(this._$AH)?this._$AA.nextSibling.data=i:this.T(tt.createTextNode(i)),this._$AH=i}$(i){let{values:t,_$litType$:e}=i,r=typeof e=="number"?this._$AC(i):(e.el===void 0&&(e.el=ft.createElement(Ee(e.h,e.h[0]),this.options)),e);if(this._$AH?._$AD===r)this._$AH.p(t);else{let n=new Yt(r,this),o=n.u(this.options);n.p(t),this.T(o),this._$AH=n}}_$AC(i){let t=Te.get(i.strings);return t===void 0&&Te.set(i.strings,t=new ft(i)),t}k(i){te(this._$AH)||(this._$AH=[],this._$AR());let t=this._$AH,e,r=0;for(let n of i)r===t.length?t.push(e=new s(this.O(mt()),this.O(mt()),this,this.options)):e=t[r],e._$AI(n),r++;r<t.length&&(this._$AR(e&&e._$AB.nextSibling,r),t.length=r)}_$AR(i=this._$AA.nextSibling,t){for(this._$AP?.(!1,!0,t);i!==this._$AB;){let e=_e(i).nextSibling;_e(i).remove(),i=e}}setConnected(i){this._$AM===void 0&&(this._$Cv=i,this._$AP?.(i))}},rt=class{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(i,t,e,r,n){this.type=1,this._$AH=p,this._$AN=void 0,this.element=i,this.name=t,this._$AM=r,this.options=n,e.length>2||e[0]!==""||e[1]!==""?(this._$AH=Array(e.length-1).fill(new String),this.strings=e):this._$AH=p}_$AI(i,t=this,e,r){let n=this.strings,o=!1;if(n===void 0)i=it(this,i,t,0),o=!gt(i)||i!==this._$AH&&i!==et,o&&(this._$AH=i);else{let a=i,d,h;for(i=n[0],d=0;d<n.length-1;d++)h=it(this,a[e+d],t,d),h===et&&(h=this._$AH[d]),o||=!gt(h)||h!==this._$AH[d],h===p?i=p:i!==p&&(i+=(h??"")+n[d+1]),this._$AH[d]=h}o&&!r&&this.j(i)}j(i){i===p?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,i??"")}},Xt=class extends rt{constructor(){super(...arguments),this.type=3}j(i){this.element[this.name]=i===p?void 0:i}},Zt=class extends rt{constructor(){super(...arguments),this.type=4}j(i){this.element.toggleAttribute(this.name,!!i&&i!==p)}},Jt=class extends rt{constructor(i,t,e,r,n){super(i,t,e,r,n),this.type=5}_$AI(i,t=this){if((i=it(this,i,t,0)??p)===et)return;let e=this._$AH,r=i===p&&e!==p||i.capture!==e.capture||i.once!==e.once||i.passive!==e.passive,n=i!==p&&(e===p||r);r&&this.element.removeEventListener(this.name,this,e),n&&this.element.addEventListener(this.name,this,i),this._$AH=i}handleEvent(i){typeof this._$AH=="function"?this._$AH.call(this.options?.host??this.element,i):this._$AH.handleEvent(i)}},Qt=class{constructor(i,t,e){this.element=i,this.type=6,this._$AN=void 0,this._$AM=t,this.options=e}get _$AU(){return this._$AM._$AU}_$AI(i){it(this,i)}};var rr=Lt.litHtmlPolyfillSupport;rr?.(ft,vt),(Lt.litHtmlVersions??=[]).push("3.3.3");var ze=(s,i,t)=>{let e=t?.renderBefore??i,r=e._$litPart$;if(r===void 0){let n=t?.renderBefore??null;e._$litPart$=r=new vt(i.insertBefore(mt(),n),n,void 0,t??{})}return r._$AI(s),r};/**
+ */var te=globalThis,Se=s=>s,Ct=te.trustedTypes,Ae=Ct?Ct.createPolicy("lit-html",{createHTML:s=>s}):void 0,Pe="$lit$",K=`lit$${Math.random().toFixed(9).slice(2)}$`,Ee="?"+K,ir=`<${Ee}>`,tt=document,mt=()=>tt.createComment(""),gt=s=>s===null||typeof s!="object"&&typeof s!="function",ee=Array.isArray,rr=s=>ee(s)||typeof s?.[Symbol.iterator]=="function",Yt=`[ 	
+\f\r]`,ut=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,Ce=/-->/g,Me=/>/g,Q=RegExp(`>|${Yt}(?:([^\\s"'>=/]+)(${Yt}*=${Yt}*(?:[^ 	
+\f\r"'\`<>=]|("|')|))|$)`,"g"),He=/'/g,Te=/"/g,ze=/^(?:script|style|textarea|title)$/i,ie=s=>(i,...t)=>({_$litType$:s,strings:i,values:t}),a=ie(1),w=ie(2),vs=ie(3),et=Symbol.for("lit-noChange"),p=Symbol.for("lit-nothing"),Re=new WeakMap,L=tt.createTreeWalker(tt,129);function Oe(s,i){if(!ee(s)||!s.hasOwnProperty("raw"))throw Error("invalid template strings array");return Ae!==void 0?Ae.createHTML(i):i}var sr=(s,i)=>{let t=s.length-1,e=[],r,n=i===2?"<svg>":i===3?"<math>":"",o=ut;for(let l=0;l<t;l++){let c=s[l],h,g,f=-1,x=0;for(;x<c.length&&(o.lastIndex=x,g=o.exec(c),g!==null);)x=o.lastIndex,o===ut?g[1]==="!--"?o=Ce:g[1]!==void 0?o=Me:g[2]!==void 0?(ze.test(g[2])&&(r=RegExp("</"+g[2],"g")),o=Q):g[3]!==void 0&&(o=Q):o===Q?g[0]===">"?(o=r??ut,f=-1):g[1]===void 0?f=-2:(f=o.lastIndex-g[2].length,h=g[1],o=g[3]===void 0?Q:g[3]==='"'?Te:He):o===Te||o===He?o=Q:o===Ce||o===Me?o=ut:(o=Q,r=void 0);let $=o===Q&&s[l+1].startsWith("/>")?" ":"";n+=o===ut?c+ir:f>=0?(e.push(h),c.slice(0,f)+Pe+c.slice(f)+K+$):c+K+(f===-2?l:$)}return[Oe(s,n+(s[t]||"<?>")+(i===2?"</svg>":i===3?"</math>":"")),e]},ft=class s{constructor({strings:i,_$litType$:t},e){let r;this.parts=[];let n=0,o=0,l=i.length-1,c=this.parts,[h,g]=sr(i,t);if(this.el=s.createElement(h,e),L.currentNode=this.el.content,t===2||t===3){let f=this.el.content.firstChild;f.replaceWith(...f.childNodes)}for(;(r=L.nextNode())!==null&&c.length<l;){if(r.nodeType===1){if(r.hasAttributes())for(let f of r.getAttributeNames())if(f.endsWith(Pe)){let x=g[o++],$=r.getAttribute(f).split(K),H=/([.?@])?(.*)/.exec(x);c.push({type:1,index:n,name:H[2],strings:$,ctor:H[1]==="."?Zt:H[1]==="?"?Jt:H[1]==="@"?Qt:st}),r.removeAttribute(f)}else f.startsWith(K)&&(c.push({type:6,index:n}),r.removeAttribute(f));if(ze.test(r.tagName)){let f=r.textContent.split(K),x=f.length-1;if(x>0){r.textContent=Ct?Ct.emptyScript:"";for(let $=0;$<x;$++)r.append(f[$],mt()),L.nextNode(),c.push({type:2,index:++n});r.append(f[x],mt())}}}else if(r.nodeType===8)if(r.data===Ee)c.push({type:2,index:n});else{let f=-1;for(;(f=r.data.indexOf(K,f+1))!==-1;)c.push({type:7,index:n}),f+=K.length-1}n++}}static createElement(i,t){let e=tt.createElement("template");return e.innerHTML=i,e}};function rt(s,i,t=s,e){if(i===et)return i;let r=e!==void 0?t._$Co?.[e]:t._$Cl,n=gt(i)?void 0:i._$litDirective$;return r?.constructor!==n&&(r?._$AO?.(!1),n===void 0?r=void 0:(r=new n(s),r._$AT(s,t,e)),e!==void 0?(t._$Co??=[])[e]=r:t._$Cl=r),r!==void 0&&(i=rt(s,r._$AS(s,i.values),r,e)),i}var Xt=class{constructor(i,t){this._$AV=[],this._$AN=void 0,this._$AD=i,this._$AM=t}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(i){let{el:{content:t},parts:e}=this._$AD,r=(i?.creationScope??tt).importNode(t,!0);L.currentNode=r;let n=L.nextNode(),o=0,l=0,c=e[0];for(;c!==void 0;){if(o===c.index){let h;c.type===2?h=new vt(n,n.nextSibling,this,i):c.type===1?h=new c.ctor(n,c.name,c.strings,this,i):c.type===6&&(h=new Lt(n,this,i)),this._$AV.push(h),c=e[++l]}o!==c?.index&&(n=L.nextNode(),o++)}return L.currentNode=tt,r}p(i){let t=0;for(let e of this._$AV)e!==void 0&&(e.strings!==void 0?(e._$AI(i,e,t),t+=e.strings.length-2):e._$AI(i[t])),t++}},vt=class s{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(i,t,e,r){this.type=2,this._$AH=p,this._$AN=void 0,this._$AA=i,this._$AB=t,this._$AM=e,this.options=r,this._$Cv=r?.isConnected??!0}get parentNode(){let i=this._$AA.parentNode,t=this._$AM;return t!==void 0&&i?.nodeType===11&&(i=t.parentNode),i}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(i,t=this){i=rt(this,i,t),gt(i)?i===p||i==null||i===""?(this._$AH!==p&&this._$AR(),this._$AH=p):i!==this._$AH&&i!==et&&this._(i):i._$litType$!==void 0?this.$(i):i.nodeType!==void 0?this.T(i):rr(i)?this.k(i):this._(i)}O(i){return this._$AA.parentNode.insertBefore(i,this._$AB)}T(i){this._$AH!==i&&(this._$AR(),this._$AH=this.O(i))}_(i){this._$AH!==p&&gt(this._$AH)?this._$AA.nextSibling.data=i:this.T(tt.createTextNode(i)),this._$AH=i}$(i){let{values:t,_$litType$:e}=i,r=typeof e=="number"?this._$AC(i):(e.el===void 0&&(e.el=ft.createElement(Oe(e.h,e.h[0]),this.options)),e);if(this._$AH?._$AD===r)this._$AH.p(t);else{let n=new Xt(r,this),o=n.u(this.options);n.p(t),this.T(o),this._$AH=n}}_$AC(i){let t=Re.get(i.strings);return t===void 0&&Re.set(i.strings,t=new ft(i)),t}k(i){ee(this._$AH)||(this._$AH=[],this._$AR());let t=this._$AH,e,r=0;for(let n of i)r===t.length?t.push(e=new s(this.O(mt()),this.O(mt()),this,this.options)):e=t[r],e._$AI(n),r++;r<t.length&&(this._$AR(e&&e._$AB.nextSibling,r),t.length=r)}_$AR(i=this._$AA.nextSibling,t){for(this._$AP?.(!1,!0,t);i!==this._$AB;){let e=Se(i).nextSibling;Se(i).remove(),i=e}}setConnected(i){this._$AM===void 0&&(this._$Cv=i,this._$AP?.(i))}},st=class{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(i,t,e,r,n){this.type=1,this._$AH=p,this._$AN=void 0,this.element=i,this.name=t,this._$AM=r,this.options=n,e.length>2||e[0]!==""||e[1]!==""?(this._$AH=Array(e.length-1).fill(new String),this.strings=e):this._$AH=p}_$AI(i,t=this,e,r){let n=this.strings,o=!1;if(n===void 0)i=rt(this,i,t,0),o=!gt(i)||i!==this._$AH&&i!==et,o&&(this._$AH=i);else{let l=i,c,h;for(i=n[0],c=0;c<n.length-1;c++)h=rt(this,l[e+c],t,c),h===et&&(h=this._$AH[c]),o||=!gt(h)||h!==this._$AH[c],h===p?i=p:i!==p&&(i+=(h??"")+n[c+1]),this._$AH[c]=h}o&&!r&&this.j(i)}j(i){i===p?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,i??"")}},Zt=class extends st{constructor(){super(...arguments),this.type=3}j(i){this.element[this.name]=i===p?void 0:i}},Jt=class extends st{constructor(){super(...arguments),this.type=4}j(i){this.element.toggleAttribute(this.name,!!i&&i!==p)}},Qt=class extends st{constructor(i,t,e,r,n){super(i,t,e,r,n),this.type=5}_$AI(i,t=this){if((i=rt(this,i,t,0)??p)===et)return;let e=this._$AH,r=i===p&&e!==p||i.capture!==e.capture||i.once!==e.once||i.passive!==e.passive,n=i!==p&&(e===p||r);r&&this.element.removeEventListener(this.name,this,e),n&&this.element.addEventListener(this.name,this,i),this._$AH=i}handleEvent(i){typeof this._$AH=="function"?this._$AH.call(this.options?.host??this.element,i):this._$AH.handleEvent(i)}},Lt=class{constructor(i,t,e){this.element=i,this.type=6,this._$AN=void 0,this._$AM=t,this.options=e}get _$AU(){return this._$AM._$AU}_$AI(i){rt(this,i)}};var nr=te.litHtmlPolyfillSupport;nr?.(ft,vt),(te.litHtmlVersions??=[]).push("3.3.3");var Ne=(s,i,t)=>{let e=t?.renderBefore??i,r=e._$litPart$;if(r===void 0){let n=t?.renderBefore??null;e._$litPart$=r=new vt(i.insertBefore(mt(),n),n,void 0,t??{})}return r._$AI(s),r};/**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */var ie=globalThis,v=class extends W{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){let i=super.createRenderRoot();return this.renderOptions.renderBefore??=i.firstChild,i}update(i){let t=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(i),this._$Do=ze(t,this.renderRoot,this.renderOptions)}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(!0)}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(!1)}render(){return et}};v._$litElement$=!0,v.finalized=!0,ie.litElementHydrateSupport?.({LitElement:v});var sr=ie.litElementPolyfillSupport;sr?.({LitElement:v});(ie.litElementVersions??=[]).push("4.2.2");/**
+ */var re=globalThis,v=class extends W{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){let i=super.createRenderRoot();return this.renderOptions.renderBefore??=i.firstChild,i}update(i){let t=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(i),this._$Do=Ne(t,this.renderRoot,this.renderOptions)}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(!0)}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(!1)}render(){return et}};v._$litElement$=!0,v.finalized=!0,re.litElementHydrateSupport?.({LitElement:v});var or=re.litElementPolyfillSupport;or?.({LitElement:v});(re.litElementVersions??=[]).push("4.2.2");/**
  * @license
  * Copyright 2022 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
@@ -28,7 +28,7 @@ var Bi=Object.defineProperty;var Ki=Object.getOwnPropertyDescriptor;var c=(s,i,t
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */var nr={attribute:!0,type:String,converter:ht,reflect:!1,hasChanged:Ct},or=(s=nr,i,t)=>{let{kind:e,metadata:r}=t,n=globalThis.litPropertyMetadata.get(r);if(n===void 0&&globalThis.litPropertyMetadata.set(r,n=new Map),e==="setter"&&((s=Object.create(s)).wrapped=!0),n.set(t.name,s),e==="accessor"){let{name:o}=t;return{set(a){let d=i.get.call(this);i.set.call(this,a),this.requestUpdate(o,d,s,!0,a)},init(a){return a!==void 0&&this.C(o,void 0,s,a),a}}}if(e==="setter"){let{name:o}=t;return function(a){let d=this[o];i.call(this,a),this.requestUpdate(o,d,s,!0,a)}}throw Error("Unsupported decorator location: "+e)};function u(s){return(i,t)=>typeof t=="object"?or(s,i,t):((e,r,n)=>{let o=r.hasOwnProperty(n);return r.constructor.createProperty(n,e),o?Object.getOwnPropertyDescriptor(r,n):void 0})(s,i,t)}/**
+ */var ar={attribute:!0,type:String,converter:ht,reflect:!1,hasChanged:At},lr=(s=ar,i,t)=>{let{kind:e,metadata:r}=t,n=globalThis.litPropertyMetadata.get(r);if(n===void 0&&globalThis.litPropertyMetadata.set(r,n=new Map),e==="setter"&&((s=Object.create(s)).wrapped=!0),n.set(t.name,s),e==="accessor"){let{name:o}=t;return{set(l){let c=i.get.call(this);i.set.call(this,l),this.requestUpdate(o,c,s,!0,l)},init(l){return l!==void 0&&this.C(o,void 0,s,l),l}}}if(e==="setter"){let{name:o}=t;return function(l){let c=this[o];i.call(this,l),this.requestUpdate(o,c,s,!0,l)}}throw Error("Unsupported decorator location: "+e)};function u(s){return(i,t)=>typeof t=="object"?lr(s,i,t):((e,r,n)=>{let o=r.hasOwnProperty(n);return r.constructor.createProperty(n,e),o?Object.getOwnPropertyDescriptor(r,n):void 0})(s,i,t)}/**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
@@ -60,7 +60,7 @@ var Bi=Object.defineProperty;var Ki=Object.getOwnPropertyDescriptor;var c=(s,i,t
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */var bt=12,Oe=2.2,j=100,F=100,Ne=500;function Ie(s,i){let t=Array.from({length:bt},(e,r)=>{let n=-90+360/bt*r+Oe/2,o=-90+360/bt*(r+1)-Oe/2;return cr(93,82,n,o)});return x`
+ */var bt=12,Ie=2.2,j=100,q=100,Ue=500;function De(s,i){let t=Array.from({length:bt},(e,r)=>{let n=-90+360/bt*r+Ie/2,o=-90+360/bt*(r+1)-Ie/2;return pr(93,82,n,o)});return w`
     <svg viewBox="0 0 200 200" role="img" aria-label="Echo Dot">
       <defs>
         <radialGradient id="top" cx="38%" cy="30%" r="78%">
@@ -72,14 +72,14 @@ var Bi=Object.defineProperty;var Ki=Object.getOwnPropertyDescriptor;var c=(s,i,t
         </filter>
       </defs>
 
-      <circle cx=${j} cy=${F} r="97" fill="var(--el-shell)"></circle>
-      <circle cx=${j} cy=${F} r="97" fill="none" stroke="var(--el-edge)" stroke-width="1"></circle>
+      <circle cx=${j} cy=${q} r="97" fill="var(--el-shell)"></circle>
+      <circle cx=${j} cy=${q} r="97" fill="none" stroke="var(--el-edge)" stroke-width="1"></circle>
 
       <g class="halo" filter="url(#blur)" style="opacity:${s.glow}">
-        ${t.map((e,r)=>x`<path d=${e} style="fill:${s.segments[r].opacity?s.segments[r].fill:"transparent"}"></path>`)}
+        ${t.map((e,r)=>w`<path d=${e} style="fill:${s.segments[r].opacity?s.segments[r].fill:"transparent"}"></path>`)}
       </g>
 
-      ${t.map((e,r)=>x`<path
+      ${t.map((e,r)=>w`<path
           class="segment"
           data-picked=${String(s.picked===r)}
           data-divisible=${String(s.divisible)}
@@ -88,15 +88,15 @@ var Bi=Object.defineProperty;var Ki=Object.getOwnPropertyDescriptor;var c=(s,i,t
           @click=${s.divisible?()=>i.segment(r):i.ring}
         ></path>`)}
 
-      <circle cx=${j} cy=${F} r="79" fill="url(#top)"></circle>
-      <circle cx=${j} cy=${F} r="79" fill="none" stroke="var(--el-edge)" stroke-width="1"></circle>
+      <circle cx=${j} cy=${q} r="79" fill="url(#top)"></circle>
+      <circle cx=${j} cy=${q} r="79" fill="none" stroke="var(--el-edge)" stroke-width="1"></circle>
 
 
-      ${re(j,F-46,x`<path d="M-4.5 0h9M0 -4.5v9"></path>`,"Volume up",()=>i.volume(1))}
+      ${se(j,q-46,w`<path d="M-4.5 0h9M0 -4.5v9"></path>`,"Volume up",()=>i.volume(1))}
       <g
         class="btn"
         data-lit=${String(s.holding)}
-        transform="translate(${j+46} ${F})"
+        transform="translate(${j+46} ${q})"
         role="button"
         tabindex="0"
         aria-label=${s.holding?"Wake the second assistant":"Wake"}
@@ -108,19 +108,19 @@ var Bi=Object.defineProperty;var Ki=Object.getOwnPropertyDescriptor;var c=(s,i,t
         <circle class="face" cx="0" cy="0" r="13"></circle>
         <g class="glyph"><circle cx="0" cy="0" r="4.5"></circle></g>
       </g>
-      ${re(j,F+46,x`<path d="M-4.5 0h9"></path>`,"Volume down",()=>i.volume(-1))}
-      ${re(j-46,F,ar(s.muted),s.muted?"Microphone muted":"Microphone live",i.mute,s.muted)}
+      ${se(j,q+46,w`<path d="M-4.5 0h9"></path>`,"Volume down",()=>i.volume(-1))}
+      ${se(j-46,q,cr(s.muted),s.muted?"Microphone muted":"Microphone live",i.mute,s.muted)}
     </svg>
-  `}function re(s,i,t,e,r,n=!1){return x`<g class="btn" data-lit=${String(n)} transform="translate(${s} ${i})"
+  `}function se(s,i,t,e,r,n=!1){return w`<g class="btn" data-lit=${String(n)} transform="translate(${s} ${i})"
     role="button" tabindex="0" aria-label=${e} @click=${r}>
     <circle class="face" cx="0" cy="0" r="13"></circle>
     <g class="glyph">${t}</g>
-  </g>`}function ar(s){return x`
+  </g>`}function cr(s){return w`
     <path d="M-2.6 -5.2a2.6 2.6 0 0 1 5.2 0v4a2.6 2.6 0 0 1-5.2 0z"></path>
     <path d="M-4.6 -0.6a4.6 4.6 0 0 0 9.2 0"></path>
     <path d="M0 3.8v2.6"></path>
-    ${s?x`<path d="M-6.4 6.4L6.4 -6.4"></path>`:lr()}
-  `}function lr(){return x``}function cr(s,i,t,e){let r=($,T)=>{let D=T*Math.PI/180;return[(j+$*Math.cos(D)).toFixed(2),(F+$*Math.sin(D)).toFixed(2)]},[n,o]=r(s,t),[a,d]=r(s,e),[h,g]=r(i,e),[f,w]=r(i,t);return`M${n} ${o}A${s} ${s} 0 0 1 ${a} ${d}L${h} ${g}A${i} ${i} 0 0 0 ${f} ${w}Z`}var Ue=`:host {
+    ${s?w`<path d="M-6.4 6.4L6.4 -6.4"></path>`:dr()}
+  `}function dr(){return w``}function pr(s,i,t,e){let r=($,H)=>{let D=H*Math.PI/180;return[(j+$*Math.cos(D)).toFixed(2),(q+$*Math.sin(D)).toFixed(2)]},[n,o]=r(s,t),[l,c]=r(s,e),[h,g]=r(i,e),[f,x]=r(i,t);return`M${n} ${o}A${s} ${s} 0 0 1 ${l} ${c}L${h} ${g}A${i} ${i} 0 0 0 ${f} ${x}Z`}var We=`:host {
   display: block;
 }
 
@@ -402,7 +402,7 @@ svg {
 .missing {
   color: var(--secondary-text-color);
 }
-`;var De=`:host {
+`;var je=`:host {
   display: flex;
   gap: 18px;
   align-items: center;
@@ -565,53 +565,53 @@ svg {
   font-weight: 500;
   font-variant-numeric: tabular-nums;
 }
-`;var We=26,Ht=135,Rt=270,k=100,S=100,G=84,Pt=38,H=class extends v{constructor(){super(...arguments);this.level="";this.floor="";this.gate="";this.mode="";this.muted=!1;this.held=null;this.grab=t=>{let e=t.currentTarget;e.setPointerCapture(t.pointerId);let r=this.hass.states[this.gate]?.attributes??{},n=r.min??0,o=r.max??20,a=r.step??1,d=this.number(this.floor)??0,h=this.number(this.level)??0,g=Math.max(d+We,h+3),f=T=>{let D=e.getBoundingClientRect(),ji=T.clientX-D.left-D.width/2,Fi=T.clientY-D.top-D.height/2,Kt=Math.atan2(Fi,ji)*180/Math.PI-Ht;for(;Kt<0;)Kt+=360;let qi=se(Math.min(Kt,Rt)/Rt);return Math.max(n,Math.min(o,Math.round(qi*(g-d)/a)*a))},w=T=>{this.held=f(T)},$=T=>{e.removeEventListener("pointermove",w),e.removeEventListener("pointerup",$),e.removeEventListener("pointercancel",$);let D=f(T);this.held=null,this.hass.callService("number","set_value",{entity_id:this.gate,value:D})};e.addEventListener("pointermove",w),e.addEventListener("pointerup",$),e.addEventListener("pointercancel",$),this.held=f(t)}}render(){let t=this.number(this.level),e=this.number(this.floor),r=this.held??this.number(this.gate);if(t===null||e===null||r===null)return p;let n=this.hass.states[this.mode],o=je(n?.state),a=Math.max(e+We,t+3),d=se((t-e)/(a-e)),h=se(r/(a-e)),g=t>=e+r&&!this.muted;return l`
+`;var qe=26,Ht=135,Tt=270,_=100,k=100,G=84,Rt=38,T=class extends v{constructor(){super(...arguments);this.level="";this.floor="";this.gate="";this.mode="";this.muted=!1;this.held=null;this.grab=t=>{let e=t.currentTarget;e.setPointerCapture(t.pointerId);let r=this.hass.states[this.gate]?.attributes??{},n=r.min??0,o=r.max??20,l=r.step??1,c=this.number(this.floor)??0,h=this.number(this.level)??0,g=Math.max(c+qe,h+3),f=H=>{let D=e.getBoundingClientRect(),Fi=H.clientX-D.left-D.width/2,Bi=H.clientY-D.top-D.height/2,Gt=Math.atan2(Bi,Fi)*180/Math.PI-Ht;for(;Gt<0;)Gt+=360;let Ki=ne(Math.min(Gt,Tt)/Tt);return Math.max(n,Math.min(o,Math.round(Ki*(g-c)/l)*l))},x=H=>{this.held=f(H)},$=H=>{e.removeEventListener("pointermove",x),e.removeEventListener("pointerup",$),e.removeEventListener("pointercancel",$);let D=f(H);this.held=null,this.hass.callService("number","set_value",{entity_id:this.gate,value:D})};e.addEventListener("pointermove",x),e.addEventListener("pointerup",$),e.addEventListener("pointercancel",$),this.held=f(t)}}render(){let t=this.number(this.level),e=this.number(this.floor),r=this.held??this.number(this.gate);if(t===null||e===null||r===null)return p;let n=this.hass.states[this.mode],o=Fe(n?.state),l=Math.max(e+qe,t+3),c=ne((t-e)/(l-e)),h=ne(r/(l-e)),g=t>=e+r&&!this.muted;return a`
       <div class="dial" @pointerdown=${this.grab}>
         <svg viewBox="0 0 200 200" role="img" aria-label="Microphone array">
-          <path class="arc-bed" d=${Fe()} pathLength="100"></path>
-          ${this.muted?p:x`<path
+          <path class="arc-bed" d=${Be()} pathLength="100"></path>
+          ${this.muted?p:w`<path
                 class="arc-live"
                 data-over=${String(g)}
-                d=${Fe()}
+                d=${Be()}
                 pathLength="100"
-                stroke-dasharray=${`${d*100} 100`}
+                stroke-dasharray=${`${c*100} 100`}
               ></path>`}
-          ${this.muted?p:fr(h)} ${o==="beam"?gr():p}
-          ${o==="sum"?mr():p} ${hr(o,this.muted)}
-          ${this.muted?x`<path class="slash" d="M${k-30} ${S+30}L${k+30} ${S-30}"></path>`:p}
+          ${this.muted?p:br(h)} ${o==="beam"?vr():p}
+          ${o==="sum"?fr():p} ${mr(o,this.muted)}
+          ${this.muted?w`<path class="slash" d="M${_-30} ${k+30}L${_+30} ${k-30}"></path>`:p}
         </svg>
       </div>
 
       <div class="side">
         <div class="reading">
-          ${this.muted?l`<span class="now cut">Cut</span>`:l`<span class="now">${t.toFixed(1)}</span><span class="unit">dB</span>
+          ${this.muted?a`<span class="now cut">Cut</span>`:a`<span class="now">${t.toFixed(1)}</span><span class="unit">dB</span>
                 <span class="caption" data-over=${String(g)}>
                   ${g?"Over the gate":"Quiet"}
                 </span>`}
         </div>
 
         <div class="modes">
-          ${(n?.attributes.options??[]).map(f=>l`<button
+          ${(n?.attributes.options??[]).map(f=>a`<button
               class="mode"
               data-on=${String(f===n?.state)}
               @click=${()=>this.hass.callService("select","select_option",{entity_id:this.mode,option:f})}
             >
-              <svg viewBox="0 0 40 40">${ur(je(f))}</svg>
+              <svg viewBox="0 0 40 40">${gr(Fe(f))}</svg>
               <span>${f}</span>
             </button>`)}
         </div>
 
         <div class="gate">Gate <b>${r} dB</b> over a floor of <b>${e.toFixed(0)} dB</b></div>
       </div>
-    `}number(t){let e=Number(this.hass?.states?.[t]?.state);return Number.isFinite(e)?e:null}};H.styles=b(De),c([u({attribute:!1})],H.prototype,"hass",2),c([u()],H.prototype,"level",2),c([u()],H.prototype,"floor",2),c([u()],H.prototype,"gate",2),c([u()],H.prototype,"mode",2),c([u({type:Boolean})],H.prototype,"muted",2),c([m()],H.prototype,"held",2),H=c([y("echolocal-array")],H);function je(s){let i=(s??"").toLowerCase();return i.includes("center")||i.includes("centre")?"one":i.includes("beam")?"beam":"sum"}function hr(s,i){return[[k,S],...Array.from({length:6},(e,r)=>{let n=(-90+r*60)*Math.PI/180;return[k+Pt*Math.cos(n),S+Pt*Math.sin(n)]})].map(([e,r],n)=>x`<circle class="capsule" data-on=${String(!i&&(s!=="one"||n===0))}
-      cx=${e.toFixed(1)} cy=${r.toFixed(1)} r=${n===0?7:5.5}></circle>`)}function ur(s){let i=[[20,20],...Array.from({length:6},(t,e)=>{let r=(-90+e*60)*Math.PI/180;return[20+12*Math.cos(r),20+12*Math.sin(r)]})];return x`
-    ${s==="beam"?x`<path class="beam" d="M20 20C9 11 13 1 20 1C27 1 31 11 20 20Z"></path>`:p}
-    ${i.map(([t,e],r)=>x`<circle class="capsule" data-on=${String(s!=="one"||r===0)}
-          cx=${t.toFixed(1)} cy=${e.toFixed(1)} r=${r===0?3.4:2.6}></circle>`)}`}function mr(){return Array.from({length:6},(s,i)=>{let t=(-90+i*60)*Math.PI/180;return x`<line class="spoke" x1=${k} y1=${S}
-      x2=${(k+Pt*Math.cos(t)).toFixed(1)} y2=${(S+Pt*Math.sin(t)).toFixed(1)}></line>`})}function gr(){return x`<path class="beam" d="M${k} ${S}C${k-34} ${S-30} ${k-24} ${S-66} ${k} ${S-66}C${k+24} ${S-66} ${k+34} ${S-30} ${k} ${S}Z"></path>`}function Fe(){let s=Ht*Math.PI/180,i=(Ht+Rt)*Math.PI/180;return`M${(k+G*Math.cos(s)).toFixed(2)} ${(S+G*Math.sin(s)).toFixed(2)}
-    A${G} ${G} 0 1 1 ${(k+G*Math.cos(i)).toFixed(2)} ${(S+G*Math.sin(i)).toFixed(2)}`}function fr(s){let i=(Ht+s*Rt)*Math.PI/180,t=G-8,e=G+8;return x`<line class="notch"
-    x1=${(k+t*Math.cos(i)).toFixed(1)} y1=${(S+t*Math.sin(i)).toFixed(1)}
-    x2=${(k+e*Math.cos(i)).toFixed(1)} y2=${(S+e*Math.sin(i)).toFixed(1)}></line>`}function se(s){return Math.max(0,Math.min(1,s))}var qe=`:host {
+    `}number(t){let e=Number(this.hass?.states?.[t]?.state);return Number.isFinite(e)?e:null}};T.styles=b(je),d([u({attribute:!1})],T.prototype,"hass",2),d([u()],T.prototype,"level",2),d([u()],T.prototype,"floor",2),d([u()],T.prototype,"gate",2),d([u()],T.prototype,"mode",2),d([u({type:Boolean})],T.prototype,"muted",2),d([m()],T.prototype,"held",2),T=d([y("echolocal-array")],T);function Fe(s){let i=(s??"").toLowerCase();return i.includes("center")||i.includes("centre")?"one":i.includes("beam")?"beam":"sum"}function mr(s,i){return[[_,k],...Array.from({length:6},(e,r)=>{let n=(-90+r*60)*Math.PI/180;return[_+Rt*Math.cos(n),k+Rt*Math.sin(n)]})].map(([e,r],n)=>w`<circle class="capsule" data-on=${String(!i&&(s!=="one"||n===0))}
+      cx=${e.toFixed(1)} cy=${r.toFixed(1)} r=${n===0?7:5.5}></circle>`)}function gr(s){let i=[[20,20],...Array.from({length:6},(t,e)=>{let r=(-90+e*60)*Math.PI/180;return[20+12*Math.cos(r),20+12*Math.sin(r)]})];return w`
+    ${s==="beam"?w`<path class="beam" d="M20 20C9 11 13 1 20 1C27 1 31 11 20 20Z"></path>`:p}
+    ${i.map(([t,e],r)=>w`<circle class="capsule" data-on=${String(s!=="one"||r===0)}
+          cx=${t.toFixed(1)} cy=${e.toFixed(1)} r=${r===0?3.4:2.6}></circle>`)}`}function fr(){return Array.from({length:6},(s,i)=>{let t=(-90+i*60)*Math.PI/180;return w`<line class="spoke" x1=${_} y1=${k}
+      x2=${(_+Rt*Math.cos(t)).toFixed(1)} y2=${(k+Rt*Math.sin(t)).toFixed(1)}></line>`})}function vr(){return w`<path class="beam" d="M${_} ${k}C${_-34} ${k-30} ${_-24} ${k-66} ${_} ${k-66}C${_+24} ${k-66} ${_+34} ${k-30} ${_} ${k}Z"></path>`}function Be(){let s=Ht*Math.PI/180,i=(Ht+Tt)*Math.PI/180;return`M${(_+G*Math.cos(s)).toFixed(2)} ${(k+G*Math.sin(s)).toFixed(2)}
+    A${G} ${G} 0 1 1 ${(_+G*Math.cos(i)).toFixed(2)} ${(k+G*Math.sin(i)).toFixed(2)}`}function br(s){let i=(Ht+s*Tt)*Math.PI/180,t=G-8,e=G+8;return w`<line class="notch"
+    x1=${(_+t*Math.cos(i)).toFixed(1)} y1=${(k+t*Math.sin(i)).toFixed(1)}
+    x2=${(_+e*Math.cos(i)).toFixed(1)} y2=${(k+e*Math.sin(i)).toFixed(1)}></line>`}function ne(s){return Math.max(0,Math.min(1,s))}var Ke=`:host {
   display: inline-flex;
   flex: 0 0 auto;
   vertical-align: middle;
@@ -652,10 +652,10 @@ ha-tooltip {
   --ha-tooltip-border-radius: 11px;
 }
 
-`;var br=0,st=class extends v{constructor(){super(...arguments);this.text="";this.anchor=`ask-${++br}`}render(){return this.text?l`
+`;var wr=0,nt=class extends v{constructor(){super(...arguments);this.text="";this.anchor=`ask-${++wr}`}render(){return this.text?a`
       <button id=${this.anchor} aria-label="What this does" @click=${this.swallow}>?</button>
       <ha-tooltip for=${this.anchor} trigger="click" placement="top">${this.text}</ha-tooltip>
-    `:p}swallow(t){t.stopPropagation(),t.preventDefault()}};st.styles=b(qe),c([u()],st.prototype,"text",2),st=c([y("echolocal-bubble")],st);var Be=`.sheet {
+    `:p}swallow(t){t.stopPropagation(),t.preventDefault()}};nt.styles=b(Ke),d([u()],nt.prototype,"text",2),nt=d([y("echolocal-bubble")],nt);var Ge=`.sheet {
   transition: width 0.2s ease;
 }
 
@@ -909,10 +909,66 @@ ha-control-slider {
   color: var(--secondary-text-color);
 }
 
+.lines {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--primary-text-color);
+  text-align: left;
+  cursor: pointer;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.lines:hover {
+  color: var(--primary-color);
+}
+
 .empty {
   color: var(--secondary-text-color);
 }
-`;var Ke=`:host {
+`;var Pt=`/* The card's own way of showing a short set of choices, shared by the ring's animations and by any row
+   with two of them. Home Assistant's segmented control is the same idea, but it reads as cramped beside
+   these and the card is mostly pills. */
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.pill {
+  padding: 6px 11px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--primary-text-color) 6%, transparent);
+  color: var(--secondary-text-color);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pill:hover {
+  background: color-mix(in srgb, var(--primary-text-color) 12%, transparent);
+}
+
+.pill[data-on="true"] {
+  border-color: color-mix(in srgb, var(--primary-color) 45%, transparent);
+  background: color-mix(in srgb, var(--primary-color) 15%, transparent);
+  color: var(--primary-color);
+}
+
+.pill:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+`;var Ve=`:host {
   display: block;
   padding: 14px;
   border-radius: 14px;
@@ -1041,36 +1097,11 @@ ha-control-slider {
 }
 
 /* Even columns rather than a ragged wrap: forty names all fit at this width, so nothing has to scroll. */
-.options {
+.pills {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
-  gap: 5px;
 }
-
-.option {
-  padding: 6px 11px;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--primary-text-color) 6%, transparent);
-  color: var(--secondary-text-color);
-  font: inherit;
-  font-size: 0.8rem;
-  cursor: pointer;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.option:hover {
-  background: color-mix(in srgb, var(--primary-text-color) 12%, transparent);
-}
-
-.option[data-on="true"] {
-  border-color: color-mix(in srgb, var(--primary-color) 45%, transparent);
-  background: color-mix(in srgb, var(--primary-color) 15%, transparent);
-  color: var(--primary-color);
-}
-`;var Et=[["White",[255,255,255]],["Warm",[255,190,120]],["Red",[255,40,40]],["Orange",[255,130,20]],["Yellow",[250,230,60]],["Green",[60,220,90]],["Teal",[40,220,200]],["Blue",[60,140,255]],["Violet",[150,90,255]],["Pink",[255,90,200]]];function xr(s,i){return Array.isArray(s)&&i.every((t,e)=>s[e]===t)}var P=class extends v{constructor(){super(...arguments);this.light="";this.muted="";this.failure="";this.room="";this.target="rest"}render(){let t=this.hass.states[this.light];if(!t)return p;let e=this.situations(),r=e.find(o=>o.key===this.target)??e[0],n=t.attributes.brightness??255;return l`
+`;var Et=[["White",[255,255,255]],["Warm",[255,190,120]],["Red",[255,40,40]],["Orange",[255,130,20]],["Yellow",[250,230,60]],["Green",[60,220,90]],["Teal",[40,220,200]],["Blue",[60,140,255]],["Violet",[150,90,255]],["Pink",[255,90,200]]];function kr(s,i){return Array.isArray(s)&&i.every((t,e)=>s[e]===t)}var P=class extends v{constructor(){super(...arguments);this.light="";this.muted="";this.failure="";this.room="";this.target="rest"}render(){let t=this.hass.states[this.light];if(!t)return p;let e=this.situations(),r=e.find(o=>o.key===this.target)??e[0],n=t.attributes.brightness??255;return a`
       <div class="dim">
         <span>Brightness</span>
         <ha-control-slider
@@ -1086,19 +1117,19 @@ ha-control-slider {
       <div class="hue">
         <span>Color</span>
         <div class="swatches">
-          ${Et.map(([o,a])=>l`<button
+          ${Et.map(([o,l])=>a`<button
               class="swatch"
               title=${o}
               aria-label=${o}
-              data-on=${String(xr(t.attributes.rgb_color,a))}
-              style=${`background:rgb(${a.join(",")})`}
-              @click=${()=>this.hass.callService("light","turn_on",{entity_id:this.light,rgb_color:a})}
+              data-on=${String(kr(t.attributes.rgb_color,l))}
+              style=${`background:rgb(${l.join(",")})`}
+              @click=${()=>this.hass.callService("light","turn_on",{entity_id:this.light,rgb_color:l})}
             ></button>`)}
         </div>
       </div>
 
       <div class="when">
-        ${e.map(o=>l`<button
+        ${e.map(o=>a`<button
             class="situation"
             data-on=${String(o.key===r.key)}
             @click=${()=>this.target=o.key}
@@ -1112,16 +1143,16 @@ ha-control-slider {
       </div>
 
       <div class="caption">${r.label} shows</div>
-      <div class="options">
-        ${this.options(r).map(o=>l`<button
-            class="option"
+      <div class="pills">
+        ${this.options(r).map(o=>a`<button
+            class="pill"
             data-on=${String(o===this.showing(r))}
             @click=${()=>this.choose(r,o)}
           >
             ${o}
           </button>`)}
       </div>
-    `}situations(){return[{key:"rest",label:"At rest",icon:"mdi:record-circle-outline"},{key:"muted",label:"Muted",icon:"mdi:microphone-off",entity:this.muted},{key:"failure",label:"On failure",icon:"mdi:alert-circle-outline",entity:this.failure},{key:"room",label:"Follows the room",icon:"mdi:motion-sensor",entity:this.room}].filter(e=>e.key==="rest"||e.entity&&this.hass.states[e.entity])}showing(t){if(t.entity)return this.hass.states[t.entity]?.state??"";let e=this.hass.states[this.light];return e?.state!=="on"?"":e.attributes.effect??""}options(t){return(t.entity?this.hass.states[t.entity]?.attributes.options:this.hass.states[this.light]?.attributes.effect_list)??[]}choose(t,e){if(!t.entity){this.hass.callService("light","turn_on",{entity_id:this.light,effect:e});return}this.hass.callService("select","select_option",{entity_id:t.entity,option:e})}};P.styles=b(Ke),c([u({attribute:!1})],P.prototype,"hass",2),c([u()],P.prototype,"light",2),c([u()],P.prototype,"muted",2),c([u()],P.prototype,"failure",2),c([u()],P.prototype,"room",2),c([m()],P.prototype,"target",2),P=c([y("echolocal-appearance")],P);var $r={mic_mute:"Cuts the microphones in hardware. The device cannot hear anything at all while this is on, including its wake word \u2014 it is a switch on the power to the capsules, not a software mute.",microphone_gain:"How much the capsules are amplified before anything else happens. Raise it in a large or quiet room; lower it if speech close to the device clips and comes out distorted.",microphone_mixing:"How the seven capsules are combined into the one channel the speech engine hears. Beamforming favours whichever direction someone is talking from and rejects the rest of the room; averaging treats every direction equally and is steadier when several people talk.",microphone_leveling:"Evens out loud and quiet talkers so a whisper across the room and a shout beside it arrive at similar volume. Helps transcription, and costs a little dynamic range.",microphone_cancel_echo:"Subtracts what the speaker is playing from what the microphones hear, so the device can be interrupted while it is talking and does not answer its own reply.",microphone_sensitivity:"How much louder than the room's own noise floor a sound has to be before the device treats it as somebody talking. Raise it in a noisy room to stop the device reacting to the room itself; lower it if quiet speech is missed.",room_level:"How loud the room is right now, in decibels below full scale. Nothing to set \u2014 it is what the sensitivity is measured against, and watching it is how you pick a sensible one.",room_floor:"The quietest the room has been recently, which is the baseline the device compares against. It drifts with the room, so a fridge switching on raises it rather than fooling the device.",mute_led_brightness:"How bright the red ring is while the microphones are cut. Dim is enough to see in a dark room without lighting it up.",stop_word_sensitivity:"How sure the device has to be before it takes an interruption as the word stop. Lower it if saying stop over a reply does not land.",ring:"The whole ring, as one light. Turning it off leaves the device working normally and silent about it.",segment:"One of the twelve segments, addressable on its own. They ship switched off in Home Assistant because twelve extra lights in every list is rarely what anyone wants \u2014 enable one and it can be coloured individually from the card.",ring_muted:"What the ring does while the microphones are cut. Something visible is worth choosing: a muted device that looks identical to a listening one is how people end up talking to a device that cannot hear them.",failure_effect:"What the ring does when a turn fails \u2014 no network, no pipeline, nothing understood. Distinct from the normal colours on purpose.",room_reaction:"Lets the ring track how loud the room is while the device is listening, so somebody can see that it is hearing them before it answers.",headphones:"Sends audio out of the jack instead of the speaker. The speaker goes quiet while this is on.",noise_layer:"Plays a generated sound the device makes itself \u2014 rain, a fan, a brook. Nothing is streamed and nothing is stored: it is synthesised as it plays, so it never loops or runs out. Two layers can overlap, so rain over a fan is one choice in each.",media_on_turn:"What happens to music when someone says the wake word. Ducking drops the volume and keeps playing, which resumes on the same note; stopping does not.",media_duck_level:"How far the volume drops while the device is listening or talking. Far enough that the microphones are not fighting the music, not so far that the room goes silent.",voice_resampling:"How the reply's audio is resampled to what the speaker wants. Better quality costs a little more work on a device that has four small cores.",wake_word:"What this assistant listens for. The list is what the device has on disk plus whatever Home Assistant is offering from its custom_wake_words directory.",wake_threshold:"How sure the device has to be before it decides it heard its wake word. Lower it if it misses you; raise it if the television sets it off.",follow_up:"Keeps listening for a moment after a reply, so a second question needs no second wake word.",max_listen:"How long the device will wait for someone to finish talking before giving up on the turn.",max_think:"How long to wait for Home Assistant's pipeline to answer. Generous is usually right \u2014 a slow answer beats a turn that dies just before it arrives.",wake_effect:"What the ring does at this point in a turn. Cosmetic, but it is how somebody knows the device heard them.",wake_tone:"A short sound at this point in a turn. Some people want the confirmation; some find it grating.",reply_buffer:"How much of a reply to collect before starting to play it. More is steadier on a poor network, at the cost of answering a beat later.",reply_delivery:"Whether a reply starts playing as it arrives or once all of it has. Streaming is faster to start and stutters on a bad connection.",update_channel:"Which releases this device is offered. Stable only, or the ones that are still being tried out.",check_for_updates:"Looks now rather than waiting for the next scheduled check. Nothing is installed by pressing it.",bluetooth_proxy:"Forwards nearby Bluetooth advertisements to Home Assistant, so this device extends Bluetooth coverage into its room. It costs some radio time it would otherwise spend on wifi.",metrics_interval:"How often the device reports its own temperature, memory and load. Often enough to be useful; every report is work the device does instead of listening.",purge_cache:"Deletes what Android's runtime has cached. It comes back on its own, so this buys disk space for a while rather than permanently.",test_playback:"Plays a short sound, which is the quickest way to find out whether the speaker, the volume and the output route are all what you think they are.",remote_adb:"Opens Android's debugging port over the network. Off by default, and worth leaving off: it is an unauthenticated way onto the device for anything on the same network.",vad_sensitivity:"How readily the device decides somebody has stopped talking. Tighter ends a turn sooner and can cut you off mid-sentence.",wifi_signal:"How strong the connection to the access point is. Above about -70 dBm is comfortable; below -80 dBm is where audio starts arriving late.",cpu_temperature:"The chip's own temperature. These run warm by design \u2014 it is a sustained climb rather than a number that matters.",load_average:"How much work is queued across the cores. Listening for a wake word is continuous work, so this is never zero.",memory_available:"How much memory is free. Wake models and the audio path are what use it.",free_space:"Disk left. Wake models and saved recordings are what fill it.",update_status:"What the last self-update did. Worth reading when a device is on an older version than the rest."},_r={array:"The seven capsules and what the room sounds like to them. The arc is how loud the room is right now; the notch is how far above the room's own noise floor something has to be before the device treats it as speech. Drag the notch, then talk from where you normally would and watch whether the arc crosses it.",appearance:"Ring controls, current brighness and color, active and conditional effects.",noise:"Sounds the device generates itself, mixed live rather than played from a file, so nothing loops. Two layers overlap \u2014 pick rain in one and a fan in the other.",volume:"The speaker's volume, in the same thirty steps the buttons on the device move it through, so this dial and the device agree.",history:"What the device has been hearing. Rows rebuilt from Home Assistant's recorder show what was said; rows the device itself reported also show where the time went and can be played back."},kr={microphone:"The seven microphones and how the room sounds to them. Everything here changes what the device hears before a word of it reaches Home Assistant, so it is the first place to look when it mishears or does not wake at all.",ring:"The twelve-segment light. None of it changes what the device does \u2014 it changes what somebody in the room can tell about it, which is why the muted and failed colours are worth setting.",playback:"The speaker: what comes out of it, how loud, and what happens to music when somebody talks to the device.",assistant:"One wake word and the turn that follows it. A device can run more than one, each with its own word, sensitivity and timings, which is how one device answers to two names.",device:"The device itself rather than anything it hears or says: which releases it takes, what else it does for the network, and the housekeeping.",diagnostics:"What the device reports about itself. Nothing here is a setting \u2014 it is the evidence, and it is what to read before changing anything else."};function Ge(s){return $r[s]}function Ve(s){return _r[s]}function Ye(s){return kr[s]??""}var zt="echolocal_turn";var Ze="turn_audio";var Sr=[{key:"wake_ms",label:"Wake"},{key:"listen_ms",label:"Listen"},{key:"think_ms",label:"Think"},{key:"speak_ms",label:"Reply"}];function yt(s){return Sr.map(({key:i,label:t})=>({key:i,label:t,ms:Number(s[i]??0)})).filter(i=>i.ms>0)}function nt(s){return yt(s).reduce((i,t)=>i+t.ms,0)}function Ot(s){let i=s;if(!i||i.version!=="1"||!i.wake_word)return null;let t={version:1,mac:(i.mac??"").toLowerCase(),id:i.id??"",slot:Xe(i.slot)??1,wake_word:i.wake_word,outcome:i.outcome??"completed"};i.heard&&(t.heard=i.heard),i.reply&&(t.reply=i.reply);for(let e of["wake_ms","listen_ms","think_ms","speak_ms","audio_seconds","peak_db","floor_db"]){let r=Xe(i[e]);r!==void 0&&(t[e]=r)}return t}function Xe(s){if(s===void 0||s==="")return;let i=Number(s);return Number.isFinite(i)?i:void 0}var Je=`:host {
+    `}situations(){return[{key:"rest",label:"At rest",icon:"mdi:record-circle-outline"},{key:"muted",label:"Muted",icon:"mdi:microphone-off",entity:this.muted},{key:"failure",label:"On failure",icon:"mdi:alert-circle-outline",entity:this.failure},{key:"room",label:"Follows the room",icon:"mdi:motion-sensor",entity:this.room}].filter(e=>e.key==="rest"||e.entity&&this.hass.states[e.entity])}showing(t){if(t.entity)return this.hass.states[t.entity]?.state??"";let e=this.hass.states[this.light];return e?.state!=="on"?"":e.attributes.effect??""}options(t){return(t.entity?this.hass.states[t.entity]?.attributes.options:this.hass.states[this.light]?.attributes.effect_list)??[]}choose(t,e){if(!t.entity){this.hass.callService("light","turn_on",{entity_id:this.light,effect:e});return}this.hass.callService("select","select_option",{entity_id:t.entity,option:e})}};P.styles=[b(Pt),b(Ve)],d([u({attribute:!1})],P.prototype,"hass",2),d([u()],P.prototype,"light",2),d([u()],P.prototype,"muted",2),d([u()],P.prototype,"failure",2),d([u()],P.prototype,"room",2),d([m()],P.prototype,"target",2),P=d([y("echolocal-appearance")],P);var Sr={mic_mute:"Cuts the microphones in hardware. The device cannot hear anything at all while this is on, including its wake word \u2014 it is a switch on the power to the capsules, not a software mute.",microphone_gain:"How much the capsules are amplified before anything else happens. Raise it in a large or quiet room; lower it if speech close to the device clips and comes out distorted.",microphone_mixing:"How the seven capsules are combined into the one channel the speech engine hears. Beamforming favours whichever direction someone is talking from and rejects the rest of the room; averaging treats every direction equally and is steadier when several people talk.",microphone_leveling:"Evens out loud and quiet talkers so a whisper across the room and a shout beside it arrive at similar volume. Helps transcription, and costs a little dynamic range.",microphone_cancel_echo:"Subtracts what the speaker is playing from what the microphones hear, so the device can be interrupted while it is talking and does not answer its own reply.",microphone_sensitivity:"How much louder than the room's own noise floor a sound has to be before the device treats it as somebody talking. Raise it in a noisy room to stop the device reacting to the room itself; lower it if quiet speech is missed.",room_level:"How loud the room is right now, in decibels below full scale. Nothing to set \u2014 it is what the sensitivity is measured against, and watching it is how you pick a sensible one.",room_floor:"The quietest the room has been recently, which is the baseline the device compares against. It drifts with the room, so a fridge switching on raises it rather than fooling the device.",mute_led_brightness:"How bright the red ring is while the microphones are cut. Dim is enough to see in a dark room without lighting it up.",stop_word_sensitivity:"How sure the device has to be before it takes an interruption as the word stop. Lower it if saying stop over a reply does not land.",ring:"The whole ring, as one light. Turning it off leaves the device working normally and silent about it.",segment:"One of the twelve segments, addressable on its own. They ship switched off in Home Assistant because twelve extra lights in every list is rarely what anyone wants \u2014 enable one and it can be coloured individually from the card.",ring_muted:"What the ring does while the microphones are cut. Something visible is worth choosing: a muted device that looks identical to a listening one is how people end up talking to a device that cannot hear them.",failure_effect:"What the ring does when a turn fails \u2014 no network, no pipeline, nothing understood. Distinct from the normal colours on purpose.",room_reaction:"Lets the ring track how loud the room is while the device is listening, so somebody can see that it is hearing them before it answers.",headphones:"Sends audio out of the jack instead of the speaker. The speaker goes quiet while this is on.",noise_layer:"Plays a generated sound the device makes itself \u2014 rain, a fan, a brook. Nothing is streamed and nothing is stored: it is synthesised as it plays, so it never loops or runs out. Two layers can overlap, so rain over a fan is one choice in each.",media_on_turn:"What happens to music when someone says the wake word. Ducking drops the volume and keeps playing, which resumes on the same note; stopping does not.",media_duck_level:"How far the volume drops while the device is listening or talking. Far enough that the microphones are not fighting the music, not so far that the room goes silent.",voice_resampling:"How the reply's audio is resampled to what the speaker wants. Better quality costs a little more work on a device that has four small cores.",wake_word:"What this assistant listens for. The list is what the device has on disk plus whatever Home Assistant is offering from its custom_wake_words directory.",wake_threshold:"How sure the device has to be before it decides it heard its wake word. Lower it if it misses you; raise it if the television sets it off.",follow_up:"Keeps listening for a moment after a reply, so a second question needs no second wake word.",max_listen:"How long the device will wait for someone to finish talking before giving up on the turn.",max_think:"How long to wait for Home Assistant's pipeline to answer. Generous is usually right \u2014 a slow answer beats a turn that dies just before it arrives.",wake_effect:"What the ring does at this point in a turn. Cosmetic, but it is how somebody knows the device heard them.",wake_tone:"A short sound at this point in a turn. Some people want the confirmation; some find it grating.",reply_buffer:"How much of a reply to collect before starting to play it. More is steadier on a poor network, at the cost of answering a beat later.",reply_delivery:"Whether a reply starts playing as it arrives or once all of it has. Streaming is faster to start and stutters on a bad connection.",update_channel:"Which releases this device is offered. Stable only, or the ones that are still being tried out.",check_for_updates:"Looks now rather than waiting for the next scheduled check. Nothing is installed by pressing it.",bluetooth_proxy:"Forwards nearby Bluetooth advertisements to Home Assistant, so this device extends Bluetooth coverage into its room. It costs some radio time it would otherwise spend on wifi.",metrics_interval:"How often the device reports its own temperature, memory and load. Often enough to be useful; every report is work the device does instead of listening.",purge_cache:"Deletes what Android's runtime has cached. It comes back on its own, so this buys disk space for a while rather than permanently.",test_playback:"Plays a short sound, which is the quickest way to find out whether the speaker, the volume and the output route are all what you think they are.",remote_adb:"Opens Android's debugging port over the network. Off by default, and worth leaving off: it is an unauthenticated way onto the device for anything on the same network.",vad_sensitivity:"How readily the device decides somebody has stopped talking. Tighter ends a turn sooner and can cut you off mid-sentence.",wifi_signal:"How strong the connection to the access point is. Above about -70 dBm is comfortable; below -80 dBm is where audio starts arriving late.",cpu_temperature:"The chip's own temperature. These run warm by design \u2014 it is a sustained climb rather than a number that matters.",load_average:"How much work is queued across the cores. Listening for a wake word is continuous work, so this is never zero.",memory_available:"How much memory is free. Wake models and the audio path are what use it.",free_space:"Disk left. Wake models and saved recordings are what fill it.",update_status:"What the last self-update did. Worth reading when a device is on an older version than the rest."},Ar={array:"The seven capsules and what the room sounds like to them. The arc is how loud the room is right now; the notch is how far above the room's own noise floor something has to be before the device treats it as speech. Drag the notch, then talk from where you normally would and watch whether the arc crosses it.",appearance:"Ring controls, current brighness and color, active and conditional effects.",noise:"Sounds the device generates itself, mixed live rather than played from a file, so nothing loops. Two layers overlap \u2014 pick rain in one and a fan in the other.",volume:"The speaker's volume, in the same thirty steps the buttons on the device move it through, so this dial and the device agree.",history:"What the device has been hearing. Rows rebuilt from Home Assistant's recorder show what was said; rows the device itself reported also show where the time went and can be played back."},Cr={microphone:"The seven microphones and how the room sounds to them. Everything here changes what the device hears before a word of it reaches Home Assistant, so it is the first place to look when it mishears or does not wake at all.",ring:"The twelve-segment light. None of it changes what the device does \u2014 it changes what somebody in the room can tell about it, which is why the muted and failed colours are worth setting.",playback:"The speaker: what comes out of it, how loud, and what happens to music when somebody talks to the device.",assistant:"One wake word and the turn that follows it. A device can run more than one, each with its own word, sensitivity and timings, which is how one device answers to two names.",device:"The device itself rather than anything it hears or says: which releases it takes, what else it does for the network, and the housekeeping.",diagnostics:"What the device reports about itself. Nothing here is a setting \u2014 it is the evidence, and it is what to read before changing anything else.",activity:"The last few turns: what woke the device, what it heard, and what it said back. Rows the device itself reported also show where the time went, and can be played back or saved."};function Ye(s){return Sr[s]}function Xe(s){return Ar[s]}function Ze(s){return Cr[s]??""}var zt="echolocal_turn";var Qe="turn_audio";var Mr=[{key:"wake_ms",label:"Wake"},{key:"listen_ms",label:"Listen"},{key:"think_ms",label:"Think"},{key:"speak_ms",label:"Reply"}];function yt(s){return Mr.map(({key:i,label:t})=>({key:i,label:t,ms:Number(s[i]??0)})).filter(i=>i.ms>0)}function ot(s){return yt(s).reduce((i,t)=>i+t.ms,0)}function Ot(s){let i=s;if(!i||i.version!=="1"||!i.wake_word)return null;let t={version:1,mac:(i.mac??"").toLowerCase(),id:i.id??"",slot:Je(i.slot)??1,wake_word:i.wake_word,outcome:i.outcome??"completed"};i.heard&&(t.heard=i.heard),i.reply&&(t.reply=i.reply);for(let e of["wake_ms","listen_ms","think_ms","speak_ms","audio_seconds","peak_db","floor_db"]){let r=Je(i[e]);r!==void 0&&(t[e]=r)}return t}function Je(s){if(s===void 0||s==="")return;let i=Number(s);return Number.isFinite(i)?i:void 0}var Le=`:host {
   display: block;
 }
 
@@ -1260,7 +1291,7 @@ ha-control-slider {
   font-size: 0.82rem;
   color: var(--secondary-text-color);
 }
-`;var ne=new Map;function Qe(s){return ne.get(s)}function Le(s,i,t){let r=`${i.toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_|_$/g,"")}_${t}`;return s?.services?.esphome?.[r]?r:void 0}async function ti(s,i,t){let e=ne.get(t);if(e)return e;let r=[],n="audio/wav",o=1;for(let d=0;d<Math.min(o,64);d++){let h=await Cr(s,i,t,d);if(!h)return null;o=h.pages||1,n=h.mime||n,r.push(Mr(h.data))}let a=URL.createObjectURL(new Blob(r,{type:n}));return ne.set(t,a),a}async function Cr(s,i,t,e){try{let n=(await s.callService("esphome",i,{id:t,page:e},void 0,!0,!0))?.response;return n?.version===1&&typeof n.data=="string"?n:null}catch{return null}}function Mr(s){let i=atob(s),t=new Uint8Array(i.length);for(let e=0;e<i.length;e++)t[e]=i.charCodeAt(e);return t}var ei=`:host {
+`;var oe=new Map;function ti(s){return oe.get(s)}function ei(s,i,t){let r=`${i.toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_|_$/g,"")}_${t}`;return s?.services?.esphome?.[r]?r:void 0}async function ii(s,i,t){let e=oe.get(t);if(e)return e;let r=[],n="audio/wav",o=1;for(let c=0;c<Math.min(o,64);c++){let h=await Tr(s,i,t,c);if(!h)return null;o=h.pages||1,n=h.mime||n,r.push(Rr(h.data))}let l=URL.createObjectURL(new Blob(r,{type:n}));return oe.set(t,l),l}async function Tr(s,i,t,e){try{let n=(await s.callService("esphome",i,{id:t,page:e},void 0,!0,!0))?.response;return n?.version===1&&typeof n.data=="string"?n:null}catch{return null}}function Rr(s){let i=atob(s),t=new Uint8Array(i.length);for(let e=0;e<i.length;e++)t[e]=i.charCodeAt(e);return t}var ri=`:host {
   display: flex;
   gap: 6px;
   flex: 0 0 auto;
@@ -1293,7 +1324,7 @@ button ha-icon {
 button.keep ha-icon {
   color: var(--secondary-text-color);
 }
-`;var ot=null,E=class extends v{constructor(){super(...arguments);this.device="";this.turn="";this.filename="recording.wav";this.busy=!1;this.playing=!1;this.play=async()=>{if(this.playing){ot?.audio.pause();return}let t=await this.fetch();if(!t)return;ot?.stop();let e=new Audio(t),r=()=>{this.playing=!1,ot?.audio===e&&(ot=null)};e.addEventListener("ended",r),e.addEventListener("pause",r),ot={audio:e,stop:()=>e.pause()},this.playing=!0,e.play().catch(r)};this.save=async()=>{let t=await this.fetch();if(!t)return;let e=document.createElement("a");e.href=t,e.download=this.filename,e.click()}}disconnectedCallback(){super.disconnectedCallback(),this.playing&&ot?.audio.pause()}render(){return!this.turn||!this.action()?p:l`
+`;var at=null,E=class extends v{constructor(){super(...arguments);this.device="";this.turn="";this.filename="recording.wav";this.busy=!1;this.playing=!1;this.play=async()=>{if(this.playing){at?.audio.pause();return}let t=await this.fetch();if(!t)return;at?.stop();let e=new Audio(t),r=()=>{this.playing=!1,at?.audio===e&&(at=null)};e.addEventListener("ended",r),e.addEventListener("pause",r),at={audio:e,stop:()=>e.pause()},this.playing=!0,e.play().catch(r)};this.save=async()=>{let t=await this.fetch();if(!t)return;let e=document.createElement("a");e.href=t,e.download=this.filename,e.click()}}disconnectedCallback(){super.disconnectedCallback(),this.playing&&at?.audio.pause()}render(){return!this.turn||!this.action()?p:a`
       <button
         aria-label=${this.playing?"Stop the recording":"Play the recording"}
         @click=${this.play}
@@ -1305,39 +1336,39 @@ button.keep ha-icon {
       <button class="keep" aria-label="Save the recording" @click=${this.save}>
         <ha-icon icon="mdi:tray-arrow-down"></ha-icon>
       </button>
-    `}action(){return this.device?Le(this.hass,this.device,Ze):void 0}async fetch(){let t=Qe(this.turn);if(t)return t;let e=this.action();if(!e)return null;this.busy=!0;try{return await ti(this.hass,e,this.turn)}finally{this.busy=!1}}};E.styles=b(ei),c([u({attribute:!1})],E.prototype,"hass",2),c([u()],E.prototype,"device",2),c([u()],E.prototype,"turn",2),c([u()],E.prototype,"filename",2),c([m()],E.prototype,"busy",2),c([m()],E.prototype,"playing",2),E=c([y("echolocal-recording")],E);var ii=24,ri=12,Hr=4e3,C=class extends v{constructor(){super(...arguments);this.mac="";this.wake="";this.heard="";this.reply="";this.device="";this.recorded=[];this.live=[];this.asked=!1}updated(){this.asked||!this.hass||!this.wake||(this.asked=!0,this.load(),this.listen())}disconnectedCallback(){super.disconnectedCallback(),this.stop?.()}render(){let t=this.merged();return l`
+    `}action(){return this.device?ei(this.hass,this.device,Qe):void 0}async fetch(){let t=ti(this.turn);if(t)return t;let e=this.action();if(!e)return null;this.busy=!0;try{return await ii(this.hass,e,this.turn)}finally{this.busy=!1}}};E.styles=b(ri),d([u({attribute:!1})],E.prototype,"hass",2),d([u()],E.prototype,"device",2),d([u()],E.prototype,"turn",2),d([u()],E.prototype,"filename",2),d([m()],E.prototype,"busy",2),d([m()],E.prototype,"playing",2),E=d([y("echolocal-recording")],E);var si=24,ni=12,Er=4e3,C=class extends v{constructor(){super(...arguments);this.mac="";this.wake="";this.heard="";this.reply="";this.device="";this.recorded=[];this.live=[];this.asked=!1}updated(){this.asked||!this.hass||!this.wake||(this.asked=!0,this.load(),this.listen())}disconnectedCallback(){super.disconnectedCallback(),this.stop?.()}render(){let t=this.merged();return a`
       <div class="caption">
-        Recent turns ${t.length?l`<span>last ${ii} hours</span>`:p}
+        Recent turns ${t.length?a`<span>last ${si} hours</span>`:p}
       </div>
-      ${t.length?l`<div class="turns">${t.map(e=>this.row(e,this.scale(t)))}</div>`:l`<div class="none">${this.asked?"Nothing in the last day.":"Looking\u2026"}</div>`}
-    `}scale(t){return Math.max(1,...t.map(e=>e.turn?nt(e.turn):0))}row(t,e){let r=t.turn,n=r?yt(r):[],o=r?nt(r):0;return l`<div class="turn">
-      <div class="when">${Er(t.at)}</div>
+      ${t.length?a`<div class="turns">${t.map(e=>this.row(e,this.scale(t)))}</div>`:a`<div class="none">${this.asked?"Nothing in the last day.":"Looking\u2026"}</div>`}
+    `}scale(t){return Math.max(1,...t.map(e=>e.turn?ot(e.turn):0))}row(t,e){let r=t.turn,n=r?yt(r):[],o=r?ot(r):0;return a`<div class="turn">
+      <div class="when">${Nr(t.at)}</div>
       <div class="wake">${t.wake}</div>
       <div class="right">
-        ${r?l`<div class="outcome" data-bad=${String(r.outcome!=="completed")}>
+        ${r?a`<div class="outcome" data-bad=${String(r.outcome!=="completed")}>
               ${r.outcome==="completed"?`${(o/1e3).toFixed(1)}s`:r.outcome}
             </div>`:p}
-        ${r?.audio_seconds?l`<echolocal-recording
+        ${r?.audio_seconds?a`<echolocal-recording
               .hass=${this.hass}
               .device=${this.device}
               .turn=${r.id}
-              .filename=${zr(t)}
+              .filename=${Ir(t)}
             ></echolocal-recording>`:p}
       </div>
-      ${t.heard?l`<div class="said">${t.heard}</div>`:p}
-      ${t.reply?l`<div class="said-back">${t.reply}</div>`:p}
-      ${n.length?l`<div class="bar">
-              ${n.map(a=>l`<div
+      ${t.heard?a`<div class="said">${t.heard}</div>`:p}
+      ${t.reply?a`<div class="said-back">${t.reply}</div>`:p}
+      ${n.length?a`<div class="bar">
+              ${n.map(l=>a`<div
                   class="slice"
-                  data-phase=${a.key}
-                  title=${`${a.label} ${a.ms} ms`}
-                  style=${`flex:0 0 ${a.ms/e*100}%`}
+                  data-phase=${l.key}
+                  title=${`${l.label} ${l.ms} ms`}
+                  style=${`flex:0 0 ${l.ms/e*100}%`}
                 ></div>`)}
             </div>
             <div class="legend">
-              ${n.map(a=>l`<span>${a.label} ${(a.ms/1e3).toFixed(1)}s</span>`)}
+              ${n.map(l=>a`<span>${l.label} ${(l.ms/1e3).toFixed(1)}s</span>`)}
             </div>`:p}
-    </div>`}merged(){let t=[...this.live];for(let e of this.recorded)t.some(r=>Math.abs(r.at-e.at)<Hr)||t.push(e);return t.sort((e,r)=>r.at-e.at).slice(0,ri)}async load(){let t=[this.wake,this.heard,this.reply].filter(Boolean),e=new Date(Date.now()-ii*36e5).toISOString();try{let r=await this.hass.callWS({type:"history/history_during_period",start_time:e,entity_ids:t,minimal_response:!0,no_attributes:!0});this.recorded=Rr(oe(r[this.wake]),oe(r[this.heard]),oe(r[this.reply]))}catch{this.recorded=[]}}async listen(){if(this.hass.connection)try{this.stop=await this.hass.connection.subscribeEvents(t=>{let e=Ot(t.data);e&&(this.mac&&e.mac&&e.mac!==this.mac||(this.live=[{at:Date.now(),wake:e.wake_word,heard:e.heard,reply:e.reply,turn:e},...this.live].slice(0,ri)))},zt)}catch{}}};C.styles=b(Je),c([u({attribute:!1})],C.prototype,"hass",2),c([u()],C.prototype,"mac",2),c([u()],C.prototype,"wake",2),c([u()],C.prototype,"heard",2),c([u()],C.prototype,"reply",2),c([u()],C.prototype,"device",2),c([m()],C.prototype,"recorded",2),c([m()],C.prototype,"live",2),c([m()],C.prototype,"asked",2),C=c([y("echolocal-history")],C);function oe(s){return(s??[]).map(i=>({at:i.lu?i.lu*1e3:Date.parse(i.last_updated??""),value:i.s??i.state??""})).filter(i=>Number.isFinite(i.at)&&Pr(i.value))}function Rr(s,i,t){let e=[...s].sort((n,o)=>o.at-n.at),r=n=>[...n].sort((o,a)=>o.at-a.at);return e.map((n,o)=>{let a=e[o-1]?.at??1/0,d=h=>r(h).find(g=>g.at>=n.at&&g.at<a)?.value;return{at:n.at,wake:n.value,heard:d(i),reply:d(t)}})}function Pr(s){return!!s&&s!=="unknown"&&s!=="unavailable"&&s!=="None"}function Er(s){return new Date(s).toLocaleTimeString(void 0,{hour:"2-digit",minute:"2-digit"})}function zr(s){let i=new Date(s.at).toISOString().replace(/[:.]/g,"-").slice(0,19),t=s.wake.toLowerCase().replace(/[^a-z0-9]+/g,"-");return`${i}-${t}.wav`}var si=`:host {
+    </div>`}merged(){let t=[...this.live];for(let e of this.recorded)t.some(r=>Math.abs(r.at-e.at)<Er)||t.push(e);return t.sort((e,r)=>r.at-e.at).slice(0,ni)}async load(){let t=[this.wake,this.heard,this.reply].filter(Boolean),e=new Date(Date.now()-si*36e5).toISOString();try{let r=await this.hass.callWS({type:"history/history_during_period",start_time:e,entity_ids:t,minimal_response:!0,no_attributes:!0});this.recorded=zr(ae(r[this.wake]),ae(r[this.heard]),ae(r[this.reply]))}catch{this.recorded=[]}}async listen(){if(this.hass.connection)try{this.stop=await this.hass.connection.subscribeEvents(t=>{let e=Ot(t.data);e&&(this.mac&&e.mac&&e.mac!==this.mac||(this.live=[{at:Date.now(),wake:e.wake_word,heard:e.heard,reply:e.reply,turn:e},...this.live].slice(0,ni)))},zt)}catch{}}};C.styles=b(Le),d([u({attribute:!1})],C.prototype,"hass",2),d([u()],C.prototype,"mac",2),d([u()],C.prototype,"wake",2),d([u()],C.prototype,"heard",2),d([u()],C.prototype,"reply",2),d([u()],C.prototype,"device",2),d([m()],C.prototype,"recorded",2),d([m()],C.prototype,"live",2),d([m()],C.prototype,"asked",2),C=d([y("echolocal-history")],C);function ae(s){return(s??[]).map(i=>({at:i.lu?i.lu*1e3:Date.parse(i.last_updated??""),value:i.s??i.state??""})).filter(i=>Number.isFinite(i.at)&&Or(i.value))}function zr(s,i,t){let e=[...s].sort((n,o)=>o.at-n.at),r=n=>[...n].sort((o,l)=>o.at-l.at);return e.map((n,o)=>{let l=e[o-1]?.at??1/0,c=h=>r(h).find(g=>g.at>=n.at&&g.at<l)?.value;return{at:n.at,wake:n.value,heard:c(i),reply:c(t)}})}function Or(s){return!!s&&s!=="unknown"&&s!=="unavailable"&&s!=="None"}function Nr(s){return new Date(s).toLocaleTimeString(void 0,{hour:"2-digit",minute:"2-digit"})}function Ir(s){let i=new Date(s.at).toISOString().replace(/[:.]/g,"-").slice(0,19),t=s.wake.toLowerCase().replace(/[^a-z0-9]+/g,"-");return`${i}-${t}.wav`}var oi=`:host {
   display: block;
   padding: 14px;
   border-radius: 14px;
@@ -1409,7 +1440,7 @@ button.keep ha-icon {
   font-size: 0.62rem;
   line-height: 1;
 }
-`;var ni=`:host {
+`;var ai=`:host {
   display: flex;
   gap: 18px;
   align-items: center;
@@ -1506,11 +1537,11 @@ svg {
   background: color-mix(in srgb, var(--primary-color) 16%, transparent);
   color: var(--primary-color);
 }
-`;var ae=135,le=270,Nt=100,It=100,at=78,Ir={White:"mdi:grain",Pink:"mdi:blur",Brown:"mdi:waveform",Rain:"mdi:weather-pouring",Ocean:"mdi:waves",Brook:"mdi:water",Wind:"mdi:weather-windy",Fire:"mdi:fireplace",Crickets:"mdi:bug-outline",Fan:"mdi:fan",Cabin:"mdi:airplane"},lt="None",V=class extends v{constructor(){super(...arguments);this.player="";this.jack="";this.grab=t=>{let e=t.currentTarget;e.setPointerCapture(t.pointerId);let r=d=>{let h=e.getBoundingClientRect(),g=d.clientX-h.left-h.width/2,f=d.clientY-h.top-h.height/2,w=Math.atan2(f,g)*180/Math.PI-ae;for(;w<0;)w+=360;let $=Math.max(0,Math.min(1,Math.min(w,le)/le));return Math.round($*30)/30},n=d=>this.hass.callService("media_player","volume_set",{entity_id:this.player,volume_level:r(d)}),o=d=>n(d),a=d=>{e.removeEventListener("pointermove",o),e.removeEventListener("pointerup",a),e.removeEventListener("pointercancel",a),n(d)};e.addEventListener("pointermove",o),e.addEventListener("pointerup",a),e.addEventListener("pointercancel",a),n(t)}}render(){let t=this.hass.states[this.player];if(!t)return p;let e=Number(t.attributes.volume_level??0),r=t.attributes.is_volume_muted===!0,n=this.jack?this.hass.states[this.jack]?.state==="on":!1;return l`
+`;var le=135,ce=270,Nt=100,It=100,lt=78,Wr={White:"mdi:grain",Pink:"mdi:blur",Brown:"mdi:waveform",Rain:"mdi:weather-pouring",Ocean:"mdi:waves",Brook:"mdi:water",Wind:"mdi:weather-windy",Fire:"mdi:fireplace",Crickets:"mdi:bug-outline",Fan:"mdi:fan",Cabin:"mdi:airplane"},ct="None",V=class extends v{constructor(){super(...arguments);this.player="";this.jack="";this.grab=t=>{let e=t.currentTarget;e.setPointerCapture(t.pointerId);let r=c=>{let h=e.getBoundingClientRect(),g=c.clientX-h.left-h.width/2,f=c.clientY-h.top-h.height/2,x=Math.atan2(f,g)*180/Math.PI-le;for(;x<0;)x+=360;let $=Math.max(0,Math.min(1,Math.min(x,ce)/ce));return Math.round($*30)/30},n=c=>this.hass.callService("media_player","volume_set",{entity_id:this.player,volume_level:r(c)}),o=c=>n(c),l=c=>{e.removeEventListener("pointermove",o),e.removeEventListener("pointerup",l),e.removeEventListener("pointercancel",l),n(c)};e.addEventListener("pointermove",o),e.addEventListener("pointerup",l),e.addEventListener("pointercancel",l),n(t)}}render(){let t=this.hass.states[this.player];if(!t)return p;let e=Number(t.attributes.volume_level??0),r=t.attributes.is_volume_muted===!0,n=this.jack?this.hass.states[this.jack]?.state==="on":!1;return a`
       <div class="dial" @pointerdown=${this.grab}>
         <svg viewBox="0 0 200 200" role="img" aria-label="Volume">
-          <path class="bed" d=${oi()} pathLength="100"></path>
-          ${e>0?x`<path class="live" data-muted=${String(r)} d=${oi()} pathLength="100"
+          <path class="bed" d=${li()} pathLength="100"></path>
+          ${e>0?w`<path class="live" data-muted=${String(r)} d=${li()} pathLength="100"
                 stroke-dasharray=${`${e*100} 100`}></path>`:p}
           <text class="step" x=${Nt} y=${It+4}>${Math.round(e*30)}</text>
           <text class="of" x=${Nt} y=${It+20}>of 30</text>
@@ -1518,37 +1549,37 @@ svg {
       </div>
 
       <div class="side">
-        <div class="state">${Ur(t.state)}</div>
+        <div class="state">${jr(t.state)}</div>
         <div class="badges">
           <div class="badge" data-on=${String(r)}>
             <ha-icon .icon=${r?"mdi:volume-off":"mdi:volume-high"}></ha-icon>
             ${r?"Muted":`${Math.round(e*100)}%`}
           </div>
-          ${this.jack?l`<div class="badge" data-on=${String(n)}>
+          ${this.jack?a`<div class="badge" data-on=${String(n)}>
                 <ha-icon icon="mdi:headphones"></ha-icon>
                 ${n?"Headphones":"Speaker"}
               </div>`:p}
         </div>
       </div>
-    `}};V.styles=b(ni),c([u({attribute:!1})],V.prototype,"hass",2),c([u()],V.prototype,"player",2),c([u()],V.prototype,"jack",2),V=c([y("echolocal-volume")],V);var Y=class extends v{constructor(){super(...arguments);this.layers=[];this.busy=!1}render(){let t=this.layers.map(o=>this.hass.states[o]?.state??lt),e=(this.hass.states[this.layers[0]]?.attributes.options??[]).filter(o=>o!==lt),r=t.every(o=>o!==lt),n=o=>t.indexOf(o);return l`
+    `}};V.styles=b(ai),d([u({attribute:!1})],V.prototype,"hass",2),d([u()],V.prototype,"player",2),d([u()],V.prototype,"jack",2),V=d([y("echolocal-volume")],V);var Y=class extends v{constructor(){super(...arguments);this.layers=[];this.busy=!1}render(){let t=this.layers.map(o=>this.hass.states[o]?.state??ct),e=(this.hass.states[this.layers[0]]?.attributes.options??[]).filter(o=>o!==ct),r=t.every(o=>o!==ct),n=o=>t.indexOf(o);return a`
       <div class="caption">
         Generated sound
-        <span>${r?"Both layers in use":`${t.filter(o=>o!==lt).length} of 2`}</span>
+        <span>${r?"Both layers in use":`${t.filter(o=>o!==ct).length} of 2`}</span>
       </div>
       <div class="grid">
-        ${e.map(o=>{let a=n(o);return l`<button
+        ${e.map(o=>{let l=n(o);return a`<button
             class="sound"
-            data-on=${String(a>=0)}
+            data-on=${String(l>=0)}
             ?disabled=${this.busy}
-            @click=${()=>this.pick(o,a,t)}
+            @click=${()=>this.pick(o,l,t)}
           >
-            <ha-icon .icon=${Ir[o]??"mdi:music-note"}></ha-icon>
+            <ha-icon .icon=${Wr[o]??"mdi:music-note"}></ha-icon>
             ${o}
-            ${a>=0&&this.layers.length>1?l`<span class="layer">${a+1}</span>`:p}
+            ${l>=0&&this.layers.length>1?a`<span class="layer">${l+1}</span>`:p}
           </button>`})}
       </div>
-    `}async pick(t,e,r){let n=r.findIndex(a=>a===lt),o=e>=0?e:n>=0?n:this.layers.length-1;if(!(o<0)){this.busy=!0;try{await this.hass.callService("select","select_option",{entity_id:this.layers[o],option:e>=0?lt:t})}finally{this.busy=!1}}}};Y.styles=b(si),c([u({attribute:!1})],Y.prototype,"hass",2),c([u({attribute:!1})],Y.prototype,"layers",2),c([m()],Y.prototype,"busy",2),Y=c([y("echolocal-noise")],Y);function Ur(s){return s==="playing"?"Playing":s==="paused"?"Paused":s==="unavailable"?"Unavailable":"Idle"}function oi(){let s=ae*Math.PI/180,i=(ae+le)*Math.PI/180;return`M${(Nt+at*Math.cos(s)).toFixed(2)} ${(It+at*Math.sin(s)).toFixed(2)}
-    A${at} ${at} 0 1 1 ${(Nt+at*Math.cos(i)).toFixed(2)} ${(It+at*Math.sin(i)).toFixed(2)}`}var A=class extends v{constructor(){super(...arguments);this.heading="";this.subtitle="";this.icon="";this.sections=[];this.widgets=[];this.device="";this.mac="";this.help=!0;this.about="";this.held={}}render(){let t=this.sections.map(o=>({...o,rows:o.rows.filter(a=>this.hass.states?.[a.entityId])})).filter(o=>o.rows.length),n=`--ha-dialog-width-md:${t.reduce((o,a)=>o+a.rows.length,0)>3||this.widgets.some(o=>o.place!=="header")?820:460}px`;return l`
+    `}async pick(t,e,r){let n=r.findIndex(l=>l===ct),o=e>=0?e:n>=0?n:this.layers.length-1;if(!(o<0)){this.busy=!0;try{await this.hass.callService("select","select_option",{entity_id:this.layers[o],option:e>=0?ct:t})}finally{this.busy=!1}}}};Y.styles=b(oi),d([u({attribute:!1})],Y.prototype,"hass",2),d([u({attribute:!1})],Y.prototype,"layers",2),d([m()],Y.prototype,"busy",2),Y=d([y("echolocal-noise")],Y);function jr(s){return s==="playing"?"Playing":s==="paused"?"Paused":s==="unavailable"?"Unavailable":"Idle"}function li(){let s=le*Math.PI/180,i=(le+ce)*Math.PI/180;return`M${(Nt+lt*Math.cos(s)).toFixed(2)} ${(It+lt*Math.sin(s)).toFixed(2)}
+    A${lt} ${lt} 0 1 1 ${(Nt+lt*Math.cos(i)).toFixed(2)} ${(It+lt*Math.sin(i)).toFixed(2)}`}var A=class extends v{constructor(){super(...arguments);this.heading="";this.subtitle="";this.icon="";this.sections=[];this.widgets=[];this.device="";this.mac="";this.help=!0;this.about="";this.held={}}render(){let t=this.sections.map(o=>({...o,rows:o.rows.filter(l=>this.hass.states?.[l.entityId])})).filter(o=>o.rows.length),n=`--ha-dialog-width-md:${t.reduce((o,l)=>o+l.rows.length,0)>3||this.widgets.some(o=>o.place!=="header")?820:460}px`;return a`
       <ha-dialog open hideActions style=${n} @closed=${this.dismiss}>
         <div class="sheet">
           <div class="head">
@@ -1556,26 +1587,26 @@ svg {
             <div class="titles">
               <div class="title">
                 ${this.heading}
-                ${this.help&&this.about?l`<echolocal-bubble .text=${this.about}></echolocal-bubble>`:p}
+                ${this.help&&this.about?a`<echolocal-bubble .text=${this.about}></echolocal-bubble>`:p}
               </div>
-              ${this.subtitle?l`<div class="subtitle">${this.subtitle}</div>`:p}
+              ${this.subtitle?a`<div class="subtitle">${this.subtitle}</div>`:p}
             </div>
             ${this.widgets.filter(o=>o.place==="header").map(o=>this.widget(o))}
           </div>
           ${this.widgets.filter(o=>o.place!=="header").map(o=>this.explained(o))}
           <div class="groups">
-            ${t.length?t.map(o=>this.group(o)):this.widgets.length?p:l`<div class="empty">Nothing to show here.</div>`}
+            ${t.length?t.map(o=>this.group(o)):this.widgets.length?p:a`<div class="empty">Nothing to show here.</div>`}
           </div>
         </div>
       </ha-dialog>
-    `}widget({widget:t,roles:e,lists:r}){let n=o=>o?.[0]??"";switch(t){case"appearance":return l`<echolocal-appearance
+    `}widget({widget:t,roles:e,lists:r}){let n=o=>o?.[0]??"";switch(t){case"appearance":return a`<echolocal-appearance
           class="hero"
           .hass=${this.hass}
           .light=${e.light}
           .muted=${n(r.muted)}
           .failure=${n(r.failure)}
           .room=${n(r.room)}
-        ></echolocal-appearance>`;case"array":return l`<echolocal-array
+        ></echolocal-appearance>`;case"array":return a`<echolocal-array
           class="hero"
           .hass=${this.hass}
           .level=${e.level}
@@ -1583,7 +1614,7 @@ svg {
           .gate=${e.gate}
           .mode=${e.mode}
           .muted=${this.muted}
-        ></echolocal-array>`;case"history":return l`<echolocal-history
+        ></echolocal-array>`;case"history":return a`<echolocal-history
           class="hero"
           .hass=${this.hass}
           .wake=${e.wake}
@@ -1591,16 +1622,16 @@ svg {
           .reply=${e.reply??""}
           .device=${this.device}
           .mac=${this.mac}
-        ></echolocal-history>`;case"volume":return l`<echolocal-volume
+        ></echolocal-history>`;case"volume":return a`<echolocal-volume
           class="hero"
           .hass=${this.hass}
           .player=${e.player}
           .jack=${n(r.jack)}
-        ></echolocal-volume>`;case"noise":return l`<echolocal-noise
+        ></echolocal-volume>`;case"noise":return a`<echolocal-noise
           class="hero"
           .hass=${this.hass}
           .layers=${r.layers??[]}
-        ></echolocal-noise>`;case"player":return this.crownPlayer(e.player);case"power":return this.crownPower(e.light);case"mute":return this.crownMute(e.mute,e.lamp)}}crownPlayer(t){let e=this.hass.states[t],r=e?.state==="playing",n=e?.attributes.is_volume_muted!==!0;return l`<div class="crown">
+        ></echolocal-noise>`;case"player":return this.crownPlayer(e.player);case"power":return this.crownPower(e.light);case"mute":return this.crownMute(e.mute,e.lamp)}}crownPlayer(t){let e=this.hass.states[t],r=e?.state==="playing",n=e?.attributes.is_volume_muted!==!0;return a`<div class="crown">
       <ha-icon-button
         .label=${r?"Pause":"Play"}
         @click=${()=>this.hass.callService("media_player",r?"media_pause":"media_play",{entity_id:t})}
@@ -1608,10 +1639,10 @@ svg {
         <ha-icon .icon=${r?"mdi:pause":"mdi:play"}></ha-icon>
       </ha-icon-button>
       ${this.crownSwitch(n,"Sound",o=>this.hass.callService("media_player","volume_mute",{entity_id:t,is_volume_muted:!o}))}
-    </div>`}crownPower(t){return l`<div class="crown">
+    </div>`}crownPower(t){return a`<div class="crown">
       ${this.crownSwitch(this.hass.states[t]?.state==="on","Ring",e=>this.hass.callService("light",e?"turn_on":"turn_off",{entity_id:t}))}
-    </div>`}crownMute(t,e){let r=this.hass.states[e];return l`<div class="crown">
-      ${r?l`<ha-control-select
+    </div>`}crownMute(t,e){let r=this.hass.states[e];return a`<div class="crown">
+      ${r?a`<ha-control-select
             class="lamp"
             .options=${(r.attributes.options??[]).map(n=>({value:n,label:n}))}
             .value=${r.state}
@@ -1619,79 +1650,83 @@ svg {
             @value-changed=${n=>this.hass.callService("select","select_option",{entity_id:e,option:n.detail.value})}
           ></ha-control-select>`:p}
       ${this.crownSwitch(this.hass.states[t]?.state==="on","Microphone mute",n=>this.hass.callService("switch",n?"turn_on":"turn_off",{entity_id:t}),"warn")}
-    </div>`}crownSwitch(t,e,r,n=""){return l`<ha-control-switch
+    </div>`}crownSwitch(t,e,r,n=""){return a`<ha-control-switch
       class=${n}
       .checked=${t}
       .label=${e}
       @change=${o=>r(o.target.checked)}
-    ></ha-control-switch>`}get muted(){let t=this.widgets.find(e=>e.roles.mute)?.roles.mute;return!!t&&this.hass.states[t]?.state==="on"}explained(t){let e=this.help?Ve(t.widget):void 0;return e?l`<div class="explained">
+    ></ha-control-switch>`}get muted(){let t=this.widgets.find(e=>e.roles.mute)?.roles.mute;return!!t&&this.hass.states[t]?.state==="on"}explained(t){let e=this.help?Xe(t.widget):void 0;return e?a`<div class="explained">
       ${this.widget(t)}
       <echolocal-bubble class="corner" .text=${e}></echolocal-bubble>
-    </div>`:this.widget(t)}group(t){return l`<section class="group">
-      ${t.title?l`<div class="section">${t.title}</div>`:p}
+    </div>`:this.widget(t)}group(t){return a`<section class="group">
+      ${t.title?a`<div class="section">${t.title}</div>`:p}
       ${t.rows.map(e=>this.row(e))}
-    </section>`}row(t){if(!this.hass.states?.[t.entityId])return p;switch(t.entityId.split(".")[0]){case"switch":return this.toggle(t,"switch");case"light":return this.toggle(t,"light");case"number":return this.slider(t);case"select":return this.options(t);case"button":return this.press(t);case"update":return this.version(t);default:return this.reading(t)}}version(t){let e=this.hass.states[t.entityId],r=e.attributes.installed_version,n=e.attributes.latest_version;return this.tile(t,!1,{trail:e.attributes.in_progress?l`<ha-spinner size="tiny"></ha-spinner>`:l`<button class="reading" @click=${()=>this.moreInfo(t.entityId)}>
+    </section>`}row(t){if(!this.hass.states?.[t.entityId])return p;switch(t.entityId.split(".")[0]){case"switch":return this.toggle(t,"switch");case"light":return this.toggle(t,"light");case"number":return this.slider(t);case"select":return this.options(t);case"button":return this.press(t);case"update":return this.version(t);default:return this.reading(t)}}version(t){let e=this.hass.states[t.entityId],r=e.attributes.installed_version,n=e.attributes.latest_version;return this.tile(t,!1,{trail:e.attributes.in_progress?a`<ha-spinner size="tiny"></ha-spinner>`:a`<button class="reading" @click=${()=>this.moreInfo(t.entityId)}>
               ${r?String(r):e.state}
             </button>
-            ${e.state==="on"?l`<ha-button
+            ${e.state==="on"?a`<ha-button
                   size="small"
                   @click=${()=>this.hass.callService("update","install",{entity_id:t.entityId})}
                 >
                   ${String(n)}
-                </ha-button>`:p}`})}toggle(t,e){let{entityId:r,label:n}=t,o=this.hass.states[r].state;return this.tile(t,o==="on",{trail:l`<ha-control-switch
+                </ha-button>`:p}`})}toggle(t,e){let{entityId:r,label:n}=t,o=this.hass.states[r].state;return this.tile(t,o==="on",{trail:a`<ha-control-switch
         .checked=${o==="on"}
         .disabled=${o==="unavailable"}
         .label=${n}
-        @change=${a=>this.hass.callService(e,a.target.checked?"turn_on":"turn_off",{entity_id:r})}
-      ></ha-control-switch>`})}slider(t){let{entityId:e}=t,r=this.hass.states[e],n=r.attributes,o=n.min??0,a=n.max??100,d=this.held[e]??Number(r.state);return this.tile(t,!1,{trail:l`<span class="reading">${Number.isNaN(d)?"\u2014":d}</span>
-        ${n.unit_of_measurement?l`<span class="unit">${n.unit_of_measurement}</span>`:p}`,under:l`<ha-control-slider
-        .value=${d}
+        @change=${l=>this.hass.callService(e,l.target.checked?"turn_on":"turn_off",{entity_id:r})}
+      ></ha-control-switch>`})}slider(t){let{entityId:e}=t,r=this.hass.states[e],n=r.attributes,o=n.min??0,l=n.max??100,c=this.held[e]??Number(r.state);return this.tile(t,!1,{trail:a`<span class="reading">${Number.isNaN(c)?"\u2014":c}</span>
+        ${n.unit_of_measurement?a`<span class="unit">${n.unit_of_measurement}</span>`:p}`,under:a`<ha-control-slider
+        .value=${c}
         .min=${o}
-        .max=${a}
+        .max=${l}
         .step=${n.step??1}
         .unit=${n.unit_of_measurement??""}
         .disabled=${r.state==="unavailable"}
         @slider-moved=${h=>{this.held={...this.held,[e]:h.detail.value}}}
         @value-changed=${h=>{let{[e]:g,...f}=this.held;this.held=f,this.hass.callService("number","set_value",{entity_id:e,value:h.detail.value})}}
-      ></ha-control-slider>`})}options(t){let{entityId:e}=t,r=this.hass.states[e],n=r.attributes.options??[],o=n.map(h=>({value:h,label:h})),a=h=>{h&&h!==r.state&&this.hass.callService("select","select_option",{entity_id:e,option:h})},d=r.state==="unavailable";return this.tile(t,!1,{trail:n.length===2?l`<ha-control-select
+      ></ha-control-slider>`})}options(t){let{entityId:e}=t,r=this.hass.states[e],n=r.attributes.options??[],o=n.map(h=>({value:h,label:h})),l=h=>{h&&h!==r.state&&this.hass.callService("select","select_option",{entity_id:e,option:h})},c=r.state==="unavailable";return this.tile(t,!1,{trail:n.length===2?a`<div class="pills">
+              ${n.map(h=>a`<button
+                  class="pill"
+                  data-on=${String(h===r.state)}
+                  ?disabled=${c}
+                  @click=${()=>l(h)}
+                >
+                  ${h}
+                </button>`)}
+            </div>`:a`<ha-control-select-menu
               .options=${o}
               .value=${r.state}
-              .disabled=${d}
-              .label=${t.label}
-              @value-changed=${h=>a(h.detail.value)}
-            ></ha-control-select>`:l`<ha-control-select-menu
-              .options=${o}
-              .value=${r.state}
-              .disabled=${d}
+              .disabled=${c}
               .label=${t.label}
               hide-label
               show-arrow
-              @wa-select=${h=>a(h.detail.item?.value)}
-            ></ha-control-select-menu>`})}press(t){let e=t.reading?this.hass.states[t.reading]:void 0;return this.tile(t,!1,{trail:l`${e?l`<span class="reading">${e.state}</span>
-            ${e.attributes.unit_of_measurement?l`<span class="unit">${e.attributes.unit_of_measurement}</span>`:p}`:p}
-      <ha-button
-        size="small"
-        @click=${()=>this.hass.callService("button","press",{entity_id:t.entityId})}
-      >
-        Run
-      </ha-button>`})}reading(t){let e=this.hass.states[t.entityId],r=e.attributes.unit_of_measurement;return this.tile(t,!1,{trail:l`<button class="reading" @click=${()=>this.moreInfo(t.entityId)}>
+              @wa-select=${h=>l(h.detail.item?.value)}
+            ></ha-control-select-menu>`})}press(t){let e=t.reading?this.hass.states[t.reading]:void 0,r=a`<ha-button
+      size="small"
+      @click=${()=>this.hass.callService("button","press",{entity_id:t.entityId})}
+    >
+      Run
+    </ha-button>`;return e?this.tile(t,!1,{trail:a`<span class="reading">${e.state}</span>
+        ${e.attributes.unit_of_measurement?a`<span class="unit">${e.attributes.unit_of_measurement}</span>`:p}`,under:r}):this.tile(t,!1,{trail:r})}reading(t){let e=this.hass.states[t.entityId],r=e.attributes.unit_of_measurement,n=e.state.split(", ").filter(o=>o.length);return n.length>1?this.tile(t,!1,{under:a`<button class="lines" @click=${()=>this.moreInfo(t.entityId)}>
+          ${n.map(o=>a`<div>${o}</div>`)}
+        </button>`}):this.tile(t,!1,{trail:a`<button class="reading" @click=${()=>this.moreInfo(t.entityId)}>
           ${e.state}
         </button>
-        ${r?l`<span class="unit">${r}</span>`:p}`})}tile({entityId:t,label:e,name:r},n,o){let a=this.hass.states[t].attributes.icon,d=n&&a?.includes("mic")&&a.includes("off"),h=this.help?Ge(r):void 0;return l`<div class="tile" data-active=${String(n&&!d)} data-alert=${String(!!d)}>
+        ${r?a`<span class="unit">${r}</span>`:p}`})}tile({entityId:t,label:e,name:r},n,o){let l=this.hass.states[t].attributes.icon,c=n&&l?.includes("mic")&&l.includes("off"),h=this.help?Ye(r):void 0;return a`<div class="tile" data-active=${String(n&&!c)} data-alert=${String(!!c)}>
       <div class="top">
-        <div class="icon"><ha-icon .icon=${a??"mdi:tune"}></ha-icon></div>
+        <div class="icon"><ha-icon .icon=${l??"mdi:tune"}></ha-icon></div>
         <div class="named">
           <div class="name">${e}</div>
-          ${h?l`<echolocal-bubble .text=${h}></echolocal-bubble>`:p}
+          ${h?a`<echolocal-bubble .text=${h}></echolocal-bubble>`:p}
         </div>
-        ${o.trail?l`<div class="trail">${o.trail}</div>`:p}
+        ${o.trail?a`<div class="trail">${o.trail}</div>`:p}
       </div>
       ${o.under??p}
-    </div>`}moreInfo(t){this.dispatchEvent(new CustomEvent("hass-more-info",{detail:{entityId:t},bubbles:!0,composed:!0}))}dismiss(){this.dispatchEvent(new CustomEvent("closed",{bubbles:!0,composed:!0}))}};A.styles=b(Be),c([u({attribute:!1})],A.prototype,"hass",2),c([u()],A.prototype,"heading",2),c([u()],A.prototype,"subtitle",2),c([u()],A.prototype,"icon",2),c([u({attribute:!1})],A.prototype,"sections",2),c([u({attribute:!1})],A.prototype,"widgets",2),c([u()],A.prototype,"device",2),c([u()],A.prototype,"mac",2),c([u({type:Boolean})],A.prototype,"help",2),c([u()],A.prototype,"about",2),c([m()],A.prototype,"held",2),A=c([y("echolocal-dialog")],A);function ai(s,i){let t=li(s);return i.map(e=>{let r=t?.get(e.entity_id);return{...e,name:r?.name??"",slot:r?.slot??0,part:r?.part??0}})}function wt(s){let i=new Map;for(let t of s){let e=i.get(t.name);e?e.push(t):i.set(t.name,[t])}for(let t of i.values())t.sort((e,r)=>e.slot-r.slot);return i}var Dt="echolocal-keys",Ut=null,ce=null;function li(s){return Ut||(Ut=Dr(s),Ut.then(()=>window.dispatchEvent(new Event(Dt))),Wr(s)),ce}async function Dr(s){let i=new Map;try{let t=await s.callWS({type:"config/entity_registry/list"});for(let e of t)e.device_id&&i.set(e.entity_id,{entityId:e.entity_id,deviceId:e.device_id,...de(e.unique_id),platform:e.platform,disabled:!!e.disabled_by})}catch{}return ce=i,i}function de(s){let i=s.replace(/^(?:[0-9a-f]{2}:){5}[0-9a-f]{2}-?/i,""),t=i.lastIndexOf("@"),e=t<0?0:Number(i.slice(t+1))||0,r=t<0?i:i.slice(0,t),n=r.indexOf("-"),o=n<0?r:r.slice(n+1),a=o.lastIndexOf("_"),d=a<0?"":o.slice(a+1),h=/^\d+$/.test(d);return{name:h?o.slice(0,a):o,slot:h?Number(d):0,part:e}}function Wr(s){s.connection?.subscribeEvents(()=>{Ut=null,ce=null,li(s)},"entity_registry_updated").catch(()=>{})}var jt={ring:[{title:null,rows:[["ring","Ring"]]},{title:"Segments",rows:[["segment","Segment"]]}],microphone:[{title:null,rows:[["mic_mute","Mute"]]},{title:"Capture",rows:[["microphone_gain","Gain"],["microphone_mixing","Mixing"],["microphone_leveling","Leveling"],["microphone_cancel_echo","Echo cancellation"]]},{title:"The room",rows:[["microphone_sensitivity","Sensitivity"],["room_level","Room level"],["room_floor","Room floor"],["stop_word_sensitivity","Stop word"],["vad_sensitivity","End of speech"]]},{title:"Indicator",rows:[["mute_led_brightness","Mute light"]]}],playback:[{title:null,rows:[["headphones","Headphones"]]},{title:"Generated sound",rows:[["noise_layer","Layer"]]},{title:"During a turn",rows:[["media_on_turn","Music"],["media_duck_level","Ducking"]]},{title:"Voice",rows:[["voice_resampling","Resampling"]]}],assistant:[{title:null,rows:[["wake_word","Wake word"],["pipeline","Pipeline"],["wake_threshold","Wake sensitivity"]]},{title:"Timing",rows:[["max_listen","Max listen"],["max_think","Max think"],["follow_up","Follow up"]]},{title:"Feedback",rows:[["wake_effect","Ring effect"],["wake_tone","Chime"]]},{title:"Reply",rows:[["reply_buffer","Buffer"],["reply_delivery","Delivery"]]}],device:[{title:null,rows:[["firmware","Firmware"],["update_channel","Update channel"],["check_for_updates","Check for updates"]]},{title:"Bluetooth",rows:[["bluetooth_proxy","Proxy enabled"]]},{title:"Maintenance",rows:[["metrics_interval","Metrics interval"],["purge_cache","Purge cache","cached_data"],["test_playback","Test playback"],["remote_adb","Remote adb"]]}],diagnostics:[{title:"Network",rows:[["ip_address","IP address"],["wifi_signal","Signal"],["wifi_sent","Sent"],["wifi_received","Received"],["ble_advertisements","Bluetooth advertisements"]]},{title:"Hardware",rows:[["cpu_temperature","CPU"],["radio_temperature","Radio"],["cpu_cores","Cores"],["cpu_cores_online","Cores online"],["load_average","Load"],["memory_available","Memory"],["free_space","Disk"]]},{title:"The room",rows:[["room_level","Room level"],["room_floor","Room floor"]]},{title:"Updates",rows:[["update_status","Update status"],["update_outcome","Last update"]]}]},jr={ring:[{widget:"power",place:"header",roles:{light:"ring"}},{widget:"appearance",roles:{light:"ring"},lists:{segments:"segment",muted:"ring_muted",failure:"failure_effect",room:"room_reaction"}}],playback:[{widget:"player",place:"header",roles:{player:"speaker"}},{widget:"volume",roles:{player:"speaker"},lists:{jack:"headphones"}},{widget:"noise",roles:{first:"noise_layer"},lists:{layers:"noise_layer"}}],microphone:[{widget:"mute",place:"header",roles:{mute:"mic_mute",lamp:"mute_led_brightness"}},{widget:"array",roles:{level:"room_level",floor:"room_floor",gate:"microphone_sensitivity",mode:"microphone_mixing"}}]},Fr=[["ring","ring"],["microphone","mic_mute"],["playback","speaker"]];function ci(s){let i=Fr.filter(([,t])=>s.by.has(t)).map(([t])=>({kind:t,slot:0}));for(let t of s.by.get("wake_threshold")??[])i.push({kind:"assistant",slot:t.slot});return i}function di(s,i,t=0){let e=[],r=new Set;for(let n of jr[s]??[]){let o={};for(let[d,h]of Object.entries(n.roles)){let g=Wt(i.by,h,t)[0];g&&(o[d]=g.entity_id)}if(Object.keys(o).length!==Object.keys(n.roles).length)continue;let a={};for(let[d,h]of Object.entries(n.lists??{}))a[d]=Wt(i.by,h,t).map(g=>g.entity_id);e.push({widget:n.widget,place:n.place??"body",roles:o,lists:a}),[...Object.values(o),...Object.values(a).flat()].forEach(d=>r.add(d))}return{widgets:e,sections:ui(jt[s]??[],i.by,t,r)}}var qr=new Set(["switch","select","number","button","text","time","update"]);function pi(s){return mi(jt.device??[],s.entities.filter(i=>i.device_id===s.device.id&&qr.has(i.entity_id.split(".")[0])),new Set)}function hi(s){let i=s.entities.filter(n=>n.entity_category==="diagnostic"),t=wt(i),e={};for(let[n,o]of Object.entries({wake:"last_wake_word",heard:"last_heard",reply:"last_reply"})){let a=t.get(o)?.[0];a&&(e[n]=a.entity_id)}return{widgets:e.wake?[{widget:"history",place:"body",roles:e,lists:{}}]:[],sections:mi(jt.diagnostics??[],i,new Set(Object.values(e)))}}function Wt(s,i,t){let e=s.get(i)??[];return t?e.filter(r=>(r.slot||1)===t):e}function ui(s,i,t,e){let r=[];for(let n of s){let o=[];for(let[a,d,h]of n.rows){let g=Wt(i,a,t);for(let f of g)e.has(f.entity_id)||o.push({entityId:f.entity_id,name:a,label:g.length>1?`${d} ${f.slot}`:d,reading:h?Wt(i,h,t)[0]?.entity_id:void 0})}o.length&&r.push({title:n.title,rows:o})}return r}var Br=new Set(Object.values(jt).flatMap(s=>(s??[]).flatMap(i=>i.rows.flatMap(([t,,e])=>e?[t,e]:[t]))));function mi(s,i,t){let e=ui(s,wt(i),0,t),r=new Set(e.flatMap(o=>o.rows.flatMap(a=>[a.entityId,a.reading??""]))),n=i.filter(o=>!r.has(o.entity_id)&&!t.has(o.entity_id)&&!Br.has(o.name));return n.length?[...e,{title:e.length?"More":null,rows:n.map(o=>({entityId:o.entity_id,name:o.name,label:o.name||o.entity_id})).sort((o,a)=>o.label.localeCompare(a.label))}]:e}var Kr="EchoLocal",Gr="esphome",xt=12;function Vr(s){return!!s?.identifiers?.some(([i])=>i===Gr)}function gi(s,i){return Object.values(s.devices??{}).filter(t=>t.via_device_id===i&&!t.disabled_by).sort((t,e)=>_(t).localeCompare(_(e)))}function M(s){return s?Object.values(s.devices??{}).filter(i=>Yr(s,i.id)&&!i.via_device_id&&!i.disabled_by).sort((i,t)=>_(i).localeCompare(_(t))):[]}function _(s){return s?.name_by_user||s?.name||""}function Yr(s,i){return s?.devices?.[i]?.manufacturer!==Kr?!1:gi(s,i).some(Vr)}function q(s,i){if(!s||!i)return null;let t=s.devices?.[i];if(!t)return null;let e=new Set([i,...gi(s,i).map(d=>d.id)]),r=ai(s,Object.values(s.entities??{}).filter(d=>d.device_id&&e.has(d.device_id)&&!d.hidden)),n=wt(r),o=d=>n.get(d)?.[0]?.entity_id,a=new Array(xt).fill(void 0);for(let d of n.get("segment")??[]){let h=d.slot-1;h>=0&&h<xt&&(a[h]=d.entity_id)}return{device:t,entities:r,by:n,satellite:o("assist_satellite"),player:o("speaker"),update:o("firmware"),ring:o("ring"),segments:a,mute:o("mic_mute")}}function fi(s){return(s.by.get("wake_assistant")??[]).map(i=>i.entity_id)}function $t(s,i){let t=i?s?.states?.[i]:void 0;return!t||t.state!=="on"?null:{rgb:t.attributes.rgb_color??[255,255,255],level:(t.attributes.brightness??255)/255}}function vi(s,i){return!!i&&s?.states?.[i]?.state==="on"}function bi(s,i){return(i?s?.states?.[i]?.state:void 0)??"unavailable"}async function yi(s,i){let t=new Array(xt).fill(void 0);if(!s.user?.is_admin)return t;let e=new Set(i.entities.map(r=>r.device_id));try{let r=await s.callWS({type:"config/entity_registry/list"});for(let n of r){if(!n.disabled_by||!n.device_id||!e.has(n.device_id))continue;let{name:o,slot:a}=de(n.unique_id);o==="segment"&&a>=1&&a<=xt&&(t[a-1]=n.entity_id)}}catch{}return t}async function wi(s,i){await s.callWS({type:"config/entity_registry/update",entity_id:i,disabled_by:null})}var Xr={device_id:"Device",shell:"Shell",help:"Explain each setting"},ct={ring:"mdi:record-circle-outline",microphone:"mdi:microphone",playback:"mdi:speaker",assistant:"mdi:account-voice",device:"mdi:cog-outline",diagnostics:"mdi:stethoscope",follow:"mdi:backup-restore",close:"mdi:check"},Zr={idle:"Idle",listening:"Listening",processing:"Thinking",responding:"Speaking",unavailable:"Unavailable",unknown:"Unknown"},R=class extends v{constructor(){super(...arguments);this.opened=null;this.picked=null;this.holding=!1;this.timer=0;this.hiddenSegments=[];this.offering=null;this.asked=!1}static getConfigElement(){return document.createElement("echolocal-satellite-card-editor")}static getStubConfig(t){return{device_id:M(t)[0]?.id??""}}setConfig(t){if(!t?.device_id)throw new Error("Choose an EchoLocal device");this.config={shell:"grey",...t}}getCardSize(){return 6}updated(){if(this.asked||!this.hass||!this.config)return;let t=q(this.hass,this.config.device_id);!t||t.segments.some(Boolean)||(this.asked=!0,yi(this.hass,t).then(e=>this.hiddenSegments=e))}render(){if(!this.hass||!this.config)return p;let t=q(this.hass,this.config.device_id);if(!t)return l`<ha-card><div class="missing">Device not found</div></ha-card>`;let e=bi(this.hass,t.satellite);return l`
+    </div>`}moreInfo(t){this.dispatchEvent(new CustomEvent("hass-more-info",{detail:{entityId:t},bubbles:!0,composed:!0}))}dismiss(){this.dispatchEvent(new CustomEvent("closed",{bubbles:!0,composed:!0}))}};A.styles=[b(Pt),b(Ge)],d([u({attribute:!1})],A.prototype,"hass",2),d([u()],A.prototype,"heading",2),d([u()],A.prototype,"subtitle",2),d([u()],A.prototype,"icon",2),d([u({attribute:!1})],A.prototype,"sections",2),d([u({attribute:!1})],A.prototype,"widgets",2),d([u()],A.prototype,"device",2),d([u()],A.prototype,"mac",2),d([u({type:Boolean})],A.prototype,"help",2),d([u()],A.prototype,"about",2),d([m()],A.prototype,"held",2),A=d([y("echolocal-dialog")],A);function ci(s,i){let t=di(s);return i.map(e=>{let r=t?.get(e.entity_id);return{...e,name:r?.name??"",slot:r?.slot??0,part:r?.part??0}})}function Dt(s){let i=new Map;for(let t of s){let e=i.get(t.name);e?e.push(t):i.set(t.name,[t])}for(let t of i.values())t.sort((e,r)=>e.slot-r.slot);return i}var Wt="echolocal-keys",Ut=null,de=null;function di(s){return Ut||(Ut=qr(s),Ut.then(()=>window.dispatchEvent(new Event(Wt))),Fr(s)),de}async function qr(s){let i=new Map;try{let t=await s.callWS({type:"config/entity_registry/list"});for(let e of t)e.device_id&&i.set(e.entity_id,{entityId:e.entity_id,deviceId:e.device_id,...pe(e.unique_id),platform:e.platform,disabled:!!e.disabled_by})}catch{}return de=i,i}function pe(s){let i=s.replace(/^(?:[0-9a-f]{2}:){5}[0-9a-f]{2}-?/i,""),t=i.lastIndexOf("@"),e=t<0?0:Number(i.slice(t+1))||0,r=t<0?i:i.slice(0,t),n=r.indexOf("-"),o=n<0?r:r.slice(n+1),l=o.lastIndexOf("_"),c=l<0?"":o.slice(l+1),h=/^\d+$/.test(c);return{name:h?o.slice(0,l):o,slot:h?Number(c):0,part:e}}function Fr(s){s.connection?.subscribeEvents(()=>{Ut=null,de=null,di(s)},"entity_registry_updated").catch(()=>{})}var qt={ring:[{title:null,rows:[["ring","Ring"]]},{title:"Segments",rows:[["segment","Segment"]]}],microphone:[{title:null,rows:[["mic_mute","Mute"]]},{title:"Capture",rows:[["microphone_gain","Gain"],["microphone_mixing","Mixing"],["microphone_leveling","Leveling"],["microphone_cancel_echo","Echo cancellation"]]},{title:"The room",rows:[["microphone_sensitivity","Sensitivity"],["room_level","Room level"],["room_floor","Room floor"],["stop_word_sensitivity","Stop word"],["vad_sensitivity","End of speech"]]},{title:"Indicator",rows:[["mute_led_brightness","Mute light"]]}],playback:[{title:null,rows:[["headphones","Headphones"]]},{title:"Generated sound",rows:[["noise_layer","Layer"]]},{title:"During a turn",rows:[["media_on_turn","Music"],["media_duck_level","Ducking"]]},{title:"Voice",rows:[["voice_resampling","Resampling"]]}],assistant:[{title:null,rows:[["wake_word","Wake word"],["pipeline","Pipeline"],["wake_threshold","Wake sensitivity"]]},{title:"Timing",rows:[["max_listen","Max listen"],["max_think","Max think"],["follow_up","Follow up"]]},{title:"Feedback",rows:[["wake_effect","Ring effect"],["wake_tone","Chime"]]},{title:"Reply",rows:[["reply_buffer","Buffer"],["reply_delivery","Delivery"]]}],device:[{title:null,rows:[["firmware","Firmware"],["update_channel","Update channel"],["check_for_updates","Check for updates"]]},{title:"Bluetooth",rows:[["bluetooth_proxy","Proxy enabled"]]},{title:"Maintenance",rows:[["metrics_interval","Metrics interval"],["purge_cache","Purge cache","cached_data"],["test_playback","Test playback"],["remote_adb","Remote adb"]]}],diagnostics:[{title:"Network",rows:[["ip_address","IP address"],["wifi_signal","Signal"],["wifi_sent","Sent"],["wifi_received","Received"],["ble_advertisements","Bluetooth advertisements"]]},{title:"Hardware",rows:[["cpu_temperature","CPU"],["radio_temperature","Radio"],["cpu_cores","Cores"],["cpu_cores_online","Cores online"],["load_average","Load"],["memory_available","Memory"],["free_space","Disk"]]},{title:"Updates",rows:[["update_status","Update status"],["update_outcome","Last update"]]}]},Br={ring:[{widget:"power",place:"header",roles:{light:"ring"}},{widget:"appearance",roles:{light:"ring"},lists:{segments:"segment",muted:"ring_muted",failure:"failure_effect",room:"room_reaction"}}],playback:[{widget:"player",place:"header",roles:{player:"speaker"}},{widget:"volume",roles:{player:"speaker"},lists:{jack:"headphones"}},{widget:"noise",roles:{first:"noise_layer"},lists:{layers:"noise_layer"}}],activity:[{widget:"history",roles:{wake:"last_wake_word",heard:"last_heard",reply:"last_reply"}}],microphone:[{widget:"mute",place:"header",roles:{mute:"mic_mute",lamp:"mute_led_brightness"}},{widget:"array",roles:{level:"room_level",floor:"room_floor",gate:"microphone_sensitivity",mode:"microphone_mixing"}}]},Kr=[["ring","ring"],["microphone","mic_mute"],["playback","speaker"]];function pi(s){let i=Kr.filter(([,t])=>s.by.has(t)).map(([t])=>({kind:t,slot:0}));for(let t of s.by.get("wake_threshold")??[])i.push({kind:"assistant",slot:t.slot});return i}function hi(s,i,t=0){let e=[],r=new Set;for(let n of Br[s]??[]){let o={};for(let[c,h]of Object.entries(n.roles)){let g=jt(i.by,h,t)[0];g&&(o[c]=g.entity_id)}if(Object.keys(o).length!==Object.keys(n.roles).length)continue;let l={};for(let[c,h]of Object.entries(n.lists??{}))l[c]=jt(i.by,h,t).map(g=>g.entity_id);e.push({widget:n.widget,place:n.place??"body",roles:o,lists:l}),[...Object.values(o),...Object.values(l).flat()].forEach(c=>r.add(c))}return{widgets:e,sections:gi(qt[s]??[],i.by,t,r)}}var Gr=new Set(["switch","select","number","button","text","time","update"]);function ui(s){return fi(qt.device??[],s.entities.filter(i=>i.device_id===s.device.id&&Gr.has(i.entity_id.split(".")[0])),new Set)}function mi(s){let i=s.entities.filter(t=>t.entity_category==="diagnostic");return{widgets:[],sections:fi(qt.diagnostics??[],i,new Set)}}function jt(s,i,t){let e=s.get(i)??[];return t?e.filter(r=>(r.slot||1)===t):e}function gi(s,i,t,e){let r=[];for(let n of s){let o=[];for(let[l,c,h]of n.rows){let g=jt(i,l,t);for(let f of g)e.has(f.entity_id)||o.push({entityId:f.entity_id,name:l,label:g.length>1?`${c} ${f.slot}`:c,reading:h?jt(i,h,t)[0]?.entity_id:void 0})}o.length&&r.push({title:n.title,rows:o})}return r}var Vr=new Set(Object.values(qt).flatMap(s=>(s??[]).flatMap(i=>i.rows.flatMap(([t,,e])=>e?[t,e]:[t]))));function fi(s,i,t){let e=gi(s,Dt(i),0,t),r=new Set(e.flatMap(o=>o.rows.flatMap(l=>[l.entityId,l.reading??""]))),n=i.filter(o=>!r.has(o.entity_id)&&!t.has(o.entity_id)&&!Vr.has(o.name));return n.length?[...e,{title:e.length?"More":null,rows:n.map(o=>({entityId:o.entity_id,name:o.name,label:o.name||o.entity_id})).sort((o,l)=>o.label.localeCompare(l.label))}]:e}var Yr="EchoLocal",Xr="esphome",wt=12;function Zr(s){return!!s?.identifiers?.some(([i])=>i===Xr)}function vi(s,i){return Object.values(s.devices??{}).filter(t=>t.via_device_id===i&&!t.disabled_by).sort((t,e)=>S(t).localeCompare(S(e)))}function M(s){return s?Object.values(s.devices??{}).filter(i=>Jr(s,i.id)&&!i.via_device_id&&!i.disabled_by).sort((i,t)=>S(i).localeCompare(S(t))):[]}function S(s){return s?.name_by_user||s?.name||""}function Jr(s,i){return s?.devices?.[i]?.manufacturer!==Yr?!1:vi(s,i).some(Zr)}function F(s,i){if(!s||!i)return null;let t=s.devices?.[i];if(!t)return null;let e=new Set([i,...vi(s,i).map(c=>c.id)]),r=ci(s,Object.values(s.entities??{}).filter(c=>c.device_id&&e.has(c.device_id)&&!c.hidden)),n=Dt(r),o=c=>n.get(c)?.[0]?.entity_id,l=new Array(wt).fill(void 0);for(let c of n.get("segment")??[]){let h=c.slot-1;h>=0&&h<wt&&(l[h]=c.entity_id)}return{device:t,entities:r,by:n,satellite:o("assist_satellite"),player:o("speaker"),update:o("firmware"),ring:o("ring"),segments:l,mute:o("mic_mute")}}function bi(s){return(s.by.get("wake_assistant")??[]).map(i=>i.entity_id)}function xt(s,i){let t=i?s?.states?.[i]:void 0;return!t||t.state!=="on"?null:{rgb:t.attributes.rgb_color??[255,255,255],level:(t.attributes.brightness??255)/255}}function yi(s,i){return!!i&&s?.states?.[i]?.state==="on"}function wi(s,i){return(i?s?.states?.[i]?.state:void 0)??"unavailable"}async function xi(s,i){let t=new Array(wt).fill(void 0);if(!s.user?.is_admin)return t;let e=new Set(i.entities.map(r=>r.device_id));try{let r=await s.callWS({type:"config/entity_registry/list"});for(let n of r){if(!n.disabled_by||!n.device_id||!e.has(n.device_id))continue;let{name:o,slot:l}=pe(n.unique_id);o==="segment"&&l>=1&&l<=wt&&(t[l-1]=n.entity_id)}}catch{}return t}async function $i(s,i){await s.callWS({type:"config/entity_registry/update",entity_id:i,disabled_by:null})}var Qr={device_id:"Device",shell:"Shell",help:"Explain each setting"},it={ring:"mdi:record-circle-outline",microphone:"mdi:microphone",playback:"mdi:speaker",assistant:"mdi:account-voice",device:"mdi:cog-outline",diagnostics:"mdi:stethoscope",activity:"mdi:timeline-text-outline",follow:"mdi:backup-restore",close:"mdi:check"},Lr={idle:"Idle",listening:"Listening",processing:"Thinking",responding:"Speaking",unavailable:"Unavailable",unknown:"Unknown"},R=class extends v{constructor(){super(...arguments);this.opened=null;this.picked=null;this.holding=!1;this.timer=0;this.hiddenSegments=[];this.offering=null;this.asked=!1}static getConfigElement(){return document.createElement("echolocal-satellite-card-editor")}static getStubConfig(t){return{device_id:M(t)[0]?.id??""}}setConfig(t){if(!t?.device_id)throw new Error("Choose an EchoLocal device");this.config={shell:"grey",...t}}getCardSize(){return 6}updated(){if(this.asked||!this.hass||!this.config)return;let t=F(this.hass,this.config.device_id);!t||t.segments.some(Boolean)||(this.asked=!0,xi(this.hass,t).then(e=>this.hiddenSegments=e))}render(){if(!this.hass||!this.config)return p;let t=F(this.hass,this.config.device_id);if(!t)return a`<ha-card><div class="missing">Device not found</div></ha-card>`;let e=wi(this.hass,t.satellite);return a`
       <ha-card>
         <div class="frame">
           <div class="art" data-shell=${this.config.shell??"grey"} data-activity=${e}>
-            ${Ie({segments:this.segments(t),glow:this.glow(t),muted:vi(this.hass,t.mute),holding:this.holding,picked:this.picked,divisible:[...t.segments,...this.hiddenSegments].some(Boolean)},{ring:()=>this.open({kind:"ring",slot:0}),segment:r=>this.tapped(t,r),action:r=>this.pressed(t,r),mute:()=>this.toggle("switch",t.mute),volume:r=>this.volume(t,r)})}
+            ${De({segments:this.segments(t),glow:this.glow(t),muted:yi(this.hass,t.mute),holding:this.holding,picked:this.picked,divisible:[...t.segments,...this.hiddenSegments].some(Boolean)},{ring:()=>this.open({kind:"ring",slot:0}),segment:r=>this.tapped(t,r),action:r=>this.pressed(t,r),mute:()=>this.toggle("switch",t.mute),volume:r=>this.volume(t,r)})}
           </div>
 
           <div class="side">${this.side(t)}</div>
@@ -1701,16 +1736,17 @@ svg {
       </ha-card>
 
       ${this.popup(t)}
-    `}foot(t,e){return l`<div class="foot">
+    `}foot(t,e){return a`<div class="foot">
       <div class="label">
-        <div class="name">${_(t.device)}</div>
-        <div class="status">${Zr[e]??e}</div>
+        <div class="name">${S(t.device)}</div>
+        <div class="status">${Lr[e]??e}</div>
       </div>
       <div class="tail">
-        ${this.square(ct.device,"Settings",()=>this.open({kind:"device",slot:0}))}
-        ${this.square(ct.diagnostics,"Diagnostics",()=>this.open({kind:"diagnostics",slot:0}))}
+        ${this.square(it.activity,"Activity",()=>this.open({kind:"activity",slot:0}))}
+        ${this.square(it.device,"Settings",()=>this.open({kind:"device",slot:0}))}
+        ${this.square(it.diagnostics,"Diagnostics",()=>this.open({kind:"diagnostics",slot:0}))}
       </div>
-    </div>`}tapped(t,e){if(t.segments[e]){this.picked=this.picked===e?null:e;return}if(this.hiddenSegments[e]){this.offering=e;return}this.open({kind:"ring",slot:0})}offer(t){let e=async r=>{for(let n of r)n&&await wi(this.hass,n);this.hiddenSegments=this.hiddenSegments.map(n=>r.includes(n)?void 0:n),this.offering=null,this.picked=t};return l`<div class="foot">
+    </div>`}tapped(t,e){if(t.segments[e]){this.picked=this.picked===e?null:e;return}if(this.hiddenSegments[e]){this.offering=e;return}this.open({kind:"ring",slot:0})}offer(t){let e=async r=>{for(let n of r)n&&await $i(this.hass,n);this.hiddenSegments=this.hiddenSegments.map(n=>r.includes(n)?void 0:n),this.offering=null,this.picked=t};return a`<div class="foot">
       <div class="label">
         <div class="name">Segment ${t+1} disabled</div>
       </div>
@@ -1719,16 +1755,16 @@ svg {
         <button class="plain" @click=${()=>e(this.hiddenSegments)}>Enable all</button>
         <button class="plain quiet" @click=${()=>this.offering=null}>Cancel</button>
       </div>
-    </div>`}palette(t){let e=t.segments[this.picked];return l`<div class="foot palette">
+    </div>`}palette(t){let e=t.segments[this.picked];return a`<div class="foot palette">
       <div class="top">
         <div class="name">Segment ${this.picked+1}</div>
         <div class="tail">
-          ${this.square(ct.follow,"Follow the ring",()=>{this.hass.callService("light","turn_off",{entity_id:e}),this.picked=null})}
-          ${this.square(ct.close,"Done",()=>this.picked=null)}
+          ${this.square(it.follow,"Follow the ring",()=>{this.hass.callService("light","turn_off",{entity_id:e}),this.picked=null})}
+          ${this.square(it.close,"Done",()=>this.picked=null)}
         </div>
       </div>
       <div class="swatches">
-        ${Et.map(([r,n])=>l`<button
+        ${Et.map(([r,n])=>a`<button
             class="swatch"
             title=${r}
             aria-label=${r}
@@ -1736,28 +1772,28 @@ svg {
             @click=${()=>this.hass.callService("light","turn_on",{entity_id:e,rgb_color:n})}
           ></button>`)}
       </div>
-    </div>`}segments(t){let e=$t(this.hass,t.ring);return Array.from({length:bt},(r,n)=>{let o=$t(this.hass,t.segments[n])??e;return{fill:o?`rgb(${o.rgb.join(",")})`:"var(--el-ring-off)",opacity:o?.25+.75*o.level:1}})}glow(t){return $t(this.hass,t.ring)||t.segments.some(r=>$t(this.hass,r))?.55:0}side(t){let e=ci(t),r=e.filter(n=>n.kind==="assistant").length>1;return e.map(({kind:n,slot:o})=>this.square(ct[n],this.titled(n,o),()=>this.open({kind:n,slot:o}),r&&n==="assistant"?o:null))}titled(t,e){let r={ring:"Ring",microphone:"Microphone",playback:"Playback",assistant:"Assistant",device:"Settings",diagnostics:"Diagnostics"}[t];return e?`${r} ${e}`:r}square(t,e,r,n=null){return l`<button class="sq" title=${e} aria-label=${e} @click=${r}>
+    </div>`}segments(t){let e=xt(this.hass,t.ring);return Array.from({length:bt},(r,n)=>{let o=xt(this.hass,t.segments[n])??e;return{fill:o?`rgb(${o.rgb.join(",")})`:"var(--el-ring-off)",opacity:o?.25+.75*o.level:1}})}glow(t){return xt(this.hass,t.ring)||t.segments.some(r=>xt(this.hass,r))?.55:0}side(t){let e=pi(t),r=e.filter(n=>n.kind==="assistant").length>1;return e.map(({kind:n,slot:o})=>this.square(it[n],this.titled(n,o),()=>this.open({kind:n,slot:o}),r&&n==="assistant"?o:null))}titled(t,e){let r={ring:"Ring",microphone:"Microphone",playback:"Playback",assistant:"Assistant",device:"Settings",diagnostics:"Diagnostics",activity:"Activity"}[t];return e?`${r} ${e}`:r}square(t,e,r,n=null){return a`<button class="sq" title=${e} aria-label=${e} @click=${r}>
       <ha-icon .icon=${t}></ha-icon>
-      ${n?l`<span class="badge">${n}</span>`:p}
-    </button>`}popup(t){if(!this.opened)return p;let{kind:e,slot:r}=this.opened,n,o=[];return e==="device"?n=pi(t):e==="diagnostics"?{widgets:o,sections:n}=hi(t):{widgets:o,sections:n}=di(e,t,r),l`<echolocal-dialog
+      ${n?a`<span class="badge">${n}</span>`:p}
+    </button>`}popup(t){if(!this.opened)return p;let{kind:e,slot:r}=this.opened,n,o=[];return e==="device"?n=ui(t):e==="diagnostics"?{widgets:o,sections:n}=mi(t):{widgets:o,sections:n}=hi(e,t,r),a`<echolocal-dialog
       .hass=${this.hass}
       .heading=${this.titled(e,r)}
-      .subtitle=${_(t.device)}
-      .icon=${ct[e]}
+      .subtitle=${S(t.device)}
+      .icon=${it[e]}
       .sections=${n}
       .widgets=${o}
-      .device=${_(t.device)}
-      .mac=${t.device.connections?.find(([a])=>a==="mac")?.[1]??""}
+      .device=${t.device.name??""}
+      .mac=${t.device.connections?.find(([l])=>l==="mac")?.[1]??""}
       .help=${this.config.help!==!1}
-      .about=${Ye(e)}
+      .about=${Ze(e)}
       @closed=${()=>this.opened=null}
-    ></echolocal-dialog>`}open(t){this.opened=t}pressed(t,e){if(e==="down"){this.holding=!1,this.timer=window.setTimeout(()=>this.holding=!0,Ne);return}clearTimeout(this.timer);let r=this.holding;if(this.holding=!1,e==="cancel")return;let n=fi(t),o=n[r&&n.length>1?1:0];o?this.hass.callService("button","press",{entity_id:o}):this.moreInfo(t.satellite)}toggle(t,e){e&&this.hass.callService(t,"toggle",{entity_id:e})}volume(t,e){t.player&&this.hass.callService("media_player",e>0?"volume_up":"volume_down",{entity_id:t.player})}moreInfo(t){t&&this.dispatchEvent(new CustomEvent("hass-more-info",{detail:{entityId:t},bubbles:!0,composed:!0}))}};R.styles=b(Ue),c([u({attribute:!1})],R.prototype,"hass",2),c([m()],R.prototype,"config",2),c([m()],R.prototype,"opened",2),c([m()],R.prototype,"picked",2),c([m()],R.prototype,"holding",2),c([m()],R.prototype,"hiddenSegments",2),c([m()],R.prototype,"offering",2),R=c([y("echolocal-satellite-card")],R);var dt=class extends v{setConfig(i){this.config={shell:"grey",...i}}render(){if(!this.hass||!this.config)return p;let i=[{name:"device_id",required:!0,selector:{select:{mode:"dropdown",options:M(this.hass).map(t=>({value:t.id,label:_(t)}))}}},{name:"shell",selector:{select:{mode:"dropdown",options:[{value:"grey",label:"Grey (unknown)"},{value:"black",label:"Black"},{value:"white",label:"White"}]}}},{name:"help",selector:{boolean:{}}}];return l`<ha-form
+    ></echolocal-dialog>`}open(t){this.opened=t}pressed(t,e){if(e==="down"){this.holding=!1,this.timer=window.setTimeout(()=>this.holding=!0,Ue);return}clearTimeout(this.timer);let r=this.holding;if(this.holding=!1,e==="cancel")return;let n=bi(t),o=n[r&&n.length>1?1:0];o?this.hass.callService("button","press",{entity_id:o}):this.moreInfo(t.satellite)}toggle(t,e){e&&this.hass.callService(t,"toggle",{entity_id:e})}volume(t,e){t.player&&this.hass.callService("media_player",e>0?"volume_up":"volume_down",{entity_id:t.player})}moreInfo(t){t&&this.dispatchEvent(new CustomEvent("hass-more-info",{detail:{entityId:t},bubbles:!0,composed:!0}))}};R.styles=b(We),d([u({attribute:!1})],R.prototype,"hass",2),d([m()],R.prototype,"config",2),d([m()],R.prototype,"opened",2),d([m()],R.prototype,"picked",2),d([m()],R.prototype,"holding",2),d([m()],R.prototype,"hiddenSegments",2),d([m()],R.prototype,"offering",2),R=d([y("echolocal-satellite-card")],R);var dt=class extends v{setConfig(i){this.config={shell:"grey",...i}}render(){if(!this.hass||!this.config)return p;let i=[{name:"device_id",required:!0,selector:{select:{mode:"dropdown",options:M(this.hass).map(t=>({value:t.id,label:S(t)}))}}},{name:"shell",selector:{select:{mode:"dropdown",options:[{value:"grey",label:"Grey (unknown)"},{value:"black",label:"Black"},{value:"white",label:"White"}]}}},{name:"help",selector:{boolean:{}}}];return a`<ha-form
       .hass=${this.hass}
       .data=${{help:!0,...this.config}}
       .schema=${i}
-      .computeLabel=${t=>Xr[t.name]??t.name}
+      .computeLabel=${t=>Qr[t.name]??t.name}
       @value-changed=${t=>this.emit(t.detail.value)}
-    ></ha-form>`}emit(i){this.config={...this.config,...i},this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this.config},bubbles:!0,composed:!0}))}};c([u({attribute:!1})],dt.prototype,"hass",2),c([m()],dt.prototype,"config",2),dt=c([y("echolocal-satellite-card-editor")],dt);var pe=[];function O(s){pe.push(s),pe.sort((i,t)=>i.order-t.order||i.title.localeCompare(t.title))}function ue(s){return pe.filter(i=>s||!i.admin)}function xi(s,i){let t=he(s),e=ue(i);return e.find(r=>r.path===t)??e[0]}function $i(s,i){let t=i?`${s}/${i}`:s;location.pathname!==t&&history.pushState(null,"",t),window.dispatchEvent(new CustomEvent("location-changed",{detail:{replace:!1}}))}function me(s,i){if(i!==void 0)return he(i);let t=location.pathname;return he(t.startsWith(s)?t.slice(s.length):"")}function he(s){return s.replace(/^\/+|\/+$/g,"")}var _i=`:host {
+    ></ha-form>`}emit(i){this.config={...this.config,...i},this.dispatchEvent(new CustomEvent("config-changed",{detail:{config:this.config},bubbles:!0,composed:!0}))}};d([u({attribute:!1})],dt.prototype,"hass",2),d([m()],dt.prototype,"config",2),dt=d([y("echolocal-satellite-card-editor")],dt);var he=[];function O(s){he.push(s),he.sort((i,t)=>i.order-t.order||i.title.localeCompare(t.title))}function me(s){return he.filter(i=>s||!i.admin)}function _i(s,i){let t=ue(s),e=me(i);return e.find(r=>r.path===t)??e[0]}function ki(s,i){let t=i?`${s}/${i}`:s;location.pathname!==t&&history.pushState(null,"",t),window.dispatchEvent(new CustomEvent("location-changed",{detail:{replace:!1}}))}function ge(s,i){if(i!==void 0)return ue(i);let t=location.pathname;return ue(t.startsWith(s)?t.slice(s.length):"")}function ue(s){return s.replace(/^\/+|\/+$/g,"")}var Si=`:host {
   display: block;
   height: 100%;
   overflow: auto;
@@ -1833,7 +1869,7 @@ button ha-icon {
     padding: 14px 16px 12px;
   }
 }
-`;var ge="";async function Ft(s){try{return await s.callWS({type:"config/label_registry/list"})??[]}catch{return[]}}function qt(s,i){let t=new Map,e=[];for(let n of s){let o=n.labels??[];if(!o.length){e.push(n);continue}for(let a of o){let d=i.find(g=>g.label_id===a),h=t.get(a);h?h.devices.push(n):t.set(a,{id:a,name:d?.name??a,icon:d?.icon,devices:[n]})}}let r=[...t.values()].sort((n,o)=>n.name.localeCompare(o.name));return e.length&&r.push({id:ge,name:"Ungrouped",devices:e}),r}async function ki(s,i){try{return await s.callWS({type:"config/label_registry/create",name:i})}catch{return null}}async function Si(s,i,t){await s.callWS({type:"config/label_registry/update",label_id:i,name:t})}async function Ai(s,i){await s.callWS({type:"config/label_registry/delete",label_id:i})}async function Ci(s,i,t){await s.callWS({type:"config/device_registry/update",device_id:i,labels:[...new Set(t)]})}async function Mi(s,i,t,e){let r=0,n=0,o=0;return await Promise.all(i.map(async a=>{let d=Ti(s,a,t);if(!d){o+=1;return}try{await e(d),r+=1}catch{n+=1}})),{done:r,failed:n,missing:o}}function Bt(s,i,t){let e=i.map(n=>Ti(s,n,t)).filter(n=>!!n),r=[...new Set(e.map(n=>s.states[n]?.state).filter(Boolean))];return{value:r.length===1?r[0]:null,mixed:r.length>1,entities:e}}function Ti(s,i,t){return q(s,i.id)?.by.get(t)?.[0]?.entity_id}var Hi=`:host {
+`;var fe="";async function Ft(s){try{return await s.callWS({type:"config/label_registry/list"})??[]}catch{return[]}}function Bt(s,i){let t=new Map,e=[];for(let n of s){let o=n.labels??[];if(!o.length){e.push(n);continue}for(let l of o){let c=i.find(g=>g.label_id===l),h=t.get(l);h?h.devices.push(n):t.set(l,{id:l,name:c?.name??l,icon:c?.icon,devices:[n]})}}let r=[...t.values()].sort((n,o)=>n.name.localeCompare(o.name));return e.length&&r.push({id:fe,name:"Ungrouped",devices:e}),r}async function Ai(s,i){try{return await s.callWS({type:"config/label_registry/create",name:i})}catch{return null}}async function Ci(s,i,t){await s.callWS({type:"config/label_registry/update",label_id:i,name:t})}async function Mi(s,i){await s.callWS({type:"config/label_registry/delete",label_id:i})}async function Hi(s,i,t){await s.callWS({type:"config/device_registry/update",device_id:i,labels:[...new Set(t)]})}async function Ti(s,i,t,e){let r=0,n=0,o=0;return await Promise.all(i.map(async l=>{let c=Ri(s,l,t);if(!c){o+=1;return}try{await e(c),r+=1}catch{n+=1}})),{done:r,failed:n,missing:o}}function Kt(s,i,t){let e=i.map(n=>Ri(s,n,t)).filter(n=>!!n),r=[...new Set(e.map(n=>s.states[n]?.state).filter(Boolean))];return{value:r.length===1?r[0]:null,mixed:r.length>1,entities:e}}function Ri(s,i,t){return F(s,i.id)?.by.get(t)?.[0]?.entity_id}var Pi=`:host {
   display: block;
   margin-bottom: 10px;
 }
@@ -1894,22 +1930,22 @@ button ha-icon {
   font-size: 0.7rem;
   opacity: 0.75;
 }
-`;var Ri="mic_mute",Pi="ring",Ei="speaker",X=class extends v{constructor(){super(...arguments);this.said=""}render(){if(!this.hass||!this.group)return p;let t=this.group.devices,e=Bt(this.hass,t,Ri),r=Bt(this.hass,t,Pi);return l`<div class="bar">
-      ${this.group.icon?l`<ha-icon .icon=${this.group.icon}></ha-icon>`:p}
+`;var Ei="mic_mute",zi="ring",Oi="speaker",X=class extends v{constructor(){super(...arguments);this.said=""}render(){if(!this.hass||!this.group)return p;let t=this.group.devices,e=Kt(this.hass,t,Ei),r=Kt(this.hass,t,zi);return a`<div class="bar">
+      ${this.group.icon?a`<ha-icon .icon=${this.group.icon}></ha-icon>`:p}
       <div class="name">${this.group.name}</div>
       <div class="count">${t.length} ${t.length===1?"device":"devices"}</div>
       <div class="spacer"></div>
-      ${this.said?l`<div class="short">${this.said}</div>`:p}
+      ${this.said?a`<div class="short">${this.said}</div>`:p}
 
-      ${e.entities.length?this.toggle("mdi:microphone-off","Mute all",e,()=>this.write(Ri,"switch",e.value==="on"?"turn_off":"turn_on")):p}
-      ${r.entities.length?this.toggle("mdi:lightbulb-outline","Ring",r,()=>this.write(Pi,"light",r.value==="on"?"turn_off":"turn_on")):p}
-      ${this.has(Ei)?l`<button title="Stop whatever is playing" @click=${()=>this.write(Ei,"media_player","media_stop")}>
+      ${e.entities.length?this.toggle("mdi:microphone-off","Mute all",e,()=>this.write(Ei,"switch",e.value==="on"?"turn_off":"turn_on")):p}
+      ${r.entities.length?this.toggle("mdi:lightbulb-outline","Ring",r,()=>this.write(zi,"light",r.value==="on"?"turn_off":"turn_on")):p}
+      ${this.has(Oi)?a`<button title="Stop whatever is playing" @click=${()=>this.write(Oi,"media_player","media_stop")}>
             <ha-icon icon="mdi:stop"></ha-icon>Stop
           </button>`:p}
-    </div>`}toggle(t,e,r,n){return l`<button data-on=${String(r.value==="on")} @click=${n}>
+    </div>`}toggle(t,e,r,n){return a`<button data-on=${String(r.value==="on")} @click=${n}>
       <ha-icon .icon=${t}></ha-icon>${e}
-      ${r.mixed?l`<span class="mixed">mixed</span>`:p}
-    </button>`}has(t){return Bt(this.hass,this.group.devices,t).entities.length>0}async write(t,e,r){let{done:n,failed:o,missing:a}=await Mi(this.hass,this.group.devices,t,h=>this.hass.callService(e,r,{entity_id:h})),d=o+a;this.said=d?`${n} of ${n+d}`:"",this.said&&setTimeout(()=>this.said="",4e3)}};X.styles=b(Hi),c([u({attribute:!1})],X.prototype,"hass",2),c([u({attribute:!1})],X.prototype,"group",2),c([m()],X.prototype,"said",2),X=c([y("echolocal-groupbar")],X);var zi=`:host {
+      ${r.mixed?a`<span class="mixed">mixed</span>`:p}
+    </button>`}has(t){return Kt(this.hass,this.group.devices,t).entities.length>0}async write(t,e,r){let{done:n,failed:o,missing:l}=await Ti(this.hass,this.group.devices,t,h=>this.hass.callService(e,r,{entity_id:h})),c=o+l;this.said=c?`${n} of ${n+c}`:"",this.said&&setTimeout(()=>this.said="",4e3)}};X.styles=b(Pi),d([u({attribute:!1})],X.prototype,"hass",2),d([u({attribute:!1})],X.prototype,"group",2),d([m()],X.prototype,"said",2),X=d([y("echolocal-groupbar")],X);var Ni=`:host {
   display: block;
 }
 
@@ -1969,25 +2005,25 @@ button ha-icon {
   max-width: 46ch;
   line-height: 1.5;
 }
-`;O({path:"",title:"Home",icon:"mdi:view-grid-outline",element:"echolocal-home",order:0});var Oi="echolocal:home:grouped",N=class extends v{constructor(){super(...arguments);this.narrow=!1;this.known=[];this.asked=!1;this.grouped=localStorage.getItem(Oi)!=="no";this.cards=new Map}updated(){this.asked||!this.hass||(this.asked=!0,this.load())}render(){if(!this.hass)return p;let t=M(this.hass);if(!t.length)return l`<div class="empty">
+`;O({path:"",title:"Home",icon:"mdi:view-grid-outline",element:"echolocal-home",order:0});var Ii="echolocal:home:grouped",N=class extends v{constructor(){super(...arguments);this.narrow=!1;this.known=[];this.asked=!1;this.grouped=localStorage.getItem(Ii)!=="no";this.cards=new Map}updated(){this.asked||!this.hass||(this.asked=!0,this.load())}render(){if(!this.hass)return p;let t=M(this.hass);if(!t.length)return a`<div class="empty">
         No EchoLocal devices yet. One appears here once Home Assistant has adopted it over the ESPHome
         integration.
-      </div>`;let e=qt(t,this.known),r=e.some(o=>o.id!==ge),n=this.grouped&&r?e:[{id:"all",name:"All devices",devices:t}];return l`
-      ${r?l`<div class="view">
+      </div>`;let e=Bt(t,this.known),r=e.some(o=>o.id!==fe),n=this.grouped&&r?e:[{id:"all",name:"All devices",devices:t}];return a`
+      ${r?a`<div class="view">
             <div class="pair">
               ${this.button(!0,"mdi:group","Grouped")}${this.button(!1,"mdi:view-grid-outline","All")}
             </div>
           </div>`:p}
       ${n.map(o=>this.group(o))}
-    `}button(t,e,r){return l`<button
+    `}button(t,e,r){return a`<button
       data-on=${String(this.grouped===t)}
-      @click=${()=>{this.grouped=t,localStorage.setItem(Oi,t?"yes":"no")}}
+      @click=${()=>{this.grouped=t,localStorage.setItem(Ii,t?"yes":"no")}}
     >
       <ha-icon .icon=${e}></ha-icon>${r}
-    </button>`}group(t){return l`<div class="group">
+    </button>`}group(t){return a`<div class="group">
       <echolocal-groupbar .hass=${this.hass} .group=${t}></echolocal-groupbar>
       <div class="grid">${t.devices.map(e=>this.card(t.id,e.id))}</div>
-    </div>`}card(t,e){let r=`${t}/${e}`,n=this.cards.get(r);return n||(n=document.createElement("echolocal-satellite-card"),n.setConfig({device_id:e}),this.cards.set(r,n)),n.hass=this.hass,n}async load(){this.known=await Ft(this.hass)}};N.styles=b(zi),c([u({attribute:!1})],N.prototype,"hass",2),c([u({type:Boolean})],N.prototype,"narrow",2),c([m()],N.prototype,"known",2),c([m()],N.prototype,"asked",2),c([m()],N.prototype,"grouped",2),N=c([y("echolocal-home")],N);var Ni=`:host {
+    </div>`}card(t,e){let r=`${t}/${e}`,n=this.cards.get(r);return n||(n=document.createElement("echolocal-satellite-card"),n.setConfig({device_id:e}),this.cards.set(r,n)),n.hass=this.hass,n}async load(){this.known=await Ft(this.hass)}};N.styles=b(Ni),d([u({attribute:!1})],N.prototype,"hass",2),d([u({type:Boolean})],N.prototype,"narrow",2),d([m()],N.prototype,"known",2),d([m()],N.prototype,"asked",2),d([m()],N.prototype,"grouped",2),N=d([y("echolocal-home")],N);var Ui=`:host {
   display: block;
 }
 
@@ -2061,7 +2097,7 @@ td.who {
   max-width: 52ch;
   line-height: 1.5;
 }
-`;O({path:"groups",title:"Groups",icon:"mdi:group",element:"echolocal-groups",order:30,admin:!0});var I=class extends v{constructor(){super(...arguments);this.known=[];this.asked=!1;this.naming="";this.busy=!1}connectedCallback(){super.connectedCallback(),this.hass?.connection?.subscribeEvents(()=>this.load(),"label_registry_updated").then(t=>this.stop=t).catch(()=>{})}disconnectedCallback(){super.disconnectedCallback(),this.stop?.()}updated(){this.asked||!this.hass||(this.asked=!0,this.load())}render(){if(!this.hass)return p;let t=M(this.hass),e=this.known;return l`
+`;O({path:"groups",title:"Groups",icon:"mdi:group",element:"echolocal-groups",order:30,admin:!0});var I=class extends v{constructor(){super(...arguments);this.known=[];this.asked=!1;this.naming="";this.busy=!1}connectedCallback(){super.connectedCallback(),this.hass?.connection?.subscribeEvents(()=>this.load(),"label_registry_updated").then(t=>this.stop=t).catch(()=>{})}disconnectedCallback(){super.disconnectedCallback(),this.stop?.()}updated(){this.asked||!this.hass||(this.asked=!0,this.load())}render(){if(!this.hass)return p;let t=M(this.hass),e=this.known;return a`
       <div class="make">
         <ha-input
           class="new"
@@ -2079,7 +2115,7 @@ td.who {
         </ha-button>
       </div>
 
-      ${t.length?l`<table>
+      ${t.length?a`<table>
             <thead>
               <tr>
                 <th class="who">Device</th>
@@ -2089,10 +2125,10 @@ td.who {
             <tbody>
               ${t.map(r=>this.row(r,e))}
             </tbody>
-          </table>`:l`<div class="none">
+          </table>`:a`<div class="none">
             No EchoLocal devices yet, so there is nothing to group.
           </div>`}
-    `}head(t){let e=qt(M(this.hass),this.known).find(r=>r.id===t.label_id)?.devices.length;return l`<th>
+    `}head(t){let e=Bt(M(this.hass),this.known).find(r=>r.id===t.label_id)?.devices.length;return a`<th>
       <div class="label">
         <ha-input
           .value=${t.name}
@@ -2106,16 +2142,16 @@ td.who {
           <ha-icon icon="mdi:close"></ha-icon>
         </ha-icon-button>
       </div>
-    </th>`}row(t,e){let r=t.labels??[];return l`<tr>
-      <td class="who">${_(t)}</td>
-      ${e.map(n=>l`<td>
+    </th>`}row(t,e){let r=t.labels??[];return a`<tr>
+      <td class="who">${S(t)}</td>
+      ${e.map(n=>a`<td>
           <ha-checkbox
-            aria-label="${_(t)} in ${n.name}"
+            aria-label="${S(t)} in ${n.name}"
             .checked=${r.includes(n.label_id)}
             @change=${o=>this.set(t,n.label_id,o.target.checked)}
           ></ha-checkbox>
         </td>`)}
-    </tr>`}async make(){let t=this.naming.trim();if(!t||this.busy)return;this.busy=!0,this.naming="";let e=await ki(this.hass,t);e&&(this.known=[...this.known,e].sort((r,n)=>r.name.localeCompare(n.name))),this.busy=!1,e||await this.load()}async rename(t,e){!e.trim()||e===t.name||(this.known=this.known.map(r=>r.label_id===t.label_id?{...r,name:e.trim()}:r),await Si(this.hass,t.label_id,e.trim()))}async discard(t){this.known=this.known.filter(e=>e.label_id!==t.label_id),await Ai(this.hass,t.label_id)}async set(t,e,r){let n=new Set(t.labels??[]);r?n.add(e):n.delete(e),await Ci(this.hass,t.id,[...n])}async load(){this.known=await Ft(this.hass)}};I.styles=b(Ni),c([u({attribute:!1})],I.prototype,"hass",2),c([m()],I.prototype,"known",2),c([m()],I.prototype,"asked",2),c([m()],I.prototype,"naming",2),c([m()],I.prototype,"busy",2),I=c([y("echolocal-groups")],I);var Ii=`:host {
+    </tr>`}async make(){let t=this.naming.trim();if(!t||this.busy)return;this.busy=!0,this.naming="";let e=await Ai(this.hass,t);e&&(this.known=[...this.known,e].sort((r,n)=>r.name.localeCompare(n.name))),this.busy=!1,e||await this.load()}async rename(t,e){!e.trim()||e===t.name||(this.known=this.known.map(r=>r.label_id===t.label_id?{...r,name:e.trim()}:r),await Ci(this.hass,t.label_id,e.trim()))}async discard(t){this.known=this.known.filter(e=>e.label_id!==t.label_id),await Mi(this.hass,t.label_id)}async set(t,e,r){let n=new Set(t.labels??[]);r?n.add(e):n.delete(e),await Hi(this.hass,t.id,[...n])}async load(){this.known=await Ft(this.hass)}};I.styles=b(Ui),d([u({attribute:!1})],I.prototype,"hass",2),d([m()],I.prototype,"known",2),d([m()],I.prototype,"asked",2),d([m()],I.prototype,"naming",2),d([m()],I.prototype,"busy",2),I=d([y("echolocal-groups")],I);var Di=`:host {
   display: block;
 }
 
@@ -2248,10 +2284,10 @@ td.who {
   height: 9px;
   border-radius: 2px;
 }
-`;O({path:"activity",title:"Activity",icon:"mdi:timeline-text-outline",element:"echolocal-activity",order:20});var is=60,B=class extends v{constructor(){super(...arguments);this.seen=[];this.only="";this.asked=!1}updated(){this.asked||!this.hass||(this.asked=!0,this.listen())}disconnectedCallback(){super.disconnectedCallback(),this.stop?.()}render(){if(!this.hass)return p;let t=this.names(),e=this.only?this.seen.filter(n=>n.turn.mac===this.only):this.seen,r=Math.max(1,...e.map(n=>nt(n.turn)));return l`
-      ${this.seen.length>0&&Object.keys(t).length>1?l`<div class="filters">
+`;O({path:"activity",title:"Activity",icon:"mdi:timeline-text-outline",element:"echolocal-activity",order:20});var ns=60,B=class extends v{constructor(){super(...arguments);this.seen=[];this.only="";this.asked=!1}updated(){this.asked||!this.hass||(this.asked=!0,this.listen())}disconnectedCallback(){super.disconnectedCallback(),this.stop?.()}render(){if(!this.hass)return p;let t=this.names(),e=this.only?this.seen.filter(n=>n.turn.mac===this.only):this.seen,r=Math.max(1,...e.map(n=>ot(n.turn)));return a`
+      ${this.seen.length>0&&Object.keys(t).length>1?a`<div class="filters">
             <button data-on=${String(!this.only)} @click=${()=>this.only=""}>Everything</button>
-            ${[...new Set(this.seen.map(n=>n.turn.mac))].map(n=>l`<button
+            ${[...new Set(this.seen.map(n=>n.turn.mac))].map(n=>a`<button
                 data-on=${String(this.only===n)}
                 @click=${()=>this.only=n}
               >
@@ -2259,39 +2295,39 @@ td.who {
               </button>`)}
           </div>`:p}
 
-      ${e.length?l`<div class="legend">
-              ${[["wake_ms","Wake"],["listen_ms","Listen"],["think_ms","Think"],["speak_ms","Reply"]].map(([n,o])=>l`<span class="key"
+      ${e.length?a`<div class="legend">
+              ${[["wake_ms","Wake"],["listen_ms","Listen"],["think_ms","Think"],["speak_ms","Reply"]].map(([n,o])=>a`<span class="key"
                   ><span class="dot slice" data-phase=${n}></span>${o}</span
                 >`)}
             </div>
-            <div class="turns">${e.map(n=>this.row(n,t,r))}</div>`:l`<div class="none">
+            <div class="turns">${e.map(n=>this.row(n,t,r))}</div>`:a`<div class="none">
             Nothing yet. Turns appear here as they happen, across every device — the timings come from the
             device rather than from the recorder, so there is no past to load.
           </div>`}
-    `}row(t,e,r){let n=yt(t.turn),o=nt(t.turn),a=t.turn.outcome!=="completed",d=e[t.turn.mac]??"elsewhere";return l`<div class="turn">
-      <div class="when">${ss(t.at)}</div>
-      <div class="who">${d}</div>
+    `}row(t,e,r){let n=yt(t.turn),o=ot(t.turn),l=t.turn.outcome!=="completed",c=e[t.turn.mac]??"elsewhere";return a`<div class="turn">
+      <div class="when">${as(t.at)}</div>
+      <div class="who">${c}</div>
       <div class="said">${t.turn.heard||t.turn.wake_word}</div>
       <div class="right">
-        <div class="took" data-bad=${String(a)}>
-          ${a?t.turn.outcome:`${(o/1e3).toFixed(1)}s`}
+        <div class="took" data-bad=${String(l)}>
+          ${l?t.turn.outcome:`${(o/1e3).toFixed(1)}s`}
         </div>
-        ${t.turn.audio_seconds?l`<echolocal-recording
+        ${t.turn.audio_seconds?a`<echolocal-recording
               .hass=${this.hass}
-              .device=${d}
+              .device=${c}
               .turn=${t.turn.id}
-              .filename=${rs(t,d)}
+              .filename=${os(t,c)}
             ></echolocal-recording>`:p}
       </div>
-      ${n.length?l`<div class="bar">
-            ${n.map(h=>l`<div
+      ${n.length?a`<div class="bar">
+            ${n.map(h=>a`<div
                 class="slice"
                 data-phase=${h.key}
                 title=${`${h.label} ${h.ms} ms`}
                 style=${`flex:0 0 ${h.ms/r*100}%`}
               ></div>`)}
           </div>`:p}
-    </div>`}names(){let t={};for(let e of M(this.hass)){let r=e.connections?.find(([n])=>n==="mac")?.[1];r&&(t[r.toLowerCase()]=_(e))}return t}async listen(){if(this.hass.connection)try{this.stop=await this.hass.connection.subscribeEvents(t=>{let e=Ot(t.data);e&&(this.seen=[{at:Date.now(),turn:e},...this.seen].slice(0,is))},zt)}catch{}}};B.styles=b(Ii),c([u({attribute:!1})],B.prototype,"hass",2),c([m()],B.prototype,"seen",2),c([m()],B.prototype,"only",2),c([m()],B.prototype,"asked",2),B=c([y("echolocal-activity")],B);function rs(s,i){let t=new Date(s.at).toISOString().replace(/[:.]/g,"-").slice(0,19),e=r=>r.toLowerCase().replace(/[^a-z0-9]+/g,"-");return`${t}-${e(i)}-${e(s.turn.wake_word)}.wav`}function ss(s){return new Date(s).toLocaleTimeString(void 0,{hour:"2-digit",minute:"2-digit"})}var Ui=`:host {
+    </div>`}names(){let t={};for(let e of M(this.hass)){let r=e.connections?.find(([n])=>n==="mac")?.[1];r&&(t[r.toLowerCase()]=S(e))}return t}async listen(){if(this.hass.connection)try{this.stop=await this.hass.connection.subscribeEvents(t=>{let e=Ot(t.data);e&&(this.seen=[{at:Date.now(),turn:e},...this.seen].slice(0,ns))},zt)}catch{}}};B.styles=b(Di),d([u({attribute:!1})],B.prototype,"hass",2),d([m()],B.prototype,"seen",2),d([m()],B.prototype,"only",2),d([m()],B.prototype,"asked",2),B=d([y("echolocal-activity")],B);function os(s,i){let t=new Date(s.at).toISOString().replace(/[:.]/g,"-").slice(0,19),e=r=>r.toLowerCase().replace(/[^a-z0-9]+/g,"-");return`${t}-${e(i)}-${e(s.turn.wake_word)}.wav`}function as(s){return new Date(s).toLocaleTimeString(void 0,{hour:"2-digit",minute:"2-digit"})}var Wi=`:host {
   display: block;
 }
 
@@ -2374,28 +2410,28 @@ tr[data-off="true"] td {
 .none {
   color: var(--secondary-text-color);
 }
-`;O({path:"health",title:"Health",icon:"mdi:heart-pulse",element:"echolocal-health",order:40});var fe=[{title:"Version",match:/_(?:current_version|installed_version)$/},{title:"Update",match:/^update\./,show:s=>s==="on"?"waiting":s==="off"?"current":s,wrong:s=>s==="on"?"warn":void 0},{title:"Wifi",match:/_wifi_signal$/,show:(s,i)=>`${Math.round(Number(s))} ${i||"dBm"}`,wrong:s=>Number(s)<-80?"bad":Number(s)<-70?"warn":void 0},{title:"CPU",match:/_cpu_temperature$/,show:(s,i)=>`${Math.round(Number(s))}${i||"\xB0C"}`,wrong:s=>Number(s)>80?"bad":Number(s)>70?"warn":void 0},{title:"Load",match:/_load_average$/,show:s=>Number(s).toFixed(2)},{title:"Memory",match:/_memory_available$/,show:(s,i)=>`${Math.round(Number(s))} ${i||"MB"}`,wrong:s=>Number(s)<40?"bad":Number(s)<80?"warn":void 0},{title:"Disk",match:/_free_space$/,show:(s,i)=>`${Math.round(Number(s))} ${i||"MB"}`,wrong:s=>Number(s)<50?"bad":Number(s)<150?"warn":void 0},{title:"Address",match:/_ip_address$/}],Z=class extends v{constructor(){super(...arguments);this.by="";this.down=!1}render(){if(!this.hass)return p;let t=M(this.hass);if(!t.length)return l`<div class="none">No EchoLocal devices yet.</div>`;let e=t.map(n=>this.read(n)),r=this.sort(e);return l`<div class="scroll">
+`;O({path:"health",title:"Health",icon:"mdi:heart-pulse",element:"echolocal-health",order:40});function ve(s){let i=Number(s.state);return s.attributes.unit_of_measurement==="\xB0F"?(i-32)*5/9:i}var be=[{title:"Version",name:"firmware",show:s=>String(s.attributes.installed_version??"\u2014"),sort:s=>String(s.attributes.installed_version??"")},{title:"Update",name:"firmware",show:s=>s.state==="on"?"waiting":s.state==="off"?"current":s.state,wrong:s=>s.state==="on"?"warn":void 0,sort:s=>s.state},{title:"Wifi",name:"wifi_signal",show:s=>`${Math.round(Number(s.state))} ${s.attributes.unit_of_measurement||"dBm"}`,wrong:s=>Number(s.state)<-80?"bad":Number(s.state)<-70?"warn":void 0},{title:"CPU",name:"cpu_temperature",show:s=>`${Math.round(Number(s.state))}${s.attributes.unit_of_measurement||"\xB0C"}`,wrong:s=>ve(s)>85?"bad":ve(s)>70?"warn":void 0,sort:ve},{title:"Load",name:"load_average",show:s=>Number(s.state).toFixed(2)},{title:"Memory",name:"memory_available",show:s=>`${Math.round(Number(s.state))} ${s.attributes.unit_of_measurement||"MB"}`,wrong:s=>Number(s.state)<40?"bad":Number(s.state)<80?"warn":void 0},{title:"Disk",name:"free_space",show:s=>`${Math.round(Number(s.state))} ${s.attributes.unit_of_measurement||"MB"}`,wrong:s=>Number(s.state)<50?"bad":Number(s.state)<150?"warn":void 0},{title:"Address",name:"ip_address",show:s=>s.state.split(", ")[0]??s.state}],Z=class extends v{constructor(){super(...arguments);this.by="";this.down=!1}render(){if(!this.hass)return p;let t=M(this.hass);if(!t.length)return a`<div class="none">No EchoLocal devices yet.</div>`;let e=t.map(n=>this.read(n)),r=this.sort(e);return a`<div class="scroll">
       <table>
         <thead>
           <tr>
-            ${this.head("Device")}${fe.map(n=>this.head(n.title))}
+            ${this.head("Device")}${be.map(n=>this.head(n.title))}
           </tr>
         </thead>
         <tbody>
-          ${r.map(n=>l`<tr data-off=${String(!n.up)}>
+          ${r.map(n=>a`<tr data-off=${String(!n.up)}>
               <td class="who">
                 <button @click=${()=>this.open(n.device)}>${n.name}</button>
               </td>
-              ${fe.map(o=>{let a=n.cells[o.title];return l`<td data-wrong=${a?.wrong??""}>${a?.text??"\u2014"}</td>`})}
+              ${be.map(o=>{let l=n.cells[o.title];return a`<td data-wrong=${l?.wrong??""}>${l?.text??"\u2014"}</td>`})}
             </tr>`)}
         </tbody>
       </table>
-    </div>`}head(t){return l`<th
+    </div>`}head(t){return a`<th
       data-by=${String(this.by===t)}
       @click=${()=>{this.down=this.by===t?!this.down:!1,this.by=t}}
     >
       ${t}
-    </th>`}read(t){let r=(q(this.hass,t.id)?.entities??[]).map(a=>a.entity_id),n={},o=!1;for(let a of fe){let d=r.find($=>a.match.test($)),h=d?this.hass.states[d]:void 0;if(!h)continue;let g=h.state;if(g==="unavailable"||g==="unknown")continue;o=!0;let f=h.attributes.unit_of_measurement??"",w=Number(g);n[a.title]={text:a.show?a.show(g,f):f?`${g} ${f}`:g,sort:Number.isFinite(w)&&g!==""?w:g,wrong:a.wrong?.(Number.isFinite(w)?w:g)}}return{device:t,name:_(t),cells:n,up:o}}sort(t){if(!this.by)return t;let e=r=>this.by==="Device"?r.name:r.cells[this.by]?.sort??"";return[...t].sort((r,n)=>{let o=e(r),a=e(n),d=typeof o=="number"&&typeof a=="number"?o-a:String(o).localeCompare(String(a));return this.down?-d:d})}open(t){history.pushState(null,"",`/config/devices/device/${t.id}`),window.dispatchEvent(new CustomEvent("location-changed",{detail:{replace:!1}}))}};Z.styles=b(Ui),c([u({attribute:!1})],Z.prototype,"hass",2),c([m()],Z.prototype,"by",2),c([m()],Z.prototype,"down",2),Z=c([y("echolocal-health")],Z);var Di=`:host {
+    </th>`}read(t){let e=F(this.hass,t.id),r={},n=!1;for(let o of be){let l=e?.by.get(o.name)?.[0]?.entity_id,c=l?this.hass.states[l]:void 0;if(!c||c.state==="unavailable"||c.state==="unknown")continue;n=!0;let h=Number(c.state),g=c.attributes.unit_of_measurement??"";r[o.title]={text:o.show?o.show(c):g?`${c.state} ${g}`:c.state,sort:o.sort?o.sort(c):Number.isFinite(h)&&c.state!==""?h:c.state,wrong:o.wrong?.(c)}}return{device:t,name:S(t),cells:r,up:n}}sort(t){if(!this.by)return t;let e=r=>this.by==="Device"?r.name:r.cells[this.by]?.sort??"";return[...t].sort((r,n)=>{let o=e(r),l=e(n),c=typeof o=="number"&&typeof l=="number"?o-l:String(o).localeCompare(String(l));return this.down?-c:c})}open(t){history.pushState(null,"",`/config/devices/device/${t.id}`),window.dispatchEvent(new CustomEvent("location-changed",{detail:{replace:!1}}))}};Z.styles=b(Wi),d([u({attribute:!1})],Z.prototype,"hass",2),d([m()],Z.prototype,"by",2),d([m()],Z.prototype,"down",2),Z=d([y("echolocal-health")],Z);var ji=`:host {
   display: block;
 }
 
@@ -2534,7 +2570,7 @@ button.icon ha-icon {
 input[type="file"] {
   display: none;
 }
-`;async function ve(s){try{return(await s.callWS({type:"echolocal/wake_words/list"}))?.wake_words??[]}catch{return[]}}var z=class extends v{constructor(){super(...arguments);this.words=[];this.over=!1;this.busy=!1;this.said="";this.asked=!1;this.dropped=t=>{t.preventDefault(),this.over=!1,this.add(t.dataTransfer?.files??null)}}updated(){this.asked||!this.hass||(this.asked=!0,this.refresh())}render(){return l`
+`;async function ye(s){try{return(await s.callWS({type:"echolocal/wake_words/list"}))?.wake_words??[]}catch{return[]}}var z=class extends v{constructor(){super(...arguments);this.words=[];this.over=!1;this.busy=!1;this.said="";this.asked=!1;this.dropped=t=>{t.preventDefault(),this.over=!1,this.add(t.dataTransfer?.files??null)}}updated(){this.asked||!this.hass||(this.asked=!0,this.refresh())}render(){return a`
       <div
         class="zone"
         data-over=${String(this.over)}
@@ -2543,7 +2579,7 @@ input[type="file"] {
         @dragleave=${()=>this.over=!1}
         @drop=${this.dropped}
       >
-        ${this.busy?l`<ha-spinner></ha-spinner>`:l`<ha-icon icon="mdi:tray-arrow-up"></ha-icon>`}
+        ${this.busy?a`<ha-spinner></ha-spinner>`:a`<ha-icon icon="mdi:tray-arrow-up"></ha-icon>`}
         <div>
           <div class="lead">${this.busy?"Adding\u2026":"Drop a .tflite wake model here"}</div>
           <div class="sub">
@@ -2558,10 +2594,10 @@ input[type="file"] {
         />
       </div>
 
-      ${this.words.length?l`<div class="list">${this.words.map(t=>this.row(t))}</div>`:l`<div class="none">
+      ${this.words.length?a`<div class="list">${this.words.map(t=>this.row(t))}</div>`:a`<div class="none">
             Nothing in custom_wake_words yet. Whatever the firmware ships with is unaffected.
           </div>`}
-    `}row(t){let e=[t.type||"no type",t.size?`${Math.round(t.size/1024)} KB`:"no model",...t.trained_languages.length?[t.trained_languages.join(", ")]:[]];return l`<div class="word" data-bad=${String(t.problems.length>0)}>
+    `}row(t){let e=[t.type||"no type",t.size?`${Math.round(t.size/1024)} KB`:"no model",...t.trained_languages.length?[t.trained_languages.join(", ")]:[]];return a`<div class="word" data-bad=${String(t.problems.length>0)}>
       <div class="said">
         <ha-input
           .value=${t.wake_word}
@@ -2575,8 +2611,8 @@ input[type="file"] {
           <ha-icon icon="mdi:trash-can-outline"></ha-icon>
         </ha-icon-button>
       </div>
-      ${t.problems.length?l`<div class="wrong">${t.problems.join(". ")}.</div>`:p}
-    </div>`}async add(t){let e=[...t??[]].filter(r=>r.name.endsWith(".tflite"));if(!e.length){this.said="A wake model is a .tflite file.";return}this.busy=!0,this.said="";for(let r of e){let n=new FormData;n.append("file",r);try{let o=await fetch("/api/echolocal/wake_words",{method:"POST",body:n,headers:this.credentials()});if(!o.ok){let a=await o.json().catch(()=>({}));this.said=a.error??`Home Assistant refused ${r.name}.`;break}}catch(o){this.said=`That did not reach Home Assistant: ${o}`;break}}this.busy=!1,await this.refresh()}async rename(t,e){e!==t.wake_word&&(await this.hass.callWS({type:"echolocal/wake_words/update",wake_word_id:t.id,wake_word:e}),await this.refresh())}async discard(t){await this.hass.callWS({type:"echolocal/wake_words/delete",wake_word_id:t.id}),await this.refresh()}async refresh(){this.words=await ve(this.hass)}credentials(){let t=this.hass.auth?.data?.access_token;return t?{authorization:`Bearer ${t}`}:{}}};z.styles=b(Di),c([u({attribute:!1})],z.prototype,"hass",2),c([m()],z.prototype,"words",2),c([m()],z.prototype,"over",2),c([m()],z.prototype,"busy",2),c([m()],z.prototype,"said",2),c([m()],z.prototype,"asked",2),z=c([y("echolocal-wake-words")],z);var Wi=`:host {
+      ${t.problems.length?a`<div class="wrong">${t.problems.join(". ")}.</div>`:p}
+    </div>`}async add(t){let e=[...t??[]].filter(r=>r.name.endsWith(".tflite"));if(!e.length){this.said="A wake model is a .tflite file.";return}this.busy=!0,this.said="";for(let r of e){let n=new FormData;n.append("file",r);try{let o=await fetch("/api/echolocal/wake_words",{method:"POST",body:n,headers:this.credentials()});if(!o.ok){let l=await o.json().catch(()=>({}));this.said=l.error??`Home Assistant refused ${r.name}.`;break}}catch(o){this.said=`That did not reach Home Assistant: ${o}`;break}}this.busy=!1,await this.refresh()}async rename(t,e){e!==t.wake_word&&(await this.hass.callWS({type:"echolocal/wake_words/update",wake_word_id:t.id,wake_word:e}),await this.refresh())}async discard(t){await this.hass.callWS({type:"echolocal/wake_words/delete",wake_word_id:t.id}),await this.refresh()}async refresh(){this.words=await ye(this.hass)}credentials(){let t=this.hass.auth?.data?.access_token;return t?{authorization:`Bearer ${t}`}:{}}};z.styles=b(ji),d([u({attribute:!1})],z.prototype,"hass",2),d([m()],z.prototype,"words",2),d([m()],z.prototype,"over",2),d([m()],z.prototype,"busy",2),d([m()],z.prototype,"said",2),d([m()],z.prototype,"asked",2),z=d([y("echolocal-wake-words")],z);var qi=`:host {
   display: block;
 }
 
@@ -2632,35 +2668,35 @@ h2 {
   color: var(--secondary-text-color);
   line-height: 1.5;
 }
-`;O({path:"wake-words",title:"Wake words",icon:"mdi:waveform",element:"echolocal-words",order:10,admin:!0});var J=class extends v{constructor(){super(...arguments);this.words=[];this.asked=!1;this.again=()=>this.requestUpdate()}connectedCallback(){super.connectedCallback(),window.addEventListener(Dt,this.again)}disconnectedCallback(){super.disconnectedCallback(),window.removeEventListener(Dt,this.again)}updated(){this.asked||!this.hass||(this.asked=!0,this.load())}render(){if(!this.hass)return p;let t=this.chosen(),e=new Set(this.words.filter(n=>n.problems.length&&n.wake_word).map(n=>n.wake_word)),r=this.words.filter(n=>!n.problems.length&&!t.some(o=>o.words.includes(n.wake_word)));return l`
+`;O({path:"wake-words",title:"Wake words",icon:"mdi:waveform",element:"echolocal-words",order:10,admin:!0});var J=class extends v{constructor(){super(...arguments);this.words=[];this.asked=!1;this.again=()=>this.requestUpdate()}connectedCallback(){super.connectedCallback(),window.addEventListener(Wt,this.again)}disconnectedCallback(){super.disconnectedCallback(),window.removeEventListener(Wt,this.again)}updated(){this.asked||!this.hass||(this.asked=!0,this.load())}render(){if(!this.hass)return p;let t=this.chosen(),e=new Set(this.words.filter(n=>n.problems.length&&n.wake_word).map(n=>n.wake_word)),r=this.words.filter(n=>!n.problems.length&&!t.some(o=>o.words.includes(n.wake_word)));return a`
       <h2 class="first">Listening for</h2>
-      ${t.length?l`<div class="listening">
-            ${t.map(n=>l`<div class="who">
+      ${t.length?a`<div class="listening">
+            ${t.map(n=>a`<div class="who">
                 <span class="name">${n.name}</span>
-                ${n.words.map(o=>l`<span
+                ${n.words.map(o=>a`<span
                       class="word"
                       data-gone=${String(e.has(o))}
                       title=${e.has(o)?"Its library entry is broken, so it is not offered":""}
                       >${o}</span
                     >`)}
               </div>`)}
-          </div>`:l`<div class="spare">No devices have picked a wake word yet.</div>`}
+          </div>`:a`<div class="spare">No devices have picked a wake word yet.</div>`}
 
       <h2>The library</h2>
       <echolocal-wake-words .hass=${this.hass}></echolocal-wake-words>
 
-      ${r.length?l`<div class="spare">
+      ${r.length?a`<div class="spare">
             Unused: ${r.map(n=>n.wake_word).join(", ")} — offered to every satellite, picked
             by none of them.
           </div>`:p}
-    `}chosen(){return M(this.hass).map(t=>{let r=(q(this.hass,t.id)?.by.get("wake_word")??[]).map(n=>this.hass.states[n.entity_id]?.state).filter(n=>!!n&&n!=="unknown"&&n!=="None");return{name:_(t),words:r}}).filter(t=>t.words.length)}async load(){this.words=await ve(this.hass)}};J.styles=b(Wi),c([u({attribute:!1})],J.prototype,"hass",2),c([m()],J.prototype,"words",2),c([m()],J.prototype,"asked",2),J=c([y("echolocal-words")],J);var U=class extends v{constructor(){super(...arguments);this.narrow=!1;this.at="";this.made=new Map;this.moved=()=>{this.at=me(this.base(),void 0),this.requestUpdate()}}connectedCallback(){super.connectedCallback(),window.addEventListener("location-changed",this.moved),window.addEventListener("popstate",this.moved)}disconnectedCallback(){super.disconnectedCallback(),window.removeEventListener("location-changed",this.moved),window.removeEventListener("popstate",this.moved)}render(){if(!this.hass)return p;let t=!!this.hass.user?.is_admin,e=ue(t),r=xi(this.where(),t);return l`
+    `}chosen(){return M(this.hass).map(t=>{let r=(F(this.hass,t.id)?.by.get("wake_word")??[]).map(n=>this.hass.states[n.entity_id]?.state).filter(n=>n!=="no_wake_word").filter(n=>!!n&&n!=="unknown"&&n!=="None");return{name:S(t),words:r}}).filter(t=>t.words.length)}async load(){this.words=await ye(this.hass)}};J.styles=b(qi),d([u({attribute:!1})],J.prototype,"hass",2),d([m()],J.prototype,"words",2),d([m()],J.prototype,"asked",2),J=d([y("echolocal-words")],J);var U=class extends v{constructor(){super(...arguments);this.narrow=!1;this.at="";this.made=new Map;this.moved=()=>{this.at=ge(this.base(),void 0),this.requestUpdate()}}connectedCallback(){super.connectedCallback(),window.addEventListener("location-changed",this.moved),window.addEventListener("popstate",this.moved)}disconnectedCallback(){super.disconnectedCallback(),window.removeEventListener("location-changed",this.moved),window.removeEventListener("popstate",this.moved)}render(){if(!this.hass)return p;let t=!!this.hass.user?.is_admin,e=me(t),r=_i(this.where(),t);return a`
       <header>
         <div class="bar">${e.map(n=>this.button(n,n===r))}</div>
       </header>
       <div class="page">${r?this.body(r):p}</div>
-    `}button(t,e){return l`<button
+    `}button(t,e){return a`<button
       data-here=${String(e)}
-      @click=${()=>{this.at=t.path,$i(this.base(),t.path)}}
+      @click=${()=>{this.at=t.path,ki(this.base(),t.path)}}
     >
       <ha-icon .icon=${t.icon}></ha-icon><span>${t.title}</span>
-    </button>`}body(t){let e=this.made.get(t.path);return e||(e=document.createElement(t.element),this.made.set(t.path,e)),e.hass=this.hass,e.narrow=this.narrow,e}where(){return this.route?me(this.base(),this.route.path):this.at}base(){return this.route?.prefix??"/echolocal"}};U.styles=b(_i),c([u({attribute:!1})],U.prototype,"hass",2),c([u({type:Boolean})],U.prototype,"narrow",2),c([u({attribute:!1})],U.prototype,"route",2),c([u({attribute:!1})],U.prototype,"panel",2),c([m()],U.prototype,"at",2),U=c([y("echolocal-panel")],U);window.customCards=window.customCards??[];window.customCards.some(s=>s.type==="echolocal-satellite-card")||window.customCards.push({type:"echolocal-satellite-card",name:"EchoLocal Satellite",description:"An EchoLocal satellite, drawn as itself, with its ring and mute live.",preview:!0,documentationURL:"https://github.com/ygelfand/echolocal-hacs"});
+    </button>`}body(t){let e=this.made.get(t.path);return e||(e=document.createElement(t.element),this.made.set(t.path,e)),e.hass=this.hass,e.narrow=this.narrow,e}where(){return this.route?ge(this.base(),this.route.path):this.at}base(){return this.route?.prefix??"/echolocal"}};U.styles=b(Si),d([u({attribute:!1})],U.prototype,"hass",2),d([u({type:Boolean})],U.prototype,"narrow",2),d([u({attribute:!1})],U.prototype,"route",2),d([u({attribute:!1})],U.prototype,"panel",2),d([m()],U.prototype,"at",2),U=d([y("echolocal-panel")],U);window.customCards=window.customCards??[];window.customCards.some(s=>s.type==="echolocal-satellite-card")||window.customCards.push({type:"echolocal-satellite-card",name:"EchoLocal Satellite",description:"An EchoLocal satellite, drawn as itself, with its ring and mute live.",preview:!0,documentationURL:"https://github.com/ygelfand/echolocal-hacs"});

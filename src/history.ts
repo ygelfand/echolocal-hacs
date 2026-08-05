@@ -45,8 +45,9 @@ export class EchoLocalHistory extends LitElement {
   @property() heard = "";
   @property() reply = "";
 
-  // The device's own name, which the action to fetch a recording is named after. When the device does not
-  // offer that action there is nothing to play, and the buttons stay away.
+  // What the device calls itself, which the action to fetch a recording is named after — not what anybody
+  // renamed it to. When the device does not offer that action there is nothing to play, and the buttons
+  // stay away.
   @property() device = "";
 
   @state() private recorded: Row[] = [];

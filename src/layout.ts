@@ -138,13 +138,6 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
       ],
     },
     {
-      title: "The room",
-      rows: [
-        ["room_level", "Room level"],
-        ["room_floor", "Room floor"],
-      ],
-    },
-    {
       title: "Updates",
       rows: [
         ["update_status", "Update status"],
@@ -180,6 +173,15 @@ const WIDGETS: Partial<Record<Kind, Spec[]>> = {
     { widget: "player", place: "header", roles: { player: "speaker" } },
     { widget: "volume", roles: { player: "speaker" }, lists: { jack: "headphones" } },
     { widget: "noise", roles: { first: "noise_layer" }, lists: { layers: "noise_layer" } },
+  ],
+
+  // The three last-heard sensors are one history between them, and none of them is a diagnostic reading,
+  // which is why this is its own popup rather than a corner of that one.
+  activity: [
+    {
+      widget: "history",
+      roles: { wake: "last_wake_word", heard: "last_heard", reply: "last_reply" },
+    },
   ],
 
   microphone: [
@@ -301,31 +303,11 @@ export function settings(state: Satellite): Section[] {
   );
 }
 
-// Grouped by subject across the whole device, not by which sub-device a reading hangs off. The three
-// last-heard sensors become one history, whose first row is what they each show anyway.
+// Grouped by subject across the whole device, not by which sub-device a reading hangs off.
 export function diagnostics(state: Satellite): Composed {
   const mine = state.entities.filter((e) => e.entity_category === "diagnostic");
 
-  const by = index(mine);
-  const roles: Record<string, string> = {};
-
-  for (const [role, name] of Object.entries({
-    wake: "last_wake_word",
-    heard: "last_heard",
-    reply: "last_reply",
-  })) {
-    const found = by.get(name)?.[0];
-    if (found) roles[role] = found.entity_id;
-  }
-
-  const widgets: Widget[] = roles.wake
-    ? [{ widget: "history", place: "body", roles, lists: {} }]
-    : [];
-
-  return {
-    widgets,
-    sections: withRest(LAYOUTS.diagnostics ?? [], mine, new Set(Object.values(roles))),
-  };
+  return { widgets: [], sections: withRest(LAYOUTS.diagnostics ?? [], mine, new Set()) };
 }
 
 // Home Assistant numbers its own pair wake_word and wake_word_2, so the first assistant's is slot 0 where
