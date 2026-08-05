@@ -41,131 +41,137 @@
   color: var(--secondary-text-color);
 }
 
-.list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 10px;
+.scroll {
+  overflow-x: auto;
 }
 
-.word {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 4px 12px;
-  align-items: center;
-  padding: 12px 14px;
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--primary-text-color) 6%, transparent);
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
 }
 
-.word[data-used="false"] {
-  background: color-mix(in srgb, var(--info-color, #039be5) 10%, transparent);
-  box-shadow: inset 3px 0 0 var(--info-color, #039be5);
+th {
+  padding: 0 10px 6px;
+  text-align: left;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--secondary-text-color);
+  white-space: nowrap;
 }
 
-/* A broken entry reads as broken whether or not anything picked it. */
-.word[data-used="true"] {
-  background: color-mix(in srgb, var(--success-color, #43a047) 10%, transparent);
+td {
+  padding: 4px 10px;
+  border-top: 1px solid color-mix(in srgb, var(--primary-text-color) 8%, transparent);
+  vertical-align: middle;
+}
+
+/* Whether anything listens for it, on the row's leading edge. */
+tbody tr[data-used="true"] td:first-child {
   box-shadow: inset 3px 0 0 var(--success-color, #43a047);
 }
 
-.word[data-bad="true"],
-.word[data-bad="true"][data-used="true"] {
-  background: color-mix(in srgb, var(--error-color, #db4437) 10%, transparent);
+tbody tr[data-used="false"] td:first-child {
+  box-shadow: inset 3px 0 0 var(--info-color, #039be5);
+}
+
+tbody tr[data-bad="true"] td:first-child {
   box-shadow: inset 3px 0 0 var(--error-color, #db4437);
 }
 
-.said {
-  font-size: 1rem;
-  color: var(--primary-text-color);
+tbody tr:hover td {
+  background: color-mix(in srgb, var(--primary-text-color) 4%, transparent);
 }
 
-.about {
-  grid-column: 1;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  font-size: 0.76rem;
-  color: var(--secondary-text-color);
-  font-variant-numeric: tabular-nums;
+.say {
+  width: 22ch;
 }
 
-/* The id can be long, so it gives up its width first and says the rest on hover. */
+.say ha-input {
+  --ha-input-padding-top: 0;
+  --ha-input-padding-bottom: 0;
+}
+
+.say ha-input::part(wa-base) {
+  border-color: transparent;
+  background: none;
+  min-height: 34px;
+}
+
+.say ha-input:hover::part(wa-base) {
+  border-color: color-mix(in srgb, var(--primary-text-color) 22%, transparent);
+}
+
+.say ha-input:focus-within::part(wa-base) {
+  border-color: var(--primary-color);
+}
+
+.say ha-input::part(wa-input) {
+  font-size: 0.9rem;
+  padding-inline: 8px;
+}
+
+/* The filename is the entry's real identity, so it gets the width it needs and wraps rather than
+   being cut short. */
 .id {
-  flex: 1 1 6ch;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   font-family: var(--ha-font-family-code, monospace);
-}
-
-.files {
-  display: flex;
-  gap: 4px;
-  flex: 0 0 auto;
+  font-size: 0.78rem;
+  color: var(--secondary-text-color);
+  word-break: break-all;
 }
 
 .facts {
-  flex: 0 0 auto;
-}
-
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 1px 7px 1px 5px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--primary-text-color) 10%, transparent);
   color: var(--secondary-text-color);
-  text-decoration: none;
-  font-size: 0.72rem;
-}
-
-.pill:hover {
-  background: color-mix(in srgb, var(--primary-color) 18%, transparent);
-  color: var(--primary-color);
-}
-
-.pill ha-icon {
-  --mdc-icon-size: 13px;
-  display: flex;
-}
-
-.wrong {
-  grid-column: 1 / -1;
   font-size: 0.78rem;
-  color: var(--error-color, #db4437);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
-.buttons {
-  grid-row: 1 / span 2;
-  grid-column: 2;
+.end {
+  text-align: right;
+}
+
+.acts {
   display: flex;
-  gap: 6px;
+  gap: 2px;
+  justify-content: flex-end;
 }
 
-button.icon {
-  width: 32px;
-  height: 32px;
+.act {
+  width: 30px;
+  height: 30px;
   display: grid;
   place-items: center;
   padding: 0;
-  border: 1px solid color-mix(in srgb, var(--primary-text-color) 16%, transparent);
+  border: none;
   border-radius: 50%;
   background: none;
   color: var(--secondary-text-color);
   cursor: pointer;
 }
 
-button.icon:hover {
-  color: var(--error-color, #db4437);
-  border-color: color-mix(in srgb, var(--error-color, #db4437) 40%, transparent);
+.act:hover {
+  background: color-mix(in srgb, var(--primary-color) 16%, transparent);
+  color: var(--primary-color);
 }
 
-button.icon ha-icon {
-  --mdc-icon-size: 17px;
+.act.bin:hover {
+  background: color-mix(in srgb, var(--error-color, #db4437) 16%, transparent);
+  color: var(--error-color, #db4437);
+}
+
+.act ha-icon {
+  --mdc-icon-size: 18px;
   display: flex;
+}
+
+tr.wrong td {
+  border-top: none;
+  padding-top: 0;
+  font-size: 0.76rem;
+  color: var(--error-color, #db4437);
 }
 
 .none {

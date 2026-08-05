@@ -88,7 +88,21 @@ export class EchoLocalWakeWords extends LitElement {
       </div>
 
       ${this.words.length
-        ? html`<div class="list">${this.words.map((word) => this.row(word))}</div>`
+        ? html`<div class="scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th class="say">Wake word</th>
+                  <th>File</th>
+                  <th>Model</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                ${this.words.map((word) => this.row(word))}
+              </tbody>
+            </table>
+          </div>`
         : html`<div class="none">
             Nothing in custom_wake_words yet. Whatever the firmware ships with is unaffected.
           </div>`}
@@ -104,43 +118,40 @@ export class EchoLocalWakeWords extends LitElement {
 
     const used = this.inUse.has(word.wake_word);
 
-    return html`<div
-      class="word"
-      data-bad=${String(word.problems.length > 0)}
-      data-used=${String(used)}
-    >
-      <div class="said">
+    return html`<tr data-bad=${String(word.problems.length > 0)} data-used=${String(used)}>
+      <td class="say">
         <ha-input
+          appearance="outlined"
           .value=${word.wake_word}
-          placeholder="what someone says to wake it"
+          placeholder="what wakes it"
           @change=${(e: Event) => this.rename(word, (e.target as HTMLInputElement).value)}
         ></ha-input>
-      </div>
-      <div class="about">
-        <div class="id" title=${word.id}>${word.id}</div>
-        <div class="files">
+      </td>
+      <td class="id">${word.id}</td>
+      <td class="facts">${parts.join(" · ")}</td>
+      <td class="end">
+        <div class="acts">
           ${word.model_url
-            ? html`<a class="pill" href=${word.model_url} download title=${`${word.id}.tflite`}>
-                <ha-icon icon="mdi:tray-arrow-down"></ha-icon>tflite
+            ? html`<a class="act" href=${word.model_url} download title=${`${word.id}.tflite`}>
+                <ha-icon icon="mdi:waveform"></ha-icon>
               </a>`
             : nothing}
           ${word.config_url
-            ? html`<a class="pill" href=${word.config_url} download title=${`${word.id}.json`}>
-                <ha-icon icon="mdi:tray-arrow-down"></ha-icon>json
+            ? html`<a class="act" href=${word.config_url} download title=${`${word.id}.json`}>
+                <ha-icon icon="mdi:code-json"></ha-icon>
               </a>`
             : nothing}
+          <button class="act bin" title=${`Remove ${word.id}`} @click=${() => this.discard(word)}>
+            <ha-icon icon="mdi:trash-can-outline"></ha-icon>
+          </button>
         </div>
-        <div class="facts">${parts.join(" · ")}</div>
-      </div>
-      <div class="buttons">
-        <ha-icon-button .label=${`Remove ${word.id}`} @click=${() => this.discard(word)}>
-          <ha-icon icon="mdi:trash-can-outline"></ha-icon>
-        </ha-icon-button>
-      </div>
-      ${word.problems.length
-        ? html`<div class="wrong">${word.problems.join(". ")}.</div>`
-        : nothing}
-    </div>`;
+      </td>
+    </tr>
+    ${word.problems.length
+      ? html`<tr class="wrong" data-bad="true">
+          <td colspan="4">${word.problems.join(". ")}.</td>
+        </tr>`
+      : nothing}`;
   }
 
   private dropped = (event: DragEvent) => {
