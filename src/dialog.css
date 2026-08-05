@@ -252,6 +252,31 @@ ha-control-slider {
   color: var(--secondary-text-color);
 }
 
+/* A version is a long string rather than a number, so it reads at text size and gives up its tail before
+   it can widen the row. */
+.reading.version {
+  max-width: 18ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+.offer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.note {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.78rem;
+  color: var(--secondary-text-color);
+  word-break: break-all;
+}
+
 .lines {
   padding: 0;
   border: none;

@@ -20,7 +20,8 @@ ha-card {
 /* The reading in the middle of the top face. It warms towards the reading rather than being a fixed
    colour, so a bright room glows and a dark one is barely there. */
 text.lux {
-  fill: color-mix(in srgb, var(--el-warm) calc(var(--lit) * 70%), var(--el-read));
+  fill: color-mix(in srgb, var(--el-warm) calc(var(--lit) * 100%), var(--el-read));
+  filter: drop-shadow(0 0 calc(var(--lit) * 5px) color-mix(in srgb, var(--el-warm) calc(var(--lit) * 65%), transparent));
   font-family: var(--ha-font-family-body, inherit);
   font-size: 15px;
   font-weight: 500;
@@ -75,9 +76,8 @@ text.lux .unit {
   --el-glyph: rgba(0, 0, 0, 0.45);
   --el-btn: rgba(0, 0, 0, 0.04);
 
-  /* Dark on a nearly white face, and a deeper amber than the dark shells can use. */
   --el-read: rgba(0, 0, 0, 0.72);
-  --el-warm: #b06a00;
+  --el-warm: #e07b00;
 }
 
 svg {

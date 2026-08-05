@@ -104,7 +104,7 @@ export function art(
             y=${CY + 5}
             text-anchor="middle"
             style="--lit:${state.lux.lit}"
-          >${Math.round(state.lux.value)}<tspan class="unit" dx="2.5">lx</tspan></text>`
+          >${Math.round(state.lux.value)}<tspan class="unit" dx="3.5">lx</tspan></text>`
         : ""}
 
 

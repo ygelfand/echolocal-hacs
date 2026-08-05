@@ -272,27 +272,36 @@ export class EchoLocalDialog extends LitElement {
   }
 
   // An update entity's state is on when something newer exists, which on its own reads as "Firmware off".
-  // The version installed is what somebody wants to see, and the newer one is the button that takes it.
+  // What is installed belongs on the row; a version string is too long to label a button with, so the one
+  // on offer goes underneath where it has the width for it.
   private version(row: Row) {
     const state = this.hass.states[row.entityId];
     const installed = state.attributes.installed_version;
     const latest = state.attributes.latest_version;
+    const offered = state.state === "on" && latest && latest !== installed;
+
+    if (state.attributes.in_progress) {
+      return this.tile(row, true, {
+        trail: html`<ha-spinner size="tiny"></ha-spinner>`,
+        under: html`<div class="note">Installing ${String(latest)}</div>`,
+      });
+    }
 
     return this.tile(row, false, {
-      trail: state.attributes.in_progress
-        ? html`<ha-spinner size="tiny"></ha-spinner>`
-        : html`<button class="reading" @click=${() => this.moreInfo(row.entityId)}>
-              ${installed ? String(installed) : state.state}
-            </button>
-            ${state.state === "on"
-              ? html`<ha-button
-                  size="small"
-                  @click=${() =>
-                    this.hass.callService("update", "install", { entity_id: row.entityId })}
-                >
-                  ${String(latest)}
-                </ha-button>`
-              : nothing}`,
+      trail: html`<button class="reading version" @click=${() => this.moreInfo(row.entityId)}>
+        ${installed ? String(installed) : state.state}
+      </button>`,
+      under: offered
+        ? html`<div class="offer">
+            <div class="note">New: ${String(latest)}</div>
+            <ha-button
+              size="small"
+              @click=${() => this.hass.callService("update", "install", { entity_id: row.entityId })}
+            >
+              Update
+            </ha-button>
+          </div>`
+        : undefined,
     });
   }
 
