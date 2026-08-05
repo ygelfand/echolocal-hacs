@@ -15,11 +15,6 @@ import styles from "./history.css";
 import "./recording";
 import type { HomeAssistant } from "./types";
 
-interface Point {
-  at: number;
-  value: string;
-}
-
 export interface Row {
   at: number;
   wake: string;
@@ -30,17 +25,11 @@ export interface Row {
 
 const DAYS = 14;
 
-// Two turns this close are the same turn seen twice: once as an event, once as the states it caused.
-const SAME_MS = 4000;
-
 @customElement("echolocal-history")
 export class EchoLocalHistory extends LitElement {
   static styles = unsafeCSS(styles);
 
   @property({ attribute: false }) hass!: HomeAssistant;
-  @property() wake = "";
-  @property() heard = "";
-  @property() reply = "";
 
   // What the device calls itself, which the action to fetch a recording is named after — not what anybody
   // renamed it to. When the device does not offer that action there is nothing to play, and the buttons
@@ -50,17 +39,16 @@ export class EchoLocalHistory extends LitElement {
   // Home Assistant's registry id, which is how the logbook is asked for this device's turns.
   @property() deviceId = "";
 
-  @state() private recorded: Row[] = [];
   @state() private live: Row[] = [];
   @state() private asked = false;
+  @state() private loading = true;
 
   private stop?: () => void;
 
   protected updated() {
-    if (this.asked || !this.hass || !this.wake) return;
+    if (this.asked || !this.hass || !this.deviceId) return;
 
     this.asked = true;
-    this.load();
     this.listen();
   }
 
@@ -80,7 +68,9 @@ export class EchoLocalHistory extends LitElement {
       ${turns.length
         ? html`<div class="turns">${turns.map((turn) => this.row(turn, this.scale(turns)))}</div>`
         : html`<div class="none">
-            ${this.asked ? "No turns recorded for this device yet." : "Looking…"}
+            ${this.loading
+              ? html`<ha-spinner></ha-spinner> Looking…`
+              : "No turns recorded for this device yet."}
           </div>`}
     `;
   }
@@ -123,7 +113,9 @@ export class EchoLocalHistory extends LitElement {
                   data-phase=${phase.key}
                   title=${`${phase.label} ${phase.ms} ms`}
                   style=${`flex:0 0 ${(phase.ms / longest) * 100}%`}
-                ></div>`
+                >
+                  ${(phase.ms / 1000).toFixed(1)}s
+                </div>`
               )}
             </div>
             <div class="legend">
@@ -133,37 +125,8 @@ export class EchoLocalHistory extends LitElement {
     </div>`;
   }
 
-  // The device's own turns win where they overlap: they say everything the recorder does and more.
   private merged(): Row[] {
-    const out = [...this.live];
-
-    for (const row of this.recorded) {
-      if (!out.some((seen) => Math.abs(seen.at - row.at) < SAME_MS)) out.push(row);
-    }
-    return out.sort((a, b) => b.at - a.at);
-  }
-
-  private async load() {
-    const ids = [this.wake, this.heard, this.reply].filter(Boolean);
-    const start = new Date(Date.now() - DAYS * 86_400_000).toISOString();
-
-    try {
-      const history = await this.hass.callWS<Record<string, RawPoint[]>>({
-        type: "history/history_during_period",
-        start_time: start,
-        entity_ids: ids,
-        minimal_response: true,
-        no_attributes: true,
-      });
-
-      this.recorded = assemble(
-        points(history[this.wake]),
-        points(history[this.heard]),
-        points(history[this.reply])
-      );
-    } catch {
-      this.recorded = [];
-    }
+    return [...this.live].sort((a, b) => b.at - a.at);
   }
 
   // One subscription for what the recorder holds and what happens next, in that order and without
@@ -184,49 +147,15 @@ export class EchoLocalHistory extends LitElement {
           })),
           ...this.live,
         ];
+        this.loading = false;
       });
     } catch {
-      // No logbook, or nothing has taught it to read a turn: the recorder's sensors still say what was
-      // said, which is what the rows fall back to.
+      this.loading = false;
     }
   }
 
 }
 
-interface RawPoint {
-  s?: string;
-  state?: string;
-  lu?: number;
-  last_updated?: string;
-}
-
-function points(raw?: RawPoint[]): Point[] {
-  return (raw ?? [])
-    .map((entry) => ({
-      at: entry.lu ? entry.lu * 1000 : Date.parse(entry.last_updated ?? ""),
-      value: entry.s ?? entry.state ?? "",
-    }))
-    .filter((point) => Number.isFinite(point.at) && real(point.value));
-}
-
-// assemble walks the wake words newest first, and for each takes the transcript and the reply that came
-// after it but before the wake word after it — which is what belonging to a turn means here.
-function assemble(wake: Point[], heard: Point[], reply: Point[]): Row[] {
-  const ordered = [...wake].sort((a, b) => b.at - a.at);
-  const forward = (list: Point[]) => [...list].sort((a, b) => a.at - b.at);
-
-  return ordered.map((point, i) => {
-    const next = ordered[i - 1]?.at ?? Infinity;
-    const between = (list: Point[]) =>
-      forward(list).find((entry) => entry.at >= point.at && entry.at < next)?.value;
-
-    return { at: point.at, wake: point.value, heard: between(heard), reply: between(reply) };
-  });
-}
-
-function real(value: string): boolean {
-  return !!value && value !== "unknown" && value !== "unavailable" && value !== "None";
-}
 
 function clock(at: number): string {
   return new Date(at).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });

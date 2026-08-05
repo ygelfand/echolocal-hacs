@@ -43,6 +43,7 @@
 
 .list {
   display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 10px;
 }
 
@@ -60,29 +61,9 @@
   background: color-mix(in srgb, var(--error-color, #db4437) 10%, transparent);
 }
 
-/* Edited where it is read; filling an empty one is what starts it being offered. */
 .said {
   font-size: 1rem;
   color: var(--primary-text-color);
-}
-
-.said input {
-  font: inherit;
-  color: inherit;
-  width: 100%;
-  padding: 2px 0;
-  border: none;
-  border-bottom: 1px solid transparent;
-  background: none;
-}
-
-.said input:hover {
-  border-bottom-color: color-mix(in srgb, var(--primary-text-color) 20%, transparent);
-}
-
-.said input:focus {
-  outline: none;
-  border-bottom-color: var(--primary-color);
 }
 
 .about {

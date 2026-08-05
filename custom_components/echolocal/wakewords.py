@@ -194,12 +194,12 @@ def _write(store: Path, wake_id: str, payload: bytes, config: dict[str, Any]) ->
     (store / f"{wake_id}.json").write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
 
 
-def _wake_word_id(value: Any) -> str:
-    """A wake word id is a filename stem, so it may not wander out of the directory."""
-    text = cv.string(value)
-    if not text or text != slugify(text):
-        raise ValueError(f"not a wake word id: {text}")
-    return text
+def _file(store: Path, wake_id: str, suffix: str) -> Path:
+    """The id names a file in the directory, and has to resolve to one still inside it."""
+    path = (store / f"{wake_id}{suffix}").resolve()
+    if path.parent != store.resolve():
+        raise ValueError(f"not a wake word id: {wake_id}")
+    return path
 
 
 @websocket_api.require_admin
@@ -219,7 +219,7 @@ async def ws_list(
 @websocket_api.websocket_command(
     {
         vol.Required("type"): "echolocal/wake_words/update",
-        vol.Required("wake_word_id"): _wake_word_id,
+        vol.Required("wake_word_id"): cv.string,
         vol.Optional("wake_word"): cv.string,
         vol.Optional("model_type"): cv.string,
         vol.Optional("trained_languages"): [cv.string],
@@ -232,7 +232,11 @@ async def ws_update(
     msg: dict[str, Any],
 ) -> None:
     """Correct a description, which is what fixes one core is dropping."""
-    path = _dir(hass) / f"{msg['wake_word_id']}.json"
+    try:
+        path = _file(_dir(hass), msg["wake_word_id"], ".json")
+    except ValueError as err:
+        connection.send_error(msg["id"], "invalid_format", str(err))
+        return
 
     def edit() -> dict[str, Any]:
         try:
@@ -260,7 +264,7 @@ async def ws_update(
 @websocket_api.websocket_command(
     {
         vol.Required("type"): "echolocal/wake_words/delete",
-        vol.Required("wake_word_id"): _wake_word_id,
+        vol.Required("wake_word_id"): cv.string,
     }
 )
 @websocket_api.async_response
@@ -272,9 +276,15 @@ async def ws_delete(
     """Take both files away, since one without the other is a wake word nobody can see."""
     store = _dir(hass)
 
+    try:
+        doomed = [_file(store, msg["wake_word_id"], suffix) for suffix in (".json", ".tflite")]
+    except ValueError as err:
+        connection.send_error(msg["id"], "invalid_format", str(err))
+        return
+
     def remove() -> None:
-        for suffix in (".json", ".tflite"):
-            (store / f"{msg['wake_word_id']}{suffix}").unlink(missing_ok=True)
+        for path in doomed:
+            path.unlink(missing_ok=True)
 
     await hass.async_add_executor_job(remove)
     async_invalidate(hass)

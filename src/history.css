@@ -94,19 +94,23 @@
 /* One turn's phases, to scale against each other. */
 .bar {
   display: flex;
-  height: 8px;
+  height: 20px;
   margin-top: 6px;
-  border-radius: 4px;
+  border-radius: 5px;
   overflow: hidden;
   background: color-mix(in srgb, var(--primary-text-color) 8%, transparent);
 }
 
 .slice {
   min-width: 2px;
-}
-
-.slice[data-phase="wake_ms"] {
-  background: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary-color, #fff);
+  white-space: nowrap;
 }
 
 .slice[data-phase="listen_ms"] {

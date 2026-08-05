@@ -36,6 +36,7 @@ export class EchoLocalActivity extends LitElement {
   @state() private seen: Seen[] = [];
   @state() private only = "";
   @state() private asked = false;
+  @state() private loading = true;
 
   private stop?: () => void;
 
@@ -76,7 +77,6 @@ export class EchoLocalActivity extends LitElement {
       ${shown.length
         ? html`<div class="legend">
               ${[
-                ["wake_ms", "Wake"],
                 ["listen_ms", "Listen"],
                 ["think_ms", "Think"],
                 ["speak_ms", "Reply"],
@@ -87,7 +87,9 @@ export class EchoLocalActivity extends LitElement {
               )}
             </div>
             <div class="turns">${shown.map((one) => this.row(one, names, longest))}</div>`
-        : html`<div class="none">
+        : this.loading
+          ? html`<div class="none"><ha-spinner></ha-spinner> Looking through the last ${DAYS} days…</div>`
+          : html`<div class="none">
             No turns in the last ${DAYS} days. They appear here as they happen, across every device.
           </div>`}
     `;
@@ -125,7 +127,9 @@ export class EchoLocalActivity extends LitElement {
                 data-phase=${phase.key}
                 title=${`${phase.label} ${phase.ms} ms`}
                 style=${`flex:0 0 ${(phase.ms / longest) * 100}%`}
-              ></div>`
+              >
+                ${(phase.ms / 1000).toFixed(1)}s
+              </div>`
             )}
           </div>`
         : nothing}
@@ -143,16 +147,24 @@ export class EchoLocalActivity extends LitElement {
     return out;
   }
 
-  // Every device, so a turn from one Home Assistant knows about but this dashboard does not still shows.
+  // Named devices rather than everything: the logbook holds every event in the house, and asking it to
+  // find ours is the difference between a query over five rows and one over tens of thousands.
   private async listen() {
     const since = new Date(Date.now() - DAYS * 86_400_000);
+    const devices = findSatellites(this.hass).map((device) => device.id);
+
+    if (!devices.length) {
+      this.asked = false;
+      return;
+    }
 
     try {
-      this.stop = await streamTurns(this.hass, since, [], (turns) => {
+      this.stop = await streamTurns(this.hass, since, devices, (turns) => {
         this.seen = [...turns, ...this.seen].sort((a, b) => b.at - a.at);
+        this.loading = false;
       });
     } catch {
-      // No logbook, or nothing has taught it to read a turn. The empty state says what that means.
+      this.loading = false;
     }
   }
 }

@@ -41,7 +41,6 @@ export interface Turn {
 
   // Durations rather than clock times: the device may have no set clock, and a wall clock nobody set is
   // worse than none. Milliseconds.
-  wake_ms?: number;
   listen_ms?: number;
   think_ms?: number;
   speak_ms?: number;
@@ -82,7 +81,6 @@ export interface Phase {
 
 // PHASES is the order a turn happens in, and the order the bar draws them.
 export const PHASES: { key: keyof Turn; label: string }[] = [
-  { key: "wake_ms", label: "Wake" },
   { key: "listen_ms", label: "Listen" },
   { key: "think_ms", label: "Think" },
   { key: "speak_ms", label: "Reply" },
@@ -116,7 +114,7 @@ export function fromEvent(data: unknown): Turn | null {
   if (raw.heard) turn.heard = raw.heard;
   if (raw.reply) turn.reply = raw.reply;
 
-  for (const key of ["wake_ms", "listen_ms", "think_ms", "speak_ms", "audio_seconds", "peak_db", "floor_db"] as const) {
+  for (const key of ["listen_ms", "think_ms", "speak_ms", "audio_seconds", "peak_db", "floor_db"] as const) {
     const value = number(raw[key]);
     if (value !== undefined) turn[key] = value;
   }

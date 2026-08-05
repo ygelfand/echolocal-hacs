@@ -82,15 +82,22 @@
 .bar {
   grid-column: 2 / -1;
   display: flex;
-  height: 7px;
-  margin-top: 4px;
-  border-radius: 4px;
+  height: 20px;
+  margin-top: 5px;
+  border-radius: 5px;
   overflow: hidden;
   background: color-mix(in srgb, var(--primary-text-color) 8%, transparent);
 }
 
-.slice[data-phase="wake_ms"] {
-  background: var(--info-color, #039be5);
+.slice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary-color, #fff);
+  white-space: nowrap;
 }
 
 .slice[data-phase="listen_ms"] {

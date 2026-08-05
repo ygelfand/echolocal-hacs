@@ -124,9 +124,6 @@ export class EchoLocalDialog extends LitElement {
         return html`<echolocal-history
           class="hero"
           .hass=${this.hass}
-          .wake=${roles.wake}
-          .heard=${roles.heard ?? ""}
-          .reply=${roles.reply ?? ""}
           .device=${this.device}
           .deviceId=${this.deviceId}
         ></echolocal-history>`;

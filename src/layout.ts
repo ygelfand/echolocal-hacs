@@ -180,7 +180,7 @@ const WIDGETS: Partial<Record<Kind, Spec[]>> = {
   activity: [
     {
       widget: "history",
-      roles: { wake: "last_wake_word", heard: "last_heard", reply: "last_reply" },
+      roles: {},
     },
   ],
 

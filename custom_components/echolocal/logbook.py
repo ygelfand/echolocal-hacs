@@ -19,6 +19,7 @@ from .const import DOMAIN, TURN_EVENT
 # other kind; the card turns the numbers back.
 FIELDS = (
     "version",
+    "device_id",
     "id",
     "slot",
     "outcome",
