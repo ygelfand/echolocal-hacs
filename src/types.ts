@@ -107,7 +107,8 @@ export interface CardConfig {
   device_id: string;
   // Which colour the device is. Grey is not a real Echo Dot colour — it is the one to draw when nobody
   // has said, which is every device until echod can tell us.
-  shell?: Shell;
+  // "auto" (and unset) take the shell from the device's detected hardware_color; a real colour forces it.
+  shell?: Shell | "auto";
 
   // The "?" beside each setting. On unless this says otherwise.
   help?: boolean;

@@ -23,7 +23,7 @@ import {
   type Satellite,
 } from "./satellite";
 import { SWATCHES } from "./swatches";
-import type { CardConfig, HomeAssistant, Kind, Section } from "./types";
+import type { CardConfig, HomeAssistant, Kind, Section, Shell } from "./types";
 
 const LABELS: Record<string, string> = {
   device_id: "Device",
@@ -90,7 +90,7 @@ export class EchoLocalSatelliteCard extends LitElement {
 
   setConfig(config: CardConfig) {
     if (!config?.device_id) throw new Error("Choose an EchoLocal device");
-    this.config = { shell: "grey", ...config };
+    this.config = { ...config };
   }
 
   getCardSize() {
@@ -107,6 +107,17 @@ export class EchoLocalSatelliteCard extends LitElement {
     disabledSegments(this.hass, state).then((found) => (this.hiddenSegments = found));
   }
 
+  // The shell the artwork wears: a real colour set in the config forces it, otherwise the device's own
+  // detected colour, and grey when it has not reported one (or reads unknown).
+  private shellFor(state: Satellite): Shell {
+    const forced = this.config?.shell;
+    if (forced && forced !== "auto") return forced;
+
+    const id = state.by.get("hardware_color")?.[0]?.entity_id;
+    const detected = id ? this.hass.states[id]?.state : undefined;
+    return detected === "black" || detected === "white" ? detected : "grey";
+  }
+
   render() {
     if (!this.hass || !this.config) return nothing;
 
@@ -120,7 +131,7 @@ export class EchoLocalSatelliteCard extends LitElement {
     return html`
       <ha-card>
         <div class="frame">
-          <div class="art" data-shell=${this.config.shell ?? "grey"} data-activity=${doing}>
+          <div class="art" data-shell=${this.shellFor(state)} data-activity=${doing}>
             ${art(
               {
                 segments: this.segments(state),
@@ -383,7 +394,7 @@ export class EchoLocalSatelliteCardEditor extends LitElement {
   @state() private config!: CardConfig;
 
   setConfig(config: CardConfig) {
-    this.config = { shell: "grey", ...config };
+    this.config = { ...config };
   }
 
   render() {
@@ -411,9 +422,10 @@ export class EchoLocalSatelliteCardEditor extends LitElement {
           select: {
             mode: "dropdown",
             options: [
-              { value: "grey", label: "Grey (unknown)" },
+              { value: "auto", label: "Auto (from device)" },
               { value: "black", label: "Black" },
               { value: "white", label: "White" },
+              { value: "grey", label: "Grey" },
             ],
           },
         },
@@ -423,7 +435,7 @@ export class EchoLocalSatelliteCardEditor extends LitElement {
 
     return html`<ha-form
       .hass=${this.hass}
-      .data=${{ help: true, ...this.config }}
+      .data=${{ help: true, shell: "auto", ...this.config }}
       .schema=${schema}
       .computeLabel=${(entry: { name: string }) => LABELS[entry.name] ?? entry.name}
       @value-changed=${(e: CustomEvent<{ value: CardConfig }>) => this.emit(e.detail.value)}

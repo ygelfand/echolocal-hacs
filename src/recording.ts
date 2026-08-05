@@ -12,6 +12,8 @@ import type { HomeAssistant } from "./types";
 // pressing a second play button meant.
 let sounding: { audio: HTMLAudioElement; stop: () => void } | null = null;
 
+const RECENT = 5 * 60_000;
+
 @customElement("echolocal-recording")
 export class EchoLocalRecording extends LitElement {
   static styles = unsafeCSS(styles);
@@ -22,6 +24,7 @@ export class EchoLocalRecording extends LitElement {
   @property() device = "";
   @property() turn = "";
   @property() filename = "recording.wav";
+  @property({ type: Number }) at = 0;
 
   @state() private busy = false;
   @state() private playing = false;
@@ -51,12 +54,13 @@ export class EchoLocalRecording extends LitElement {
     this.present = undefined;
     this.gone = false;
 
-    const index = this.device ? actionOf(this.hass, this.device, RECORDINGS_ACTION) : undefined;
-    if (!index) {
-      // A device without the index is on older firmware: offer the button and let a failed fetch say so.
+    if (this.at && Date.now() - this.at < RECENT) {
       this.present = true;
       return;
     }
+
+    const index = this.device ? actionOf(this.hass, this.device, RECORDINGS_ACTION) : undefined;
+    if (!index) return;
 
     availableFor(this.hass, index).then((ids) => {
       if (this.checkedTurn === this.turn) this.present = ids.has(this.turn);
@@ -137,6 +141,15 @@ export class EchoLocalRecording extends LitElement {
     try {
       const url = await fetchTurnAudio(this.hass, action, this.turn);
       this.gone = !url;
+      if (!url) {
+        this.dispatchEvent(
+          new CustomEvent("hass-notification", {
+            detail: { message: "That recording is no longer on the device." },
+            bubbles: true,
+            composed: true,
+          })
+        );
+      }
       return url;
     } finally {
       this.busy = false;

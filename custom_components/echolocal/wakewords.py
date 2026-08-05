@@ -21,7 +21,7 @@ import voluptuous as vol
 from aiohttp import web
 from homeassistant.components import websocket_api
 from homeassistant.components.esphome.const import (
-    DOMAIN as ESPHOME_DOMAIN,
+    WAKE_WORDS_API_PATH,
     WAKE_WORDS_DIR_NAME,
 )
 from homeassistant.components.http import HomeAssistantView
@@ -61,16 +61,14 @@ def _dir(hass: HomeAssistant) -> Path:
 
 @callback
 def async_invalidate(hass: HomeAssistant) -> None:
-    """Drop core's cached listing and get the satellites to ask again.
+    """Drop core's cached listing so the fresh set is read the next time it is asked for.
 
-    Reloading the esphome entries is heavy-handed, but it is the only way in: the configuration is
-    exchanged on connect, and there is no call to make a connected satellite re-ask.
+    Nothing is pushed to the satellites. A library edit changes no device's selection and nothing it
+    is running: a rename is a label, and an add or delete is a file a device only fetches when someone
+    picks it. Core re-reads the directory on its next connect or configuration change, which is the
+    only moment the new set matters.
     """
     hass.data.pop(CACHE_KEY, None)
-
-    for entry in hass.config_entries.async_entries(ESPHOME_DOMAIN):
-        if entry.state.recoverable:
-            hass.config_entries.async_schedule_reload(entry.entry_id)
 
 
 def _read(store: Path) -> list[dict[str, Any]]:
@@ -86,6 +84,8 @@ def _read(store: Path) -> list[dict[str, Any]]:
             "trained_languages": [],
             "size": 0,
             "hash": "",
+            "model_url": f"{WAKE_WORDS_API_PATH}/{model_path.name}",
+            "config_url": f"{WAKE_WORDS_API_PATH}/{config_path.name}",
             "problems": [],
         }
 
@@ -129,6 +129,8 @@ def _read(store: Path) -> list[dict[str, Any]]:
                 "trained_languages": [],
                 "size": model_path.stat().st_size,
                 "hash": "",
+                "model_url": f"{WAKE_WORDS_API_PATH}/{model_path.name}",
+                "config_url": "",
                 "problems": ["it has no description beside it, so Home Assistant ignores it"],
             }
         )

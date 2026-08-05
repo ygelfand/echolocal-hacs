@@ -54,3 +54,36 @@ h2 {
   color: var(--secondary-text-color);
   line-height: 1.5;
 }
+
+.heading {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.legend {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-left: auto;
+  font-size: 0.72rem;
+  color: var(--secondary-text-color);
+}
+
+.key {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--primary-text-color) 16%, transparent);
+}
+
+.dot[data-used="true"] {
+  background: var(--primary-color);
+}

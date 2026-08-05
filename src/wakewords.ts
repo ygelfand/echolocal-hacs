@@ -15,6 +15,10 @@ export interface WakeWord {
   size: number;
   hash: string;
 
+  // Where the two files are served, for looking at what a renamed entry actually is.
+  model_url: string;
+  config_url: string;
+
   // What core would silently ignore about this one. Empty means it is being offered.
   problems: string[];
 }
@@ -35,6 +39,9 @@ export class EchoLocalWakeWords extends LitElement {
   static styles = unsafeCSS(styles);
 
   @property({ attribute: false }) hass!: HomeAssistant;
+
+  // The spoken words some device has selected, so an entry can say whether anything listens for it.
+  @property({ attribute: false }) inUse: Set<string> = new Set();
 
   @state() private words: WakeWord[] = [];
   @state() private over = false;
@@ -95,7 +102,13 @@ export class EchoLocalWakeWords extends LitElement {
       ...(word.trained_languages.length ? [word.trained_languages.join(", ")] : []),
     ];
 
-    return html`<div class="word" data-bad=${String(word.problems.length > 0)}>
+    const used = this.inUse.has(word.wake_word);
+
+    return html`<div
+      class="word"
+      data-bad=${String(word.problems.length > 0)}
+      data-used=${String(used)}
+    >
       <div class="said">
         <ha-input
           .value=${word.wake_word}
@@ -103,7 +116,15 @@ export class EchoLocalWakeWords extends LitElement {
           @change=${(e: Event) => this.rename(word, (e.target as HTMLInputElement).value)}
         ></ha-input>
       </div>
-      <div class="about">${parts.join(" · ")}</div>
+      <div class="about">
+        <span class="file">
+          ${word.model_url
+            ? html`<a href=${word.model_url} download>${word.id}.tflite</a>`
+            : html`${word.id}.tflite`}
+          ${word.config_url ? html`<a href=${word.config_url} download>json</a>` : nothing}
+        </span>
+        ${parts.join(" · ")}
+      </div>
       <div class="buttons">
         <ha-icon-button .label=${`Remove ${word.id}`} @click=${() => this.discard(word)}>
           <ha-icon icon="mdi:trash-can-outline"></ha-icon>

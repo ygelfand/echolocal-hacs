@@ -111,6 +111,7 @@ export class EchoLocalHistory extends LitElement {
               .hass=${this.hass}
               .device=${this.device}
               .turn=${turn.id}
+              .at=${row.at}
               .filename=${filename(row)}
             ></echolocal-recording>`
           : nothing}

@@ -57,8 +57,16 @@
   background: color-mix(in srgb, var(--primary-text-color) 6%, transparent);
 }
 
-.word[data-bad="true"] {
+/* A broken entry reads as broken whether or not anything picked it. */
+.word[data-used="true"] {
+  background: color-mix(in srgb, var(--primary-color) 10%, transparent);
+  box-shadow: inset 3px 0 0 var(--primary-color);
+}
+
+.word[data-bad="true"],
+.word[data-bad="true"][data-used="true"] {
   background: color-mix(in srgb, var(--error-color, #db4437) 10%, transparent);
+  box-shadow: inset 3px 0 0 var(--error-color, #db4437);
 }
 
 .said {
@@ -71,6 +79,22 @@
   font-size: 0.76rem;
   color: var(--secondary-text-color);
   font-variant-numeric: tabular-nums;
+}
+
+.file {
+  display: flex;
+  gap: 8px;
+  font-family: var(--ha-font-family-code, monospace);
+  word-break: break-all;
+}
+
+.file a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.file a:hover {
+  text-decoration: underline;
 }
 
 .wrong {

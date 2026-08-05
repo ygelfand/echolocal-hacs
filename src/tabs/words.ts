@@ -60,10 +60,8 @@ export class EchoLocalWords extends LitElement {
       this.words.filter((word) => word.problems.length && word.wake_word).map((w) => w.wake_word)
     );
 
-    // A custom wake word nobody has selected is a file doing nothing, which is only visible from here.
-    const spare = this.words.filter(
-      (word) => !word.problems.length && !chosen.some((one) => one.words.includes(word.wake_word))
-    );
+    // What some device has picked, which is what tells a library entry apart from a file doing nothing.
+    const inUse = new Set(chosen.flatMap((one) => one.words));
 
     return html`
       <h2 class="first">Listening for</h2>
@@ -86,15 +84,14 @@ export class EchoLocalWords extends LitElement {
           </div>`
         : html`<div class="spare">No devices have picked a wake word yet.</div>`}
 
-      <h2>The library</h2>
-      <echolocal-wake-words .hass=${this.hass}></echolocal-wake-words>
-
-      ${spare.length
-        ? html`<div class="spare">
-            Unused: ${spare.map((word) => word.wake_word).join(", ")} — offered to every satellite, picked
-            by none of them.
-          </div>`
-        : nothing}
+      <div class="heading">
+        <h2>The library</h2>
+        <div class="legend">
+          <span class="key"><span class="dot" data-used="true"></span>Listened for</span>
+          <span class="key"><span class="dot" data-used="false"></span>Picked by nobody</span>
+        </div>
+      </div>
+      <echolocal-wake-words .hass=${this.hass} .inUse=${inUse}></echolocal-wake-words>
     `;
   }
 

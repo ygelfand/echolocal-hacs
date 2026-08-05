@@ -117,6 +117,7 @@ export class EchoLocalActivity extends LitElement {
               .hass=${this.hass}
               .device=${known?.node ?? ""}
               .turn=${one.turn.id}
+              .at=${one.at}
               .filename=${filename(one, who)}
             ></echolocal-recording>`
           : nothing}
