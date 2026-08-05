@@ -38,81 +38,26 @@
   flex: 0 0 auto;
 }
 
-.lamp {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 8px 4px 6px;
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--primary-text-color) 6%, transparent);
-}
-
-.lamp ha-icon {
-  --mdc-icon-size: 16px;
-  color: var(--secondary-text-color);
-  display: flex;
-}
-
-.pip {
-  padding: 3px 8px;
-  border: none;
-  border-radius: 8px;
-  background: none;
-  color: var(--secondary-text-color);
-  font: inherit;
-  font-size: 0.75rem;
-  cursor: pointer;
-}
-
-.pip[data-on="true"] {
-  background: color-mix(in srgb, var(--primary-color) 20%, transparent);
-  color: var(--primary-color);
-}
-
-.toggle.big {
+/* Home Assistant's controls fill whatever they are given, so the size is set here rather than by them. */
+.crown ha-control-switch {
   width: 52px;
-  height: 30px;
-  border-radius: 15px;
-}
-
-.toggle.big::after {
-  width: 24px;
-  height: 24px;
+  --control-switch-thickness: 30px;
+  --control-switch-border-radius: 15px;
 }
 
 /* Mute reads as a warning when it is on; every other header switch is just on. */
-.toggle.big[data-on="true"] {
-  background: var(--error-color, #db4437);
+.crown ha-control-switch.warn {
+  --control-switch-on-color: var(--error-color, #db4437);
 }
 
-.toggle.big.power[data-on="true"] {
-  background: var(--primary-color);
+.crown .lamp {
+  max-width: 168px;
+  --control-select-thickness: 30px;
+  --control-select-border-radius: 15px;
 }
 
-.round {
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  border: 1px solid color-mix(in srgb, var(--primary-color) 45%, transparent);
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
-  cursor: pointer;
-}
-
-.round ha-icon {
-  --mdc-icon-size: 22px;
+.crown ha-icon-button {
   color: var(--primary-color);
-  display: flex;
-}
-
-.round:hover {
-  background: color-mix(in srgb, var(--primary-color) 20%, transparent);
-}
-
-.toggle.big[data-on="true"]::after {
-  transform: translateX(22px);
 }
 
 .title {
@@ -254,10 +199,38 @@
 }
 
 .trail {
-  flex: 0 0 auto;
+  flex: 0 1 auto;
+  min-width: 0;
   display: flex;
-  align-items: baseline;
-  gap: 4px;
+  align-items: center;
+  gap: 6px;
+}
+
+.trail ha-control-switch {
+  width: 44px;
+  --control-switch-thickness: 26px;
+  --control-switch-border-radius: 13px;
+}
+
+/* Wide enough to read the chosen option, capped so the row's name keeps its own room. Segments need more
+   of it than a menu does: a menu shows one name at a time and segments show all of them. */
+.trail ha-control-select,
+.trail ha-control-select-menu {
+  min-width: 0;
+  --control-select-thickness: 34px;
+  --control-select-menu-height: 34px;
+}
+
+.trail ha-control-select {
+  max-width: 280px;
+}
+
+.trail ha-control-select-menu {
+  max-width: 210px;
+}
+
+ha-control-slider {
+  --control-slider-thickness: 34px;
 }
 
 .reading {
@@ -279,134 +252,6 @@
 .unit {
   font-size: 0.78rem;
   color: var(--secondary-text-color);
-}
-
-.toggle {
-  flex: 0 0 auto;
-  width: 44px;
-  height: 26px;
-  padding: 0;
-  border: none;
-  border-radius: 13px;
-  background: color-mix(in srgb, var(--primary-text-color) 18%, transparent);
-  cursor: pointer;
-  position: relative;
-  transition: background 0.2s ease;
-}
-
-.toggle::after {
-  content: "";
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--card-background-color);
-  transition: transform 0.2s ease;
-}
-
-.toggle[data-on="true"] {
-  background: var(--primary-color);
-}
-
-.toggle[data-on="true"]::after {
-  transform: translateX(18px);
-}
-
-.toggle[data-on="unavailable"] {
-  opacity: 0.4;
-  cursor: default;
-}
-
-/* The track is drawn rather than left to the browser, so the filled part reads as the value at a glance
-   and the thumb is big enough to grab on a phone. */
-input[type="range"] {
-  width: 100%;
-  height: 8px;
-  margin: 0;
-  border-radius: 4px;
-  appearance: none;
-  background: linear-gradient(
-    to right,
-    var(--primary-color) 0%,
-    var(--primary-color) var(--fill, 50%),
-    color-mix(in srgb, var(--primary-text-color) 12%, transparent) var(--fill, 50%),
-    color-mix(in srgb, var(--primary-text-color) 12%, transparent) 100%
-  );
-  cursor: pointer;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--card-background-color);
-  border: 2px solid var(--primary-color);
-  cursor: grab;
-}
-
-input[type="range"]::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
-  border: 2px solid var(--primary-color);
-  border-radius: 50%;
-  background: var(--card-background-color);
-  cursor: grab;
-}
-
-.options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.chip {
-  padding: 7px 13px;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--primary-text-color) 7%, transparent);
-  color: var(--secondary-text-color);
-  font: inherit;
-  font-size: 0.84rem;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.chip:hover {
-  background: color-mix(in srgb, var(--primary-text-color) 12%, transparent);
-}
-
-.chip[data-on="true"] {
-  background: color-mix(in srgb, var(--primary-color) 18%, transparent);
-  border-color: color-mix(in srgb, var(--primary-color) 45%, transparent);
-  color: var(--primary-color);
-}
-
-select {
-  width: 100%;
-  padding: 8px 10px;
-  border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--primary-text-color) 12%, transparent);
-  background: var(--card-background-color);
-  color: var(--primary-text-color);
-  font: inherit;
-}
-
-.press {
-  padding: 7px 14px;
-  border: 1px solid color-mix(in srgb, var(--primary-color) 45%, transparent);
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
-  color: var(--primary-color);
-  font: inherit;
-  font-size: 0.84rem;
-  cursor: pointer;
-}
-
-.press:hover {
-  background: color-mix(in srgb, var(--primary-color) 20%, transparent);
 }
 
 .empty {

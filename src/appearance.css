@@ -22,10 +22,10 @@
   font-weight: 500;
 }
 
-input[type="range"] {
+.dim ha-control-slider {
   flex: 1 1 auto;
-  accent-color: var(--primary-color);
   min-width: 0;
+  --control-slider-thickness: 28px;
 }
 
 .when {
@@ -96,34 +96,6 @@ input[type="range"] {
   color: var(--secondary-text-color);
 }
 
-/* Scrolls, so forty effects do not push the rest of the popup down. */
-.options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  max-height: 150px;
-  overflow: auto;
-  mask-image: linear-gradient(to bottom, black calc(100% - 18px), transparent);
-}
-
-.option {
-  padding: 6px 11px;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--primary-text-color) 6%, transparent);
-  color: var(--secondary-text-color);
-  font: inherit;
-  font-size: 0.8rem;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.option:hover {
-  background: color-mix(in srgb, var(--primary-text-color) 12%, transparent);
-}
-
-.option[data-on="true"] {
-  border-color: color-mix(in srgb, var(--primary-color) 45%, transparent);
-  background: color-mix(in srgb, var(--primary-color) 15%, transparent);
-  color: var(--primary-color);
+ha-control-select-menu {
+  --control-select-menu-height: 36px;
 }

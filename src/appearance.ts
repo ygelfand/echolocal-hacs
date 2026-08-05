@@ -41,18 +41,17 @@ export class EchoLocalAppearance extends LitElement {
     return html`
       <div class="dim">
         <span>Brightness</span>
-        <input
-          type="range"
+        <ha-control-slider
           min="1"
           max="255"
-          .value=${String(brightness)}
-          ?disabled=${light.state !== "on"}
-          @change=${(e: Event) =>
+          .value=${brightness}
+          .disabled=${light.state !== "on"}
+          @value-changed=${(e: CustomEvent<{ value: number }>) =>
             this.hass.callService("light", "turn_on", {
               entity_id: this.light,
-              brightness: Number((e.target as HTMLInputElement).value),
+              brightness: e.detail.value,
             })}
-        />
+        ></ha-control-slider>
         <b>${Math.round((brightness / 255) * 100)}%</b>
       </div>
 
@@ -66,24 +65,24 @@ export class EchoLocalAppearance extends LitElement {
             <ha-icon .icon=${situation.icon}></ha-icon>
             <div class="text">
               <div class="label">${situation.label}</div>
-              <div class="shows">${this.showing(situation) || "None"}</div>
+              <div class="shows">${this.showing(situation) || "—"}</div>
             </div>
           </button>`
         )}
       </div>
 
       <div class="caption">${chosen.label} shows</div>
-      <div class="options">
-        ${this.options(chosen).map(
-          (name) => html`<button
-            class="option"
-            data-on=${String(name === this.showing(chosen))}
-            @click=${() => this.choose(chosen, name)}
-          >
-            ${name}
-          </button>`
-        )}
-      </div>
+      <ha-control-select-menu
+        .options=${this.options(chosen).map((value) => ({ value, label: value }))}
+        .value=${this.showing(chosen)}
+        .label=${chosen.label}
+        hide-label
+        show-arrow
+        @wa-select=${(e: CustomEvent<{ item?: { value?: string } }>) => {
+          const name = e.detail.item?.value;
+          if (name) this.choose(chosen, name);
+        }}
+      ></ha-control-select-menu>
     `;
   }
 
@@ -100,9 +99,14 @@ export class EchoLocalAppearance extends LitElement {
     return all.filter((s) => s.key === "rest" || (s.entity && this.hass.states[s.entity]));
   }
 
+  // Home Assistant drops a light's effect while it is off, so at rest has nothing to report then. Saying
+  // None would be a lie: it is not that no animation is chosen, it is that the ring is not lit.
   private showing(situation: Situation): string {
-    if (!situation.entity) return (this.hass.states[this.light]?.attributes.effect as string) ?? "";
-    return this.hass.states[situation.entity]?.state ?? "";
+    if (situation.entity) return this.hass.states[situation.entity]?.state ?? "";
+
+    const light = this.hass.states[this.light];
+    if (light?.state !== "on") return "";
+    return (light.attributes.effect as string) ?? "";
   }
 
   private options(situation: Situation): string[] {

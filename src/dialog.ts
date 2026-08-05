@@ -60,9 +60,9 @@ export class EchoLocalDialog extends LitElement {
     const rows = groups.reduce((n, g) => n + g.rows.length, 0);
     const width = rows > 3 || this.widgets.some((w) => w.place !== "header") ? 820 : 460;
 
-    // ha-dialog caps its own surface, so the width has to be set on the dialog's variables. Sizing the
-    // sheet inside it only overflows the surface, which clips the right-hand column.
-    const sizing = `--mdc-dialog-min-width:min(94vw,${width}px);--mdc-dialog-max-width:min(94vw,${width}px)`;
+    // ha-dialog wraps wa-dialog and takes its width from this one variable, capped against the viewport
+    // on its own. Sizing the sheet inside it only overflows the surface, which clips the second column.
+    const sizing = `--ha-dialog-width-md:${width}px`;
 
     return html`
       <ha-dialog open hideActions style=${sizing} @closed=${this.dismiss}>
@@ -171,37 +171,29 @@ export class EchoLocalDialog extends LitElement {
     const sound = state?.attributes.is_volume_muted !== true;
 
     return html`<div class="crown">
-      <button
-        class="round"
-        aria-label=${playing ? "Pause" : "Play"}
+      <ha-icon-button
+        .label=${playing ? "Pause" : "Play"}
         @click=${() =>
           this.hass.callService("media_player", playing ? "media_pause" : "media_play", {
             entity_id: player,
           })}
       >
         <ha-icon .icon=${playing ? "mdi:pause" : "mdi:play"}></ha-icon>
-      </button>
-      <button
-        class="toggle big power"
-        data-on=${String(sound)}
-        aria-label="Sound"
-        @click=${() =>
-          this.hass.callService("media_player", "volume_mute", {
-            entity_id: player,
-            is_volume_muted: sound,
-          })}
-      ></button>
+      </ha-icon-button>
+      ${this.crownSwitch(sound, "Sound", (on) =>
+        this.hass.callService("media_player", "volume_mute", {
+          entity_id: player,
+          is_volume_muted: !on,
+        })
+      )}
     </div>`;
   }
 
   private crownPower(light: string): TemplateResult {
     return html`<div class="crown">
-      <button
-        class="toggle big power"
-        data-on=${String(this.hass.states[light]?.state === "on")}
-        aria-label="Ring"
-        @click=${() => this.hass.callService("light", "toggle", { entity_id: light })}
-      ></button>
+      ${this.crownSwitch(this.hass.states[light]?.state === "on", "Ring", (on) =>
+        this.hass.callService("light", on ? "turn_on" : "turn_off", { entity_id: light })
+      )}
     </div>`;
   }
 
@@ -211,27 +203,37 @@ export class EchoLocalDialog extends LitElement {
 
     return html`<div class="crown">
       ${indicator
-        ? html`<div class="lamp" title="Mute indicator">
-            <ha-icon icon="mdi:brightness-6"></ha-icon>
-            ${(indicator.attributes.options ?? []).map(
-              (option) => html`<button
-                class="pip"
-                data-on=${String(option === indicator.state)}
-                @click=${() =>
-                  this.hass.callService("select", "select_option", { entity_id: lamp, option })}
-              >
-                ${option}
-              </button>`
-            )}
-          </div>`
+        ? html`<ha-control-select
+            class="lamp"
+            .options=${(indicator.attributes.options ?? []).map((value) => ({
+              value,
+              label: value,
+            }))}
+            .value=${indicator.state}
+            label="Mute indicator"
+            @value-changed=${(e: CustomEvent<{ value: string }>) =>
+              this.hass.callService("select", "select_option", {
+                entity_id: lamp,
+                option: e.detail.value,
+              })}
+          ></ha-control-select>`
         : nothing}
-      <button
-        class="toggle big"
-        data-on=${String(this.hass.states[mute]?.state === "on")}
-        aria-label="Microphone mute"
-        @click=${() => this.hass.callService("switch", "toggle", { entity_id: mute })}
-      ></button>
+      ${this.crownSwitch(
+        this.hass.states[mute]?.state === "on",
+        "Microphone mute",
+        (on) => this.hass.callService("switch", on ? "turn_on" : "turn_off", { entity_id: mute }),
+        "warn"
+      )}
     </div>`;
+  }
+
+  private crownSwitch(on: boolean, label: string, write: (on: boolean) => void, tone = "") {
+    return html`<ha-control-switch
+      class=${tone}
+      .checked=${on}
+      .label=${label}
+      @change=${(e: Event) => write((e.target as HTMLInputElement).checked)}
+    ></ha-control-switch>`;
   }
 
   // Whether the microphones are cut, which more than one widget needs to know.
@@ -272,23 +274,54 @@ export class EchoLocalDialog extends LitElement {
         return this.options(row);
       case "button":
         return this.press(row);
+      case "update":
+        return this.version(row);
       default:
         return this.reading(row);
     }
   }
 
+  // An update entity's state is on when something newer exists, which on its own reads as "Firmware off".
+  // The version installed is what somebody wants to see, and the newer one is the button that takes it.
+  private version(row: Row) {
+    const state = this.hass.states[row.entityId];
+    const installed = state.attributes.installed_version;
+    const latest = state.attributes.latest_version;
+
+    return this.tile(row, false, {
+      trail: state.attributes.in_progress
+        ? html`<ha-spinner size="tiny"></ha-spinner>`
+        : html`<button class="reading" @click=${() => this.moreInfo(row.entityId)}>
+              ${installed ? String(installed) : state.state}
+            </button>
+            ${state.state === "on"
+              ? html`<ha-button
+                  size="small"
+                  @click=${() =>
+                    this.hass.callService("update", "install", { entity_id: row.entityId })}
+                >
+                  ${String(latest)}
+                </ha-button>`
+              : nothing}`,
+    });
+  }
+
   private toggle(row: Row, domain: string) {
     const { entityId, label } = row;
     const value = this.hass.states[entityId].state;
-    const on = value === "unavailable" ? "unavailable" : String(value === "on");
 
-    return this.tile(row, on === "true", {
-      trail: html`<button
-        class="toggle"
-        data-on=${on}
-        aria-label=${label}
-        @click=${() => this.hass.callService(domain, "toggle", { entity_id: entityId })}
-      ></button>`,
+    return this.tile(row, value === "on", {
+      trail: html`<ha-control-switch
+        .checked=${value === "on"}
+        .disabled=${value === "unavailable"}
+        .label=${label}
+        @change=${(e: Event) =>
+          this.hass.callService(
+            domain,
+            (e.target as HTMLInputElement).checked ? "turn_on" : "turn_off",
+            { entity_id: entityId }
+          )}
+      ></ha-control-switch>`,
     });
   }
 
@@ -299,85 +332,83 @@ export class EchoLocalDialog extends LitElement {
     const min = attrs.min ?? 0;
     const max = attrs.max ?? 100;
     const value = this.held[entityId] ?? Number(state.state);
-    const fill = max > min ? ((value - min) / (max - min)) * 100 : 0;
 
     return this.tile(row, false, {
       trail: html`<span class="reading">${Number.isNaN(value) ? "—" : value}</span>
         ${attrs.unit_of_measurement
           ? html`<span class="unit">${attrs.unit_of_measurement}</span>`
           : nothing}`,
-      under: html`<input
-        type="range"
-        style="--fill:${fill}%"
-        .value=${String(value)}
-        min=${min}
-        max=${max}
-        step=${attrs.step ?? 1}
-        ?disabled=${state.state === "unavailable"}
-        @input=${(e: Event) => {
-          this.held = { ...this.held, [entityId]: Number((e.target as HTMLInputElement).value) };
+      under: html`<ha-control-slider
+        .value=${value}
+        .min=${min}
+        .max=${max}
+        .step=${attrs.step ?? 1}
+        .unit=${attrs.unit_of_measurement ?? ""}
+        .disabled=${state.state === "unavailable"}
+        @slider-moved=${(e: CustomEvent<{ value: number }>) => {
+          this.held = { ...this.held, [entityId]: e.detail.value };
         }}
-        @change=${(e: Event) => {
-          const next = Number((e.target as HTMLInputElement).value);
+        @value-changed=${(e: CustomEvent<{ value: number }>) => {
           const { [entityId]: _drop, ...rest } = this.held;
           this.held = rest;
-          this.hass.callService("number", "set_value", { entity_id: entityId, value: next });
+          this.hass.callService("number", "set_value", {
+            entity_id: entityId,
+            value: e.detail.value,
+          });
         }}
-      />`,
+      ></ha-control-slider>`,
     });
   }
 
-  // Chips while there are few enough to see at once. A long list stays a dropdown: eleven noise sounds
-  // as chips would be a wall.
+  // Segmented while the names fit across a column, a menu once they do not: thirty-eight ring effects
+  // as segments would be a wall. What counts as fitting is the text, not the count.
   private options(row: Row) {
     const { entityId } = row;
     const state = this.hass.states[entityId];
-    const choices = state.attributes.options ?? [];
-    const pick = (option: string) =>
-      this.hass.callService("select", "select_option", { entity_id: entityId, option });
+    const names = state.attributes.options ?? [];
+    const choices = names.map((value) => ({ value, label: value }));
 
-    // A long list stays a dropdown, under its label rather than beside it: in a column half a popup wide
-    // there is no room next to the name, and a clipped option reads as a broken control.
-    if (choices.length > 4) {
-      return this.tile(row, false, {
-        under: html`<select
-          ?disabled=${state.state === "unavailable"}
-          @change=${(e: Event) => pick((e.target as HTMLSelectElement).value)}
-        >
-          ${choices.map(
-            (option) =>
-              html`<option value=${option} ?selected=${option === state.state}>${option}</option>`
-          )}
-        </select>`,
-      });
-    }
+    const pick = (option?: string) => {
+      if (option && option !== state.state) {
+        this.hass.callService("select", "select_option", { entity_id: entityId, option });
+      }
+    };
 
-    const chips = html`<div class="options">
-      ${choices.map(
-        (option) => html`<button
-          class="chip"
-          data-on=${String(option === state.state)}
-          @click=${() => pick(option)}
-        >
-          ${option}
-        </button>`
-      )}
-    </div>`;
+    // "Band limited / Linear / Repeat samples" is thirty-two characters and still fits beside its name in
+    // a column of a wide popup; a fifth option or a longer set does not.
+    const disabled = state.state === "unavailable";
+    const segmented = names.length <= 4 && names.join("").length <= 36;
 
-    // Short ones sit beside the label; a row of its own for two words is a wasted line. What counts as
-    // short is the text, not the count: "Whole file" and "Streamed" fit where four long names would not.
-    const room = choices.join("").length <= 22 && choices.length <= 3;
-    return this.tile(row, false, room ? { trail: chips } : { under: chips });
+    return this.tile(row, false, {
+      trail: segmented
+        ? html`<ha-control-select
+            .options=${choices}
+            .value=${state.state}
+            .disabled=${disabled}
+            .label=${row.label}
+            @value-changed=${(e: CustomEvent<{ value: string }>) => pick(e.detail.value)}
+          ></ha-control-select>`
+        : html`<ha-control-select-menu
+            .options=${choices}
+            .value=${state.state}
+            .disabled=${disabled}
+            .label=${row.label}
+            hide-label
+            show-arrow
+            @wa-select=${(e: CustomEvent<{ item?: { value?: string } }>) =>
+              pick(e.detail.item?.value)}
+          ></ha-control-select-menu>`,
+    });
   }
 
   private press(row: Row) {
     return this.tile(row, false, {
-      trail: html`<button
-        class="press"
+      trail: html`<ha-button
+        size="small"
         @click=${() => this.hass.callService("button", "press", { entity_id: row.entityId })}
       >
         Run
-      </button>`,
+      </ha-button>`,
     });
   }
 

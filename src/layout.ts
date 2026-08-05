@@ -55,9 +55,17 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
     { title: "Voice", rows: [["voice_resampling", "Resampling"]] },
   ],
 
-  // The wake word select is Home Assistant's own and sits on the device, not here.
+  // The wake word and pipeline selects are Home Assistant's own and sit on the device rather than on the
+  // assistant's sub-device, but they are per assistant, so this is where they belong.
   assistant: [
-    { title: null, rows: [["wake_threshold", "Wake sensitivity"]] },
+    {
+      title: null,
+      rows: [
+        ["wake_word", "Wake word"],
+        ["pipeline", "Pipeline"],
+        ["wake_threshold", "Wake sensitivity"],
+      ],
+    },
     {
       title: "Timing",
       rows: [
@@ -87,27 +95,19 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
       title: null,
       rows: [
         ["firmware", "Firmware"],
-        ["wake_word", "Wake word"],
-        ["pipeline", "Pipeline"],
         ["update_channel", "Update channel"],
         ["check_for_updates", "Check for updates"],
       ],
     },
     { title: "Listening", rows: [["vad_sensitivity", "End of speech"]] },
-    {
-      title: "Bluetooth",
-      rows: [
-        ["bluetooth_proxy", "Proxy"],
-        ["ble_advertisements", "Advertisements"],
-      ],
-    },
+    { title: "Bluetooth", rows: [["bluetooth_proxy", "Proxy"]] },
     {
       title: "Maintenance",
       rows: [
         ["metrics_interval", "Metrics interval"],
         ["purge_cache", "Purge cache"],
-        ["cached_data", "Cached data"],
         ["test_playback", "Test playback"],
+        ["remote_adb", "Remote adb"],
       ],
     },
   ],
@@ -120,6 +120,7 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
         ["wifi_signal", "Signal"],
         ["wifi_sent", "Sent"],
         ["wifi_received", "Received"],
+        ["ble_advertisements", "Bluetooth advertisements"],
       ],
     },
     {
@@ -132,6 +133,7 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
         ["load_average", "Load"],
         ["memory_available", "Memory"],
         ["free_space", "Disk"],
+        ["cached_data", "Cached data"],
       ],
     },
     {
@@ -142,9 +144,8 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
       ],
     },
     {
-      title: "Access",
+      title: "Updates",
       rows: [
-        ["remote_adb", "Remote adb"],
         ["update_status", "Update status"],
         ["update_outcome", "Last update"],
       ],
@@ -286,13 +287,27 @@ export function compose(kind: Kind, state: Satellite, slot = 0): Composed {
   return { widgets, sections: order(LAYOUTS[kind] ?? [], state.by, slot, taken) };
 }
 
+// A setting is something there is something to set. A reading belongs to diagnostics and an event to the
+// activity it reports; echod's own categories disagree about which is which, so the domain decides.
+const SETTABLE = new Set(["switch", "select", "number", "button", "text", "time", "update"]);
+
+// Every name some other popup shows, so a thing that already has a home does not turn up here as well.
+const CLAIMED = new Set(
+  Object.entries(LAYOUTS)
+    .filter(([kind]) => kind !== "device")
+    .flatMap(([, groups]) => groups.flatMap((group) => group.rows.map(([name]) => name)))
+);
+
 // The device's own settings. A sub-device's belong to that component's popup, so this stays on the
 // entities the device itself declares — everything else would be the same rows a second time.
 export function settings(state: Satellite): Section[] {
   return withRest(
     LAYOUTS.device ?? [],
     state.entities.filter(
-      (e) => e.device_id === state.device.id && (e.entity_category === "config" || !e.entity_category)
+      (e) =>
+        e.device_id === state.device.id &&
+        SETTABLE.has(e.entity_id.split(".")[0]) &&
+        !CLAIMED.has(e.name)
     ),
     new Set()
   );
@@ -325,9 +340,11 @@ export function diagnostics(state: Satellite): Composed {
   };
 }
 
+// Home Assistant numbers its own pair wake_word and wake_word_2, so the first assistant's is slot 0 where
+// echod's are 1 and 2. An unnumbered one is the first of whatever it is.
 function pick(by: Index, name: string, slot: number): Tagged[] {
   const found = by.get(name) ?? [];
-  return slot ? found.filter((e) => e.slot === slot) : found;
+  return slot ? found.filter((e) => (e.slot || 1) === slot) : found;
 }
 
 // Where a name has several and the popup did not ask for one — the twelve segments, the two noise layers —

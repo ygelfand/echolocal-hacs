@@ -23,7 +23,13 @@ import {
   type Satellite,
 } from "./satellite";
 import { SWATCHES } from "./swatches";
-import type { CardConfig, HomeAssistant, Kind, Section, Shell } from "./types";
+import type { CardConfig, HomeAssistant, Kind, Section } from "./types";
+
+const LABELS: Record<string, string> = {
+  device_id: "Device",
+  shell: "Shell",
+  help: "Explain each setting",
+};
 
 const ICON: Record<Kind | "follow" | "close", string> = {
   ring: "mdi:record-circle-outline",
@@ -380,59 +386,45 @@ export class EchoLocalSatelliteCardEditor extends LitElement {
   render() {
     if (!this.hass || !this.config) return nothing;
 
-    const found = findSatellites(this.hass);
+    // Our own list of devices rather than a device selector's: being one of ours means having esphome
+    // sub-devices, which no selector filter can ask for.
+    const schema = [
+      {
+        name: "device_id",
+        required: true,
+        selector: {
+          select: {
+            mode: "dropdown",
+            options: findSatellites(this.hass).map((device) => ({
+              value: device.id,
+              label: deviceName(device),
+            })),
+          },
+        },
+      },
+      {
+        name: "shell",
+        selector: {
+          select: {
+            mode: "dropdown",
+            options: [
+              { value: "grey", label: "Grey (unknown)" },
+              { value: "black", label: "Black" },
+              { value: "white", label: "White" },
+            ],
+          },
+        },
+      },
+      { name: "help", selector: { boolean: {} } },
+    ];
 
-    return html`
-      <style>
-        .field {
-          display: block;
-          margin-bottom: 12px;
-        }
-        label {
-          display: block;
-          font-size: 0.85rem;
-          color: var(--secondary-text-color);
-          margin-bottom: 4px;
-        }
-        select {
-          width: 100%;
-          padding: 8px;
-        }
-      </style>
-      <div class="field">
-        <label>Device</label>
-        <select @change=${(e: Event) => this.emit({ device_id: (e.target as HTMLSelectElement).value })}>
-          ${found.map(
-            (device) => html`<option
-              value=${device.id}
-              ?selected=${device.id === this.config.device_id}
-            >
-              ${deviceName(device)}
-            </option>`
-          )}
-        </select>
-      </div>
-      <div class="field">
-        <label>Shell</label>
-        <select
-          @change=${(e: Event) =>
-            this.emit({ shell: (e.target as HTMLSelectElement).value as Shell })}
-        >
-          ${(
-            [
-              ["grey", "Grey (unknown)"],
-              ["black", "Black"],
-              ["white", "White"],
-            ] as [Shell, string][]
-          ).map(
-            ([value, label]) =>
-              html`<option value=${value} ?selected=${(this.config.shell ?? "grey") === value}>
-                ${label}
-              </option>`
-          )}
-        </select>
-      </div>
-    `;
+    return html`<ha-form
+      .hass=${this.hass}
+      .data=${{ help: true, ...this.config }}
+      .schema=${schema}
+      .computeLabel=${(entry: { name: string }) => LABELS[entry.name] ?? entry.name}
+      @value-changed=${(e: CustomEvent<{ value: CardConfig }>) => this.emit(e.detail.value)}
+    ></ha-form>`;
   }
 
   private emit(change: Partial<CardConfig>) {
