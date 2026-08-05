@@ -91,6 +91,7 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
         ["reply_delivery", "Delivery"],
       ],
     },
+    { title: "Recordings", rows: [["keep_recordings", "Recordings kept"]] },
   ],
 
   device: [
