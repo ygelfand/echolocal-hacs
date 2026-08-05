@@ -67,11 +67,9 @@ export class EchoLocalHistory extends LitElement {
       </div>
       ${turns.length
         ? html`<div class="turns">${turns.map((turn) => this.row(turn, this.scale(turns)))}</div>`
-        : html`<div class="none">
-            ${this.loading
-              ? html`<ha-spinner></ha-spinner> Looking…`
-              : "No turns recorded for this device yet."}
-          </div>`}
+        : this.loading
+          ? html`<div class="loading"><ha-spinner size="medium"></ha-spinner></div>`
+          : html`<div class="none">No recent activity found.</div>`}
     `;
   }
 
@@ -137,6 +135,8 @@ export class EchoLocalHistory extends LitElement {
 
     try {
       this.stop = await streamTurns(this.hass, since, devices, (turns) => {
+        this.loading = false;
+        if (!turns.length) return;
         this.live = [
           ...turns.map(({ at, turn }) => ({
             at,
@@ -147,7 +147,6 @@ export class EchoLocalHistory extends LitElement {
           })),
           ...this.live,
         ];
-        this.loading = false;
       });
     } catch {
       this.loading = false;

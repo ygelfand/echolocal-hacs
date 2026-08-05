@@ -45,7 +45,9 @@ export function streamTurns(
       const turn = fromEvent(entry);
       if (turn) turns.push({ at: entry.when * 1000, turn });
     }
-    if (turns.length) found(turns);
+    // Reported even when empty: the first message is the history block, and a caller waiting to stop
+    // its spinner needs to hear that it arrived whether or not it held any turns.
+    found(turns);
   }, request);
 }
 

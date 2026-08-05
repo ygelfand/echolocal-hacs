@@ -18,6 +18,11 @@ FRONTEND_URL = "/echolocal-frontend"
 # reuses the module instead of defining every element twice.
 BUNDLE_FILE = "echolocal.js"
 
-# What a device calls a finished turn. The esphome prefix is the device's: Home Assistant fires the
-# name whole, and accepts no other domain from a device.
-TURN_EVENT = "esphome.echolocal_turn"
+# The domain a device rides in Home Assistant. Our devices connect through the esphome integration,
+# so this is the domain of their config entries and the prefix on the events they fire. The logbook
+# scopes a device-filtered query to the describers registered under a device's config entry domains,
+# so the turn describer registers under this.
+EVENT_DOMAIN = "esphome"
+
+# What a device calls a finished turn. Home Assistant fires the name whole, under the device's domain.
+TURN_EVENT = f"{EVENT_DOMAIN}.echolocal_turn"

@@ -10,10 +10,14 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
-from homeassistant.components.logbook import LOGBOOK_ENTRY_MESSAGE, LOGBOOK_ENTRY_NAME
+from homeassistant.components.logbook import (
+    LOGBOOK_ENTRY_ICON,
+    LOGBOOK_ENTRY_MESSAGE,
+    LOGBOOK_ENTRY_NAME,
+)
 from homeassistant.core import HomeAssistant, callback
 
-from .const import DOMAIN, TURN_EVENT
+from .const import EVENT_DOMAIN, TURN_EVENT
 
 # What a turn carries beyond the sentence. Everything arrives as a string because the wire has no
 # other kind; the card turns the numbers back.
@@ -48,10 +52,11 @@ def async_describe_events(
         return {
             LOGBOOK_ENTRY_NAME: data.get("wake_word") or "EchoLocal",
             LOGBOOK_ENTRY_MESSAGE: _sentence(data),
+            LOGBOOK_ENTRY_ICON: "mdi:account-voice",
             **{key: value for key, value in data.items() if key in FIELDS},
         }
 
-    async_describe_event(DOMAIN, TURN_EVENT, async_describe_turn)
+    async_describe_event(EVENT_DOMAIN, TURN_EVENT, async_describe_turn)
 
 
 def _sentence(data: dict[str, Any]) -> str:

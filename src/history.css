@@ -141,3 +141,9 @@
   font-size: 0.82rem;
   color: var(--secondary-text-color);
 }
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0;
+}

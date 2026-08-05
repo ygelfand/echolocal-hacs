@@ -88,10 +88,8 @@ export class EchoLocalActivity extends LitElement {
             </div>
             <div class="turns">${shown.map((one) => this.row(one, names, longest))}</div>`
         : this.loading
-          ? html`<div class="none"><ha-spinner></ha-spinner> Looking through the last ${DAYS} days…</div>`
-          : html`<div class="none">
-            No turns in the last ${DAYS} days. They appear here as they happen, across every device.
-          </div>`}
+          ? html`<div class="loading"><ha-spinner size="large"></ha-spinner></div>`
+          : html`<div class="none">No recent activity found.</div>`}
     `;
   }
 
@@ -160,8 +158,8 @@ export class EchoLocalActivity extends LitElement {
 
     try {
       this.stop = await streamTurns(this.hass, since, devices, (turns) => {
-        this.seen = [...turns, ...this.seen].sort((a, b) => b.at - a.at);
         this.loading = false;
+        if (turns.length) this.seen = [...turns, ...this.seen].sort((a, b) => b.at - a.at);
       });
     } catch {
       this.loading = false;
