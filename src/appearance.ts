@@ -9,7 +9,14 @@ import { LitElement, html, nothing, unsafeCSS } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
 import styles from "./appearance.css";
+import { SWATCHES } from "./swatches";
 import type { HomeAssistant } from "./types";
+
+// Which swatch is showing. The ring reports what it was given rather than the name it was given, and an
+// effect can be running over it, so an exact match is the only honest answer.
+function near(showing: unknown, swatch: [number, number, number]): boolean {
+  return Array.isArray(showing) && swatch.every((c, i) => showing[i] === c);
+}
 
 interface Situation {
   key: string;
@@ -55,6 +62,26 @@ export class EchoLocalAppearance extends LitElement {
         <b>${Math.round((brightness / 255) * 100)}%</b>
       </div>
 
+      <div class="hue">
+        <span>Color</span>
+        <div class="swatches">
+          ${SWATCHES.map(
+            ([name, rgb]) => html`<button
+              class="swatch"
+              title=${name}
+              aria-label=${name}
+              data-on=${String(near(light.attributes.rgb_color, rgb))}
+              style=${`background:rgb(${rgb.join(",")})`}
+              @click=${() =>
+                this.hass.callService("light", "turn_on", {
+                  entity_id: this.light,
+                  rgb_color: rgb,
+                })}
+            ></button>`
+          )}
+        </div>
+      </div>
+
       <div class="when">
         ${situations.map(
           (situation) => html`<button
@@ -72,17 +99,17 @@ export class EchoLocalAppearance extends LitElement {
       </div>
 
       <div class="caption">${chosen.label} shows</div>
-      <ha-control-select-menu
-        .options=${this.options(chosen).map((value) => ({ value, label: value }))}
-        .value=${this.showing(chosen)}
-        .label=${chosen.label}
-        hide-label
-        show-arrow
-        @wa-select=${(e: CustomEvent<{ item?: { value?: string } }>) => {
-          const name = e.detail.item?.value;
-          if (name) this.choose(chosen, name);
-        }}
-      ></ha-control-select-menu>
+      <div class="options">
+        ${this.options(chosen).map(
+          (name) => html`<button
+            class="option"
+            data-on=${String(name === this.showing(chosen))}
+            @click=${() => this.choose(chosen, name)}
+          >
+            ${name}
+          </button>`
+        )}
+      </div>
     `;
   }
 

@@ -53,12 +53,15 @@ svg {
   letter-spacing: 0.1em;
 }
 
+/* A row rather than a column: there are three things to say and a column of them beside a small dial
+   leaves most of a wide popup empty. Spread, they read as a bar across it. */
 .side {
   flex: 1 1 auto;
   min-width: 0;
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .state {

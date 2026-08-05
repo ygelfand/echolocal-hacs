@@ -103,7 +103,6 @@ const WIDGETS: Record<string, string> = {
   array:
     "The seven capsules and what the room sounds like to them. The arc is how loud the room is right now; the notch is how far above the room's own noise floor something has to be before the device treats it as speech. Drag the notch, then talk from where you normally would and watch whether the arc crosses it.",
   appearance: "Ring controls, current brighness and color, active and conditional effects.",
-  turn: "A turn's budget, end to end. The two grips are how long the device will wait for someone to finish talking, and how long it will wait for Home Assistant to answer. The band is what a slow turn would spend.",
   noise:
     "Sounds the device generates itself, mixed live rather than played from a file, so nothing loops. Two layers overlap — pick rain in one and a fan in the other.",
   volume:

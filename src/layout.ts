@@ -10,7 +10,9 @@ import type { Kind, Row, Section } from "./types";
 
 interface Group {
   title: string | null;
-  rows: [string, string][];
+
+  // echod's name, what the card calls it, and optionally a second name whose value shows on the same tile.
+  rows: ([string, string] | [string, string, string])[];
 }
 
 const LAYOUTS: Partial<Record<Kind, Group[]>> = {
@@ -37,6 +39,7 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
         ["room_level", "Room level"],
         ["room_floor", "Room floor"],
         ["stop_word_sensitivity", "Stop word"],
+        ["vad_sensitivity", "End of speech"],
       ],
     },
     { title: "Indicator", rows: [["mute_led_brightness", "Mute light"]] },
@@ -99,13 +102,12 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
         ["check_for_updates", "Check for updates"],
       ],
     },
-    { title: "Listening", rows: [["vad_sensitivity", "End of speech"]] },
-    { title: "Bluetooth", rows: [["bluetooth_proxy", "Proxy"]] },
+    { title: "Bluetooth", rows: [["bluetooth_proxy", "Proxy enabled"]] },
     {
       title: "Maintenance",
       rows: [
         ["metrics_interval", "Metrics interval"],
-        ["purge_cache", "Purge cache"],
+        ["purge_cache", "Purge cache", "cached_data"],
         ["test_playback", "Test playback"],
         ["remote_adb", "Remote adb"],
       ],
@@ -133,7 +135,6 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
         ["load_average", "Load"],
         ["memory_available", "Memory"],
         ["free_space", "Disk"],
-        ["cached_data", "Cached data"],
       ],
     },
     {
@@ -172,8 +173,6 @@ const WIDGETS: Partial<Record<Kind, Spec[]>> = {
       },
     },
   ],
-
-  assistant: [{ widget: "turn", roles: { listen: "max_listen", think: "max_think" } }],
 
   // The speaker belongs to the device, not to the playback sub-device, so these are composed against the
   // whole tree rather than one component's entities.
@@ -218,7 +217,6 @@ export interface Widget {
     | "player"
     | "volume"
     | "noise"
-    | "turn"
     | "history";
   place?: "header" | "body";
   roles: Record<string, string>;
@@ -291,23 +289,13 @@ export function compose(kind: Kind, state: Satellite, slot = 0): Composed {
 // activity it reports; echod's own categories disagree about which is which, so the domain decides.
 const SETTABLE = new Set(["switch", "select", "number", "button", "text", "time", "update"]);
 
-// Every name some other popup shows, so a thing that already has a home does not turn up here as well.
-const CLAIMED = new Set(
-  Object.entries(LAYOUTS)
-    .filter(([kind]) => kind !== "device")
-    .flatMap(([, groups]) => groups.flatMap((group) => group.rows.map(([name]) => name)))
-);
-
 // The device's own settings. A sub-device's belong to that component's popup, so this stays on the
 // entities the device itself declares — everything else would be the same rows a second time.
 export function settings(state: Satellite): Section[] {
   return withRest(
     LAYOUTS.device ?? [],
     state.entities.filter(
-      (e) =>
-        e.device_id === state.device.id &&
-        SETTABLE.has(e.entity_id.split(".")[0]) &&
-        !CLAIMED.has(e.name)
+      (e) => e.device_id === state.device.id && SETTABLE.has(e.entity_id.split(".")[0])
     ),
     new Set()
   );
@@ -355,7 +343,7 @@ function order(groups: Group[], by: Index, slot: number, taken: Set<string>): Se
   for (const group of groups) {
     const rows: Row[] = [];
 
-    for (const [name, label] of group.rows) {
+    for (const [name, label, beside] of group.rows) {
       const mine = pick(by, name, slot);
 
       for (const entity of mine) {
@@ -364,6 +352,7 @@ function order(groups: Group[], by: Index, slot: number, taken: Set<string>): Se
           entityId: entity.entity_id,
           name,
           label: mine.length > 1 ? `${label} ${entity.slot}` : label,
+          reading: beside ? pick(by, beside, slot)[0]?.entity_id : undefined,
         });
       }
     }
@@ -372,13 +361,28 @@ function order(groups: Group[], by: Index, slot: number, taken: Set<string>): Se
   return out;
 }
 
+// Every name any popup names, companions included. What is left over is what no layout mentions at all,
+// which is the only thing a leftovers bucket should hold: everything else already has a home, and showing
+// it twice is how Settings and Diagnostics ended up repeating each other.
+const NAMED = new Set(
+  Object.values(LAYOUTS).flatMap((groups) =>
+    (groups ?? []).flatMap((group) =>
+      group.rows.flatMap(([name, , beside]) => (beside ? [name, beside] : [name]))
+    )
+  )
+);
+
 // The two popups that stand for a whole device rather than one of its components, where a name the card
 // does not know still has to be reachable. Everywhere else an unlisted entity is deliberately not shown.
 function withRest(groups: Group[], entities: Tagged[], taken: Set<string>): Section[] {
   const out = order(groups, index(entities), 0, taken);
-  const shown = new Set(out.flatMap((s) => s.rows.map((r) => r.entityId)));
+  const shown = new Set(
+    out.flatMap((s) => s.rows.flatMap((r) => [r.entityId, r.reading ?? ""]))
+  );
 
-  const rest = entities.filter((e) => !shown.has(e.entity_id) && !taken.has(e.entity_id));
+  const rest = entities.filter(
+    (e) => !shown.has(e.entity_id) && !taken.has(e.entity_id) && !NAMED.has(e.name)
+  );
   if (!rest.length) return out;
 
   return [

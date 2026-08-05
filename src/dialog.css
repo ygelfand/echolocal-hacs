@@ -198,9 +198,10 @@
   color: var(--primary-text-color);
 }
 
+/* Never squeezed below its content: a segmented control that has to shrink breaks "Whole file" over two
+   lines. The row's name gives up its room instead, which it can do because it ellipsizes. */
 .trail {
-  flex: 0 1 auto;
-  min-width: 0;
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -212,21 +213,18 @@
   --control-switch-border-radius: 13px;
 }
 
-/* Wide enough to read the chosen option, capped so the row's name keeps its own room. Segments need more
-   of it than a menu does: a menu shows one name at a time and segments show all of them. */
-.trail ha-control-select,
+/* nowrap is inherited, so it reaches the option labels inside: "stable" broken over two lines is what a
+   squeezed segment does, and one word on two lines reads as a broken control. */
+ha-control-select {
+  --control-select-thickness: 34px;
+  white-space: nowrap;
+}
+
+/* A menu shows one name at a time, so it can be capped and ellipsize; segments cannot. */
 .trail ha-control-select-menu {
   min-width: 0;
-  --control-select-thickness: 34px;
-  --control-select-menu-height: 34px;
-}
-
-.trail ha-control-select {
-  max-width: 280px;
-}
-
-.trail ha-control-select-menu {
   max-width: 210px;
+  --control-select-menu-height: 34px;
 }
 
 ha-control-slider {

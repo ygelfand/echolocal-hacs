@@ -28,6 +28,36 @@
   --control-slider-thickness: 28px;
 }
 
+.hue {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--primary-text-color) 10%, transparent);
+  font-size: 0.85rem;
+  color: var(--secondary-text-color);
+}
+
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.swatch {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.swatch[data-on="true"] {
+  border-color: var(--primary-text-color);
+}
+
 .when {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -96,6 +126,33 @@
   color: var(--secondary-text-color);
 }
 
-ha-control-select-menu {
-  --control-select-menu-height: 36px;
+/* Even columns rather than a ragged wrap: forty names all fit at this width, so nothing has to scroll. */
+.options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: 5px;
+}
+
+.option {
+  padding: 6px 11px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--primary-text-color) 6%, transparent);
+  color: var(--secondary-text-color);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.option:hover {
+  background: color-mix(in srgb, var(--primary-text-color) 12%, transparent);
+}
+
+.option[data-on="true"] {
+  border-color: color-mix(in srgb, var(--primary-color) 45%, transparent);
+  background: color-mix(in srgb, var(--primary-color) 15%, transparent);
+  color: var(--primary-color);
 }

@@ -1,5 +1,4 @@
 :host {
-  position: relative;
   display: inline-flex;
   flex: 0 0 auto;
   vertical-align: middle;
@@ -23,32 +22,20 @@ button {
   opacity: 0.65;
 }
 
-button:hover,
-button[data-open="true"] {
+button:hover {
   opacity: 1;
   color: var(--primary-color);
   border-color: var(--primary-color);
 }
 
-.said {
-  position: absolute;
-  top: calc(100% + 7px);
-  right: -4px;
-  z-index: 20;
-  width: max-content;
-  max-width: min(300px, 70vw);
-  padding: 11px 13px;
-  border-radius: 11px;
-  border: 1px solid color-mix(in srgb, var(--primary-text-color) 12%, transparent);
-  background: var(--card-background-color, var(--primary-background-color));
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
-  color: var(--primary-text-color);
-  font-size: 0.79rem;
-  font-weight: 400;
-  line-height: 1.45;
-  text-align: left;
-  text-transform: none;
-  letter-spacing: normal;
-  white-space: normal;
+/* A paragraph rather than a label, so it gets room and normal weight. Staying on screen is ha-tooltip's
+   own doing: it renders a wa-popup with flip and shift, which the hand-placed panel needed code for. */
+ha-tooltip {
+  --max-width: min(300px, 70vw);
+  --ha-tooltip-font-size: 0.79rem;
+  --ha-tooltip-font-weight: 400;
+  --ha-tooltip-line-height: 1.45;
+  --ha-tooltip-padding: 11px 13px;
+  --ha-tooltip-border-radius: 11px;
 }
 

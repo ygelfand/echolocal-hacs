@@ -62,7 +62,9 @@ export class EchoLocalWakeWords extends LitElement {
         @dragleave=${() => (this.over = false)}
         @drop=${this.dropped}
       >
-        <ha-icon .icon=${this.busy ? "mdi:timer-outline" : "mdi:tray-arrow-up"}></ha-icon>
+        ${this.busy
+          ? html`<ha-spinner></ha-spinner>`
+          : html`<ha-icon icon="mdi:tray-arrow-up"></ha-icon>`}
         <div>
           <div class="lead">${this.busy ? "Adding…" : "Drop a .tflite wake model here"}</div>
           <div class="sub">
@@ -95,17 +97,17 @@ export class EchoLocalWakeWords extends LitElement {
 
     return html`<div class="word" data-bad=${String(word.problems.length > 0)}>
       <div class="said">
-        <input
+        <ha-input
           .value=${word.wake_word}
           placeholder="what someone says to wake it"
           @change=${(e: Event) => this.rename(word, (e.target as HTMLInputElement).value)}
-        />
+        ></ha-input>
       </div>
       <div class="about">${parts.join(" · ")}</div>
       <div class="buttons">
-        <button class="icon" aria-label="Remove ${word.id}" @click=${() => this.discard(word)}>
+        <ha-icon-button .label=${`Remove ${word.id}`} @click=${() => this.discard(word)}>
           <ha-icon icon="mdi:trash-can-outline"></ha-icon>
-        </button>
+        </ha-icon-button>
       </div>
       ${word.problems.length
         ? html`<div class="wrong">${word.problems.join(". ")}.</div>`

@@ -64,16 +64,20 @@ export class EchoLocalGroups extends LitElement {
 
     return html`
       <div class="make">
-        <input
+        <ha-input
           class="new"
           placeholder="New group"
           .value=${this.naming}
           @input=${(e: Event) => (this.naming = (e.target as HTMLInputElement).value)}
           @keydown=${(e: KeyboardEvent) => e.key === "Enter" && this.make()}
-        />
-        <button class="make" ?disabled=${!this.naming.trim() || this.busy} @click=${this.make}>
-          ${this.busy ? "Adding…" : "Add"}
-        </button>
+        ></ha-input>
+        <ha-button
+          .disabled=${!this.naming.trim() || this.busy}
+          .loading=${this.busy}
+          @click=${this.make}
+        >
+          Add
+        </ha-button>
       </div>
 
       ${devices.length
@@ -100,18 +104,17 @@ export class EchoLocalGroups extends LitElement {
 
     return html`<th>
       <div class="label">
-        <input
+        <ha-input
           .value=${label.name}
-          style=${`width:${Math.max(6, label.name.length + 1)}ch`}
+          style=${`width:${Math.max(8, label.name.length + 2)}ch`}
           @change=${(e: Event) => this.rename(label, (e.target as HTMLInputElement).value)}
-        />
-        <button
-          aria-label="Delete ${label.name}"
-          title=${count ? `${count} still in it` : "Delete this group"}
+        ></ha-input>
+        <ha-icon-button
+          .label=${count ? `Delete ${label.name}, ${count} still in it` : `Delete ${label.name}`}
           @click=${() => this.discard(label)}
         >
           <ha-icon icon="mdi:close"></ha-icon>
-        </button>
+        </ha-icon-button>
       </div>
     </th>`;
   }
@@ -123,13 +126,12 @@ export class EchoLocalGroups extends LitElement {
       <td class="who">${deviceName(device)}</td>
       ${columns.map(
         (label) => html`<td>
-          <input
-            type="checkbox"
+          <ha-checkbox
             aria-label="${deviceName(device)} in ${label.name}"
             .checked=${mine.includes(label.label_id)}
             @change=${(e: Event) =>
               this.set(device, label.label_id, (e.target as HTMLInputElement).checked)}
-          />
+          ></ha-checkbox>
         </td>`
       )}
     </tr>`;

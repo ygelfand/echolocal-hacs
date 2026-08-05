@@ -113,6 +113,10 @@ export interface Row {
 
   // echod's name for it, which is what the "?" text is written against.
   name: string;
+
+  // Another entity to show on the same tile, for a control whose effect is a number somebody wants before
+  // pressing it: how much there is to purge belongs with the button that purges it.
+  reading?: string;
 }
 
 export interface Section {

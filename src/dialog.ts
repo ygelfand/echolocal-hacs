@@ -15,7 +15,6 @@ import { helpFor, helpForWidget } from "./help";
 import type { Widget } from "./layout";
 import "./history";
 import "./playback";
-import "./turn";
 import type { HomeAssistant, Row, Section } from "./types";
 
 @customElement("echolocal-dialog")
@@ -129,14 +128,6 @@ export class EchoLocalDialog extends LitElement {
           .device=${this.device}
           .mac=${this.mac}
         ></echolocal-history>`;
-
-      case "turn":
-        return html`<echolocal-turn
-          class="hero"
-          .hass=${this.hass}
-          .listen=${roles.listen}
-          .think=${roles.think}
-        ></echolocal-turn>`;
 
       case "volume":
         return html`<echolocal-volume
@@ -374,36 +365,44 @@ export class EchoLocalDialog extends LitElement {
       }
     };
 
-    // "Band limited / Linear / Repeat samples" is thirty-two characters and still fits beside its name in
-    // a column of a wide popup; a fifth option or a longer set does not.
     const disabled = state.state === "unavailable";
-    const segmented = names.length <= 4 && names.join("").length <= 36;
 
+    // Two choices are a this-or-that and read as one control; three or more is a list, and a list belongs
+    // in a menu whatever its length — segments next to a menu in the same popup look like an accident.
     return this.tile(row, false, {
-      trail: segmented
-        ? html`<ha-control-select
-            .options=${choices}
-            .value=${state.state}
-            .disabled=${disabled}
-            .label=${row.label}
-            @value-changed=${(e: CustomEvent<{ value: string }>) => pick(e.detail.value)}
-          ></ha-control-select>`
-        : html`<ha-control-select-menu
-            .options=${choices}
-            .value=${state.state}
-            .disabled=${disabled}
-            .label=${row.label}
-            hide-label
-            show-arrow
-            @wa-select=${(e: CustomEvent<{ item?: { value?: string } }>) =>
-              pick(e.detail.item?.value)}
-          ></ha-control-select-menu>`,
+      trail:
+        names.length === 2
+          ? html`<ha-control-select
+              .options=${choices}
+              .value=${state.state}
+              .disabled=${disabled}
+              .label=${row.label}
+              @value-changed=${(e: CustomEvent<{ value: string }>) => pick(e.detail.value)}
+            ></ha-control-select>`
+          : html`<ha-control-select-menu
+              .options=${choices}
+              .value=${state.state}
+              .disabled=${disabled}
+              .label=${row.label}
+              hide-label
+              show-arrow
+              @wa-select=${(e: CustomEvent<{ item?: { value?: string } }>) =>
+                pick(e.detail.item?.value)}
+            ></ha-control-select-menu>`,
     });
   }
 
   private press(row: Row) {
+    const beside = row.reading ? this.hass.states[row.reading] : undefined;
+
     return this.tile(row, false, {
-      trail: html`<ha-button
+      trail: html`${beside
+        ? html`<span class="reading">${beside.state}</span>
+            ${beside.attributes.unit_of_measurement
+              ? html`<span class="unit">${beside.attributes.unit_of_measurement}</span>`
+              : nothing}`
+        : nothing}
+      <ha-button
         size="small"
         @click=${() => this.hass.callService("button", "press", { entity_id: row.entityId })}
       >
