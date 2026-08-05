@@ -3,8 +3,8 @@
 import { LitElement, html, nothing, unsafeCSS } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
-import { actionOf, cached, fetchTurnAudio } from "./audio";
-import { AUDIO_ACTION } from "./contract";
+import { actionOf, availableFor, cached, fetchTurnAudio } from "./audio";
+import { AUDIO_ACTION, RECORDINGS_ACTION } from "./contract";
 import styles from "./recording.css";
 import type { HomeAssistant } from "./types";
 
@@ -26,9 +26,16 @@ export class EchoLocalRecording extends LitElement {
   @state() private busy = false;
   @state() private playing = false;
 
-  // Set when the device turns out not to have the recording after all. A turn says it had one when it
-  // ended, and that never stops being true — but the device keeps only the last few, so an old row's
-  // audio is gone long before the row is. Asking is the only way to find out.
+  // Whether the device still holds this turn's audio: undefined while the per-device index is being
+  // asked for, so the buttons arrive lazily and a device that never answers simply shows none.
+  @state() private present?: boolean;
+
+  // Which turn the present check was run for, so a reused element rechecks when it is handed a new one
+  // and an ordinary hass update does not ask again.
+  private checkedTurn?: string;
+
+  // Set when a fetch turns up empty despite the index: the recording was pruned between the index call
+  // and the click. A rarer path than the index miss, but the button still has to answer for it.
   @state() private gone = false;
 
   disconnectedCallback() {
@@ -36,8 +43,28 @@ export class EchoLocalRecording extends LitElement {
     if (this.playing) sounding?.audio.pause();
   }
 
+  // One index lookup per device, shared across its rows, so what is offered follows what the device
+  // actually holds rather than what a turn once had.
+  protected updated() {
+    if (!this.hass || !this.turn || this.checkedTurn === this.turn) return;
+    this.checkedTurn = this.turn;
+    this.present = undefined;
+    this.gone = false;
+
+    const index = this.device ? actionOf(this.hass, this.device, RECORDINGS_ACTION) : undefined;
+    if (!index) {
+      // A device without the index is on older firmware: offer the button and let a failed fetch say so.
+      this.present = true;
+      return;
+    }
+
+    availableFor(this.hass, index).then((ids) => {
+      if (this.checkedTurn === this.turn) this.present = ids.has(this.turn);
+    });
+  }
+
   render() {
-    if (!this.turn || !this.action()) return nothing;
+    if (!this.turn || !this.action() || this.present !== true) return nothing;
 
     if (this.gone) {
       return html`<span class="gone" title="The device no longer has this recording">

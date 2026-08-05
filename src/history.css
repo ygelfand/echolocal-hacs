@@ -126,14 +126,24 @@
 }
 
 .legend {
-  grid-column: 2 / span 2;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 5px;
+  gap: 14px;
+  margin-bottom: 10px;
   font-size: 0.7rem;
   color: var(--secondary-text-color);
-  font-variant-numeric: tabular-nums;
+}
+
+.key {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
 }
 
 .none {

@@ -103,7 +103,11 @@ export class EchoLocalActivity extends LitElement {
     return html`<div class="turn">
       <div class="when">${clock(one.at)}</div>
       <div class="who">${who}</div>
-      <div class="said">${one.turn.heard || one.turn.wake_word}</div>
+      <div class="content">
+        <div class="wake">${one.turn.wake_word}</div>
+        ${one.turn.heard ? html`<div class="said">${one.turn.heard}</div>` : nothing}
+        ${one.turn.reply ? html`<div class="said-back">${one.turn.reply}</div>` : nothing}
+      </div>
       <div class="right">
         <div class="took" data-bad=${String(bad)}>
           ${bad ? one.turn.outcome : `${(took / 1000).toFixed(1)}s`}

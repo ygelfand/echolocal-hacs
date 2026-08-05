@@ -61,12 +61,33 @@
   text-overflow: ellipsis;
 }
 
-.said {
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.wake {
+  font-size: 0.8rem;
+  color: var(--primary-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.said,
+.said-back {
   font-size: 0.88rem;
   color: var(--secondary-text-color);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.said-back::before {
+  content: "↳ ";
+  opacity: 0.6;
 }
 
 .took {

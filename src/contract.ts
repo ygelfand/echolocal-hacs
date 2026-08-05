@@ -15,6 +15,7 @@ export const TURN_EVENT = "esphome.echolocal_turn";
 // esphome.<device>_<action>.
 export const TURNS_ACTION = "recent_turns";
 export const AUDIO_ACTION = "turn_audio";
+export const RECORDINGS_ACTION = "recordings";
 export const MODEL_ACTION = "install_wake_model";
 
 // Raw bytes per page. The encrypted transport caps a message at 65515 bytes (16-bit length, less a

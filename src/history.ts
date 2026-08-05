@@ -59,12 +59,26 @@ export class EchoLocalHistory extends LitElement {
 
   render() {
     const turns = this.merged();
+    const bars = turns.some((row) => row.turn && phases(row.turn).length > 0);
 
     return html`
       <div class="caption">
         Recent turns
         ${turns.length ? html`<span>${turns.length === 1 ? "1 turn" : `${turns.length} turns`}</span>` : nothing}
       </div>
+      ${bars
+        ? html`<div class="legend">
+            ${[
+              ["listen_ms", "Listen"],
+              ["think_ms", "Think"],
+              ["speak_ms", "Reply"],
+            ].map(
+              ([key, label]) => html`<span class="key"
+                ><span class="dot slice" data-phase=${key}></span>${label}</span
+              >`
+            )}
+          </div>`
+        : nothing}
       ${turns.length
         ? html`<div class="turns">${turns.map((turn) => this.row(turn, this.scale(turns)))}</div>`
         : this.loading
@@ -105,20 +119,17 @@ export class EchoLocalHistory extends LitElement {
       ${row.reply ? html`<div class="said-back">${row.reply}</div>` : nothing}
       ${spans.length
         ? html`<div class="bar">
-              ${spans.map(
-                (phase) => html`<div
-                  class="slice"
-                  data-phase=${phase.key}
-                  title=${`${phase.label} ${phase.ms} ms`}
-                  style=${`flex:0 0 ${(phase.ms / longest) * 100}%`}
-                >
-                  ${(phase.ms / 1000).toFixed(1)}s
-                </div>`
-              )}
-            </div>
-            <div class="legend">
-              ${spans.map((phase) => html`<span>${phase.label} ${(phase.ms / 1000).toFixed(1)}s</span>`)}
-            </div>`
+            ${spans.map(
+              (phase) => html`<div
+                class="slice"
+                data-phase=${phase.key}
+                title=${`${phase.label} ${phase.ms} ms`}
+                style=${`flex:0 0 ${(phase.ms / longest) * 100}%`}
+              >
+                ${(phase.ms / 1000).toFixed(1)}s
+              </div>`
+            )}
+          </div>`
         : nothing}
     </div>`;
   }

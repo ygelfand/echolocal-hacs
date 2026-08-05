@@ -24,5 +24,5 @@ BUNDLE_FILE = "echolocal.js"
 # so the turn describer registers under this.
 EVENT_DOMAIN = "esphome"
 
-# What a device calls a finished turn. Home Assistant fires the name whole, under the device's domain.
+# What a device calls a finished turn, fired whole under the device's domain.
 TURN_EVENT = f"{EVENT_DOMAIN}.echolocal_turn"
