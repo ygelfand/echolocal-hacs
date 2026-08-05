@@ -27,6 +27,17 @@ export interface ArtState {
   // ship disabled, so on most devices the ring is not divisible and tapping it opens its light instead.
   picked: number | null;
   divisible: boolean;
+
+  // What the room measures, for the middle of the top face, which the four buttons leave empty. Null on
+  // a device with no light sensor.
+  lux: Lux | null;
+}
+
+export interface Lux {
+  value: number;
+
+  // 0 to 1, how warm the reading is drawn.
+  lit: number;
 }
 
 // How long a press has to last to count as a hold, as on the device: a quick press wakes the first
@@ -85,6 +96,16 @@ export function art(
 
       <circle cx=${CX} cy=${CY} r="79" fill="url(#top)"></circle>
       <circle cx=${CX} cy=${CY} r="79" fill="none" stroke="var(--el-edge)" stroke-width="1"></circle>
+
+      ${state.lux
+        ? svg`<text
+            class="lux"
+            x=${CX}
+            y=${CY + 5}
+            text-anchor="middle"
+            style="--lit:${state.lux.lit}"
+          >${Math.round(state.lux.value)}<tspan class="unit" dx="2.5">lx</tspan></text>`
+        : ""}
 
 
       ${button(CX, CY - 46, svg`<path d="M-4.5 0h9M0 -4.5v9"></path>`, "Volume up", () =>

@@ -6,7 +6,7 @@
 import { LitElement, html, nothing, unsafeCSS } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
-import { HOLD, SEGMENTS, art, type Segment } from "./art";
+import { HOLD, SEGMENTS, art, type Lux, type Segment } from "./art";
 import styles from "./card.css";
 import "./dialog";
 import { helpForKind } from "./help";
@@ -51,6 +51,14 @@ const ACTIVITY: Record<string, string> = {
   unavailable: "Unavailable",
   unknown: "Unknown",
 };
+
+const LUX_FULL = 2500;
+
+// 0 to 1 on a log scale, because that is how brightness reads: 10 to 100 looks like 100 to 1000.
+function litness(lux: number): number {
+  const at = Math.log10(Math.max(lux, 1)) / Math.log10(LUX_FULL);
+  return Math.min(1, Math.max(0, at));
+}
 
 // Which assistant a popup is for, when it is one of several. Zero everywhere else.
 type Opened = {
@@ -118,6 +126,16 @@ export class EchoLocalSatelliteCard extends LitElement {
     return detected === "black" || detected === "white" ? detected : "grey";
   }
 
+  // What the room measures, or null when the board's light sensor never answered — then the middle of the
+  // face stays empty rather than reading unknown.
+  private lux(state: Satellite): Lux | null {
+    const id = state.by.get("lux")?.[0]?.entity_id;
+    const reading = id ? Number(this.hass.states[id]?.state) : NaN;
+    if (Number.isNaN(reading)) return null;
+
+    return { value: reading, lit: litness(reading) };
+  }
+
   render() {
     if (!this.hass || !this.config) return nothing;
 
@@ -140,6 +158,7 @@ export class EchoLocalSatelliteCard extends LitElement {
                 holding: this.holding,
                 picked: this.picked,
                 divisible: [...state.segments, ...this.hiddenSegments].some(Boolean),
+                lux: this.lux(state),
               },
               {
                 ring: () => this.open({ kind: "ring", slot: 0 }),

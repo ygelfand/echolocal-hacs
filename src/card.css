@@ -9,11 +9,29 @@ ha-card {
 /* The controls wrap the artwork on two sides — down the right, along the bottom — so there is room for
    more of them without the card growing a menu. */
 .frame {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   grid-template-rows: auto auto;
   gap: 12px;
   align-items: center;
+}
+
+/* The reading in the middle of the top face. It warms towards the reading rather than being a fixed
+   colour, so a bright room glows and a dark one is barely there. */
+text.lux {
+  fill: color-mix(in srgb, var(--el-warm) calc(var(--lit) * 70%), var(--el-read));
+  font-family: var(--ha-font-family-body, inherit);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.3px;
+  pointer-events: none;
+}
+
+text.lux .unit {
+  font-size: 9px;
+  font-weight: 400;
+  fill: var(--el-glyph);
 }
 
 /* The shell colors are the product's own, so they are fixed rather than themed. Everything outside the
@@ -32,6 +50,8 @@ ha-card {
   --el-ring-off: rgba(255, 255, 255, 0.1);
   --el-glyph: rgba(255, 255, 255, 0.62);
   --el-btn: rgba(255, 255, 255, 0.07);
+  --el-read: rgba(255, 255, 255, 0.78);
+  --el-warm: #ffc061;
 }
 
 .art[data-shell="black"] {
@@ -42,6 +62,8 @@ ha-card {
   --el-ring-off: rgba(255, 255, 255, 0.07);
   --el-glyph: rgba(255, 255, 255, 0.55);
   --el-btn: rgba(255, 255, 255, 0.05);
+  --el-read: rgba(255, 255, 255, 0.72);
+  --el-warm: #ffc061;
 }
 
 .art[data-shell="white"] {
@@ -52,6 +74,10 @@ ha-card {
   --el-ring-off: rgba(0, 0, 0, 0.09);
   --el-glyph: rgba(0, 0, 0, 0.45);
   --el-btn: rgba(0, 0, 0, 0.04);
+
+  /* Dark on a nearly white face, and a deeper amber than the dark shells can use. */
+  --el-read: rgba(0, 0, 0, 0.72);
+  --el-warm: #b06a00;
 }
 
 svg {
