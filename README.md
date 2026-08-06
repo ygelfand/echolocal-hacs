@@ -15,8 +15,39 @@ on top:
 
 - **A custom card** for the device with settings and controls
 - **An optional dashboard** in the sidebar, with all the attached devices, as well as global settings
-- **Extra functionality** the EspHome protocol has no way to express
+- **Extra functionality** the ESPHome protocol has no way to express
 - more to come
+
+## The card
+
+Mimics a real device hardware, with device color detection, clickable action buttons, controllable lights
+
+<p align="center">
+  <img src="docs/images/card.png" width="420" alt="The EchoLocal card: a Dot seen from above, ring lit, showing the room at 201 lx">
+</p>
+
+Additional popups for settings for individual components
+
+<p align="center">
+  <img src="docs/images/assistant.png" width="720" alt="The assistant popup: wake word, pipeline, sensitivity, timings, chime, reply delivery and how many recordings to keep">
+</p>
+
+## The dashboard
+
+Optional, in the sidebar, with every satellite on one page
+
+![The EchoLocal dashboard with three Dots, rings lit, each showing its room's light level](docs/images/dashboard.png)
+
+## The activity view
+
+Every turn a device reports — what woke it, what it heard, what it answered, and how long each phase
+took. Where a recording was kept, it plays back what the microphones actually sent.
+
+![The activity view: turns with their wake word, transcript, reply and a bar of listen, think and reply times](docs/images/activity.png)
+
+A wake word library shared by every satellite. Drop in a `.tflite` to make it available to any
+
+![The wake word tab: which device listens for what, and the library table](docs/images/wake-words.png)
 
 ## Status
 

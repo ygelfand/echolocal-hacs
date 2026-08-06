@@ -1,0 +1,15 @@
+#!/bin/sh
+# Rebuilds the bundle
+
+set -e
+
+BUNDLE=custom_components/echolocal/frontend/echolocal.js
+
+[ -d node_modules ] || exit 0
+
+npm run --silent build >/dev/null
+
+if ! git diff --quiet -- "$BUNDLE" || ! git ls-files --error-unmatch "$BUNDLE" >/dev/null 2>&1; then
+  git add "$BUNDLE"
+  echo "pre-commit: rebuilt and staged $BUNDLE"
+fi
