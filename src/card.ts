@@ -10,6 +10,7 @@ import { HOLD, SEGMENTS, art, type Lux, type Segment } from "./art";
 import styles from "./card.css";
 import "./dialog";
 import { helpForKind } from "./help";
+import { KEYS_READY } from "./keys";
 import { components, compose, diagnostics, settings, type Widget } from "./layout";
 import { disabledSegments, enable } from "./registry";
 import {
@@ -82,11 +83,9 @@ export class EchoLocalSatelliteCard extends LitElement {
   @state() private holding = false;
   private timer = 0;
 
-  // Segments that exist in the registry but are switched off, indexed by segment number, and which one
-  // is being offered. Looked up once per card.
-  @state() private hiddenSegments: (string | undefined)[] = [];
+  // Which switched-off segment is being offered. The segments themselves are read straight out of the
+  // names the integration pushes, so switching one on redraws without the card tracking it.
   @state() private offering: number | null = null;
-  private asked = false;
 
   static getConfigElement() {
     return document.createElement("echolocal-satellite-card-editor");
@@ -105,15 +104,18 @@ export class EchoLocalSatelliteCard extends LitElement {
     return 6;
   }
 
-  protected updated() {
-    if (this.asked || !this.hass || !this.config) return;
-
-    const state = resolve(this.hass, this.config.device_id);
-    if (!state || state.segments.some(Boolean)) return;
-
-    this.asked = true;
-    disabledSegments(this.hass, state).then((found) => (this.hiddenSegments = found));
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener(KEYS_READY, this.again);
   }
+
+  disconnectedCallback() {
+    window.removeEventListener(KEYS_READY, this.again);
+    super.disconnectedCallback();
+  }
+
+  // The names arrive after the first paint, and everything on the card is looked up by one.
+  private again = () => this.requestUpdate();
 
   // The shell the artwork wears: a real colour set in the config forces it, otherwise the device's own
   // detected colour, and grey when it has not reported one (or reads unknown).
@@ -157,7 +159,7 @@ export class EchoLocalSatelliteCard extends LitElement {
                 muted: isOn(this.hass, state.mute),
                 holding: this.holding,
                 picked: this.picked,
-                divisible: [...state.segments, ...this.hiddenSegments].some(Boolean),
+                divisible: [...state.segments, ...this.switchedOff(state)].some(Boolean),
                 lux: this.lux(state),
               },
               {
@@ -173,7 +175,7 @@ export class EchoLocalSatelliteCard extends LitElement {
           <div class="side">${this.side(state)}</div>
 
           ${this.offering !== null
-            ? this.offer(this.offering)
+            ? this.offer(state, this.offering)
             : this.picked === null
               ? this.foot(state, doing)
               : this.palette(state)}
@@ -205,21 +207,26 @@ export class EchoLocalSatelliteCard extends LitElement {
       this.picked = this.picked === i ? null : i;
       return;
     }
-    if (this.hiddenSegments[i]) {
+    if (this.switchedOff(state)[i]) {
       this.offering = i;
       return;
     }
     this.open({ kind: "ring", slot: 0 });
   }
 
+  // Segments that exist in the registry but are switched off, indexed by segment number.
+  private switchedOff(state: Satellite): (string | undefined)[] {
+    return disabledSegments(this.hass, state);
+  }
+
   // A segment with no entity behind it cannot be colored, and a tap that does nothing explains nothing.
   // Either that one is switched on, or all of them, since somebody who wants one usually wants the rest.
-  private offer(at: number) {
+  private offer(state: Satellite, at: number) {
+    const hidden = this.switchedOff(state);
     const enableOne = async (entityIds: (string | undefined)[]) => {
       for (const entityId of entityIds) {
         if (entityId) await enable(this.hass, entityId);
       }
-      this.hiddenSegments = this.hiddenSegments.map((id) => (entityIds.includes(id) ? undefined : id));
       this.offering = null;
       this.picked = at;
     };
@@ -229,8 +236,8 @@ export class EchoLocalSatelliteCard extends LitElement {
         <div class="name">Segment ${at + 1} disabled</div>
       </div>
       <div class="tail">
-        <button class="plain" @click=${() => enableOne([this.hiddenSegments[at]])}>Enable</button>
-        <button class="plain" @click=${() => enableOne(this.hiddenSegments)}>Enable all</button>
+        <button class="plain" @click=${() => enableOne([hidden[at]])}>Enable</button>
+        <button class="plain" @click=${() => enableOne(hidden)}>Enable all</button>
         <button class="plain quiet" @click=${() => (this.offering = null)}>Cancel</button>
       </div>
     </div>`;

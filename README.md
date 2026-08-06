@@ -56,7 +56,8 @@ of the dashboard, the lot.
 
 ## Installing
 
-Needs Home Assistant **2025.11** or newer, which is where ESPHome learned to hand out custom wake words.
+Needs Home Assistant **2026.8** or newer, which is the first release carrying the aioesphomeapi that
+names entities for us.
 
 ### HACS (custom repository)
 

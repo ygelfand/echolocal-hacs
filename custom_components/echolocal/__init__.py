@@ -10,7 +10,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.loader import async_get_integration
 
-from . import wakewords
+from . import entities, wakewords
 from .const import (
     BUNDLE_FILE,
     CONF_SIDEBAR,
@@ -35,6 +35,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: EchoLocalEntry) -> bool:
         hass.data[DOMAIN] = True
         await _async_serve_frontend(hass, version)
         await wakewords.async_setup(hass)
+        entities.async_setup(hass)
 
     if entry.options.get(CONF_SIDEBAR, True):
         await _async_register_panel(hass, version)

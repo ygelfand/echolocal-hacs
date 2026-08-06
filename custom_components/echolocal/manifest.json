@@ -1,7 +1,7 @@
 {
   "domain": "echolocal",
   "name": "EchoLocal",
-  "after_dependencies": ["esphome"],
+  "after_dependencies": ["assist_pipeline", "assist_satellite", "esphome"],
   "codeowners": ["@ygelfand"],
   "config_flow": true,
   "dependencies": ["frontend", "http", "panel_custom", "websocket_api"],

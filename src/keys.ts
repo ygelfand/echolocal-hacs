@@ -1,24 +1,21 @@
 // Entity identity that survives a rename.
 //
 // entity_id and friendly_name both belong to the user, and the display registry a card sees carries nothing
-// else. config/entity_registry/list carries unique_id, and is open to every user — only writing to the
-// registry needs an administrator.
+// else. The integration answers with the name echod gave each entity — computed on its side, never parsed
+// out of a Home Assistant identifier — and pushes a new answer whenever the registry moves.
 //
-// An esphome unique_id is <mac>-<platform>-<name>[_<slot>][@<sub-device>]. What is left after taking those
-// apart is the name echod gave the thing, which is what the card looks a row up by.
+// Without the integration there is no answer at all, and every lookup here misses. That is the intended
+// failure: the card shows what it can work out without names rather than guessing at one.
 
 import type { HassEntity, HomeAssistant } from "./types";
 
 export interface Tagged extends HassEntity {
-  // echod's own name, or Home Assistant's for the entities it invents for an assist satellite. Empty until
-  // the registry answers, so a lookup misses rather than finding the wrong thing.
+  // echod's own name for the thing. Empty until the integration answers, so a lookup misses rather than
+  // finding the wrong entity.
   name: string;
 
   // One per assistant, noise layer or ring segment. Zero when there is only one of the thing.
   slot: number;
-
-  // Which sub-device declared it, or 0 for the device itself.
-  part: number;
 }
 
 export function tag(hass: HomeAssistant, entities: HassEntity[]): Tagged[] {
@@ -26,7 +23,7 @@ export function tag(hass: HomeAssistant, entities: HassEntity[]): Tagged[] {
 
   return entities.map((entity) => {
     const found = known?.get(entity.entity_id);
-    return { ...entity, name: found?.name ?? "", slot: found?.slot ?? 0, part: found?.part ?? 0 };
+    return { ...entity, name: found?.name ?? "", slot: found?.slot ?? 0 };
   });
 }
 
@@ -52,86 +49,65 @@ export interface Known {
   deviceId: string;
   name: string;
   slot: number;
-  part: number;
-  platform: string;
+
+  // Disabled entities are here and nowhere else a card can see: this is how the ring segments are found
+  // before anyone has turned one on.
   disabled: boolean;
 }
 
 interface Entry {
   entity_id: string;
   device_id: string | null;
-  disabled_by: string | null;
-  platform: string;
-  unique_id: string;
+  object_id: string;
+  disabled: boolean;
 }
 
 export const KEYS_READY = "echolocal-keys";
 
-let cache: Promise<Map<string, Known>> | null = null;
+let started = false;
 let ready: Map<string, Known> | null = null;
 
-// Null until the registry answers. Callers render what they can and listen for KEYS_READY on window.
+// Null until the integration answers. Callers render what they can and listen for KEYS_READY on window.
 export function keys(hass: HomeAssistant): Map<string, Known> | null {
-  if (!cache) {
-    cache = load(hass);
-    cache.then(() => window.dispatchEvent(new Event(KEYS_READY)));
+  if (!started) {
+    started = true;
     listen(hass);
   }
   return ready;
 }
 
-async function load(hass: HomeAssistant): Promise<Map<string, Known>> {
-  const out = new Map<string, Known>();
-
-  try {
-    const found = await hass.callWS<Entry[]>({ type: "config/entity_registry/list" });
-
-    for (const entry of found) {
-      if (!entry.device_id) continue;
-      out.set(entry.entity_id, {
-        entityId: entry.entity_id,
-        deviceId: entry.device_id,
-        ...split(entry.unique_id),
-        platform: entry.platform,
-        disabled: !!entry.disabled_by,
-      });
-    }
-  } catch {
-    // No registry, so the card shows only what it can work out without one.
-  }
-
-  ready = out;
-  return out;
-}
-
-export function split(uniqueId: string): { name: string; slot: number; part: number } {
-  const withoutMac = uniqueId.replace(/^(?:[0-9a-f]{2}:){5}[0-9a-f]{2}-?/i, "");
-
-  const at = withoutMac.lastIndexOf("@");
-  const part = at < 0 ? 0 : Number(withoutMac.slice(at + 1)) || 0;
-  const whole = at < 0 ? withoutMac : withoutMac.slice(0, at);
-
-  // Home Assistant's own have no platform in front; echod's do.
-  const dash = whole.indexOf("-");
-  const named = dash < 0 ? whole : whole.slice(dash + 1);
-
-  const cut = named.lastIndexOf("_");
-  const tail = cut < 0 ? "" : named.slice(cut + 1);
-  const numbered = /^\d+$/.test(tail);
-
-  return {
-    name: numbered ? named.slice(0, cut) : named,
-    slot: numbered ? Number(tail) : 0,
-    part,
-  };
-}
-
 function listen(hass: HomeAssistant): void {
   hass.connection
-    ?.subscribeEvents(() => {
-      cache = null;
-      ready = null;
-      keys(hass);
-    }, "entity_registry_updated")
-    .catch(() => {});
+    ?.subscribeMessage<{ entities: Entry[] }>(
+      (message) => {
+        const out = new Map<string, Known>();
+
+        for (const entry of message.entities) {
+          if (!entry.device_id) continue;
+          out.set(entry.entity_id, {
+            entityId: entry.entity_id,
+            deviceId: entry.device_id,
+            ...split(entry.object_id),
+            disabled: entry.disabled,
+          });
+        }
+
+        ready = out;
+        window.dispatchEvent(new Event(KEYS_READY));
+      },
+      { type: "echolocal/entities" },
+    )
+    .catch(() => {
+      // No integration, or one too old to answer
+    });
+}
+
+// echod numbers its repeated entities in the object id it declares — segment_7, wake_assistant_2 — which is
+// its own naming and the one thing here that is ours to read.
+function split(objectId: string): { name: string; slot: number } {
+  const cut = objectId.lastIndexOf("_");
+  const tail = cut < 0 ? "" : objectId.slice(cut + 1);
+  if (!/^\d+$/.test(tail)) return { name: objectId, slot: 0 };
+
+  return { name: objectId.slice(0, cut), slot: Number(tail) };
 }
