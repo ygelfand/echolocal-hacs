@@ -49,6 +49,7 @@ const ACTIVITY: Record<string, string> = {
   listening: "Listening",
   processing: "Thinking",
   responding: "Speaking",
+  playing: "Playing",
   unavailable: "Unavailable",
   unknown: "Unknown",
 };
@@ -119,6 +120,16 @@ export class EchoLocalSatelliteCard extends LitElement {
 
   // The shell the artwork wears: a real colour set in the config forces it, otherwise the device's own
   // detected colour, and grey when it has not reported one (or reads unknown).
+  // A turn is what the headline is for. With no turn to report, the speaker still has something to
+  // say: music from a group plays without the satellite leaving idle.
+  private doing(state: Satellite): string {
+    const turn = activity(this.hass, state.satellite);
+    if (turn !== "idle") return turn;
+
+    const player = state.player ? this.hass?.states?.[state.player]?.state : undefined;
+    return player === "playing" ? "playing" : turn;
+  }
+
   private shellFor(state: Satellite): Shell {
     const forced = this.config?.shell;
     if (forced && forced !== "auto") return forced;
@@ -146,7 +157,7 @@ export class EchoLocalSatelliteCard extends LitElement {
       return html`<ha-card><div class="missing">Device not found</div></ha-card>`;
     }
 
-    const doing = activity(this.hass, state.satellite);
+    const doing = this.doing(state);
 
     return html`
       <ha-card>
