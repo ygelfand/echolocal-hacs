@@ -170,6 +170,7 @@ class WakeWordUploadView(HomeAssistantView):
         spoken = fields.get("wake_word") or stem.replace("_", " ").replace("-", " ").strip()
 
         config = {
+            "model": f"{wake_id}.tflite",
             "type": fields.get("type") or DEFAULT_TYPE,
             "wake_word": spoken,
             "trained_languages": [
