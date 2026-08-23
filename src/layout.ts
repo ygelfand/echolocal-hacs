@@ -30,6 +30,7 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
         ["microphone_mixing", "Mixing"],
         ["microphone_leveling", "Leveling"],
         ["microphone_cancel_echo", "Echo cancellation"],
+        ["microphone_noise_reduction", "Noise reduction"],
       ],
     },
     {

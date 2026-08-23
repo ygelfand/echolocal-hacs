@@ -13,6 +13,8 @@ const HELP: Record<string, string> = {
     "Evens out loud and quiet talkers so a whisper across the room and a shout beside it arrive at similar volume. Helps transcription, and costs a little dynamic range.",
   microphone_cancel_echo:
     "Subtracts what the speaker is playing from what the microphones hear, so the device can be interrupted while it is talking and does not answer its own reply.",
+  microphone_noise_reduction:
+    "Takes the steady part of the room — a fan, traffic, air conditioning — out of what the microphones heard. Try turning it on in a room with background noise.",
   microphone_sensitivity:
     "How much louder than the room's own noise floor a sound has to be before the device treats it as somebody talking. Raise it in a noisy room to stop the device reacting to the room itself; lower it if quiet speech is missed.",
   room_level:
