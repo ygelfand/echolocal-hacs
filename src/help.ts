@@ -62,6 +62,10 @@ const HELP: Record<string, string> = {
     "How long to wait for Home Assistant's pipeline to answer. Generous is usually right — a slow answer beats a turn that dies just before it arrives.",
   wake_effect:
     "What the ring does at this point in a turn. Cosmetic, but it is how somebody knows the device heard them.",
+  thinking_effect:
+    "What the ring does while Home Assistant works on the answer. Default leaves it as the ring effect, played backwards.",
+  replying_effect:
+    "What the ring does while the answer plays. Default leaves it as the ring effect, played backwards.",
   wake_tone:
     "A short sound at this point in a turn. Some people want the confirmation; some find it grating.",
   reply_buffer:
@@ -84,6 +88,8 @@ const HELP: Record<string, string> = {
     "Plays a short sound, which is the quickest way to find out whether the speaker, the volume and the output route are all what you think they are.",
   remote_adb:
     "Opens Android's debugging port over the network. Off by default, and worth leaving off: it is an unauthenticated way onto the device for anything on the same network.",
+  insecure_tls:
+    "Lets the device accept a certificate it cannot verify, which is what talking to a Home Assistant with a self-signed one needs. It also means anything on the network can pose as that server, so it is worth turning off again once a certificate the device trusts is in place.",
   vad_sensitivity:
     "How readily the device decides somebody has stopped talking. Tighter ends a turn sooner and can cut you off mid-sentence.",
 

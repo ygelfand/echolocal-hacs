@@ -82,6 +82,8 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
       title: "Feedback",
       rows: [
         ["wake_effect", "Ring effect"],
+        ["thinking_effect", "Thinking effect"],
+        ["replying_effect", "Replying effect"],
         ["wake_tone", "Chime"],
       ],
     },
@@ -112,6 +114,7 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
         ["purge_cache", "Purge cache", "cached_data"],
         ["test_playback", "Test playback"],
         ["remote_adb", "Remote adb"],
+        ["insecure_tls", "Insecure TLS"],
       ],
     },
   ],
@@ -301,7 +304,12 @@ export function settings(state: Satellite): Section[] {
     state.entities.filter(
       (e) => e.device_id === state.device.id && SETTABLE.has(e.entity_id.split(".")[0])
     ),
-    new Set()
+    new Set(),
+
+    // A settable thing echod filed as a diagnostic is still a setting, and a row here names it. What is
+    // left is a name this card has never heard of: diagnostics is where those are already shown, so
+    // picking it up here as well would be the same row twice.
+    (e) => e.entity_category !== "diagnostic"
   );
 }
 
@@ -357,14 +365,22 @@ const NAMED = new Set(
 
 // The two popups that stand for a whole device rather than one of its components, where a name the card
 // does not know still has to be reachable. Everywhere else an unlisted entity is deliberately not shown.
-function withRest(groups: Group[], entities: Tagged[], taken: Set<string>): Section[] {
+function withRest(
+  groups: Group[],
+  entities: Tagged[],
+  taken: Set<string>,
+
+  // Which leftovers this popup will take. The rows above are unaffected: a layout that names something
+  // shows it wherever it was named.
+  spare: (entity: Tagged) => boolean = () => true
+): Section[] {
   const out = order(groups, index(entities), 0, taken);
   const shown = new Set(
     out.flatMap((s) => s.rows.flatMap((r) => [r.entityId, r.reading ?? ""]))
   );
 
   const rest = entities.filter(
-    (e) => !shown.has(e.entity_id) && !taken.has(e.entity_id) && !NAMED.has(e.name)
+    (e) => !shown.has(e.entity_id) && !taken.has(e.entity_id) && !NAMED.has(e.name) && spare(e)
   );
   if (!rest.length) return out;
 
