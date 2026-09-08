@@ -20,6 +20,7 @@ from typing import Any
 import voluptuous as vol
 from aiohttp import web
 from homeassistant.components import websocket_api
+from homeassistant.components.esphome import assist_satellite as esphome_satellite
 from homeassistant.components.esphome.const import (
     WAKE_WORDS_API_PATH,
     WAKE_WORDS_DIR_NAME,
@@ -63,6 +64,12 @@ def _dir(hass: HomeAssistant) -> Path:
 def async_invalidate(hass: HomeAssistant) -> None:
     """Drop core's cached listing. It re-reads on its next connect or set_wake_words."""
     hass.data.pop(CACHE_KEY, None)
+
+    # Core's sync @singleton also wraps the loader in functools.lru_cache, which returns its
+    # own result without looking at hass.data. Clear that as well or the pop above does nothing.
+    cache_clear = getattr(esphome_satellite._get_custom_wake_words, "cache_clear", None)
+    if cache_clear is not None:
+        cache_clear()
 
 
 def _read(store: Path) -> list[dict[str, Any]]:
