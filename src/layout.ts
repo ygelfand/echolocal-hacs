@@ -81,7 +81,7 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
     {
       title: "Feedback",
       rows: [
-        ["wake_effect", "Ring effect"],
+        ["wake_effect", "Listening effect"],
         ["thinking_effect", "Thinking effect"],
         ["replying_effect", "Replying effect"],
         ["wake_tone", "Chime"],
@@ -176,8 +176,16 @@ const WIDGETS: Partial<Record<Kind, Spec[]>> = {
   // whole tree rather than one component's entities.
   playback: [
     { widget: "player", place: "header", roles: { player: "speaker" } },
-    { widget: "volume", roles: { player: "speaker" }, lists: { jack: "headphones" } },
-    { widget: "noise", roles: { first: "noise_layer" }, lists: { layers: "noise_layer" } },
+    {
+      widget: "volume",
+      roles: { player: "speaker" },
+      lists: { jack: "headphones" },
+    },
+    {
+      widget: "noise",
+      roles: { first: "noise_layer" },
+      lists: { layers: "noise_layer" },
+    },
   ],
 
   // The three last-heard sensors are one history between them, and none of them is a diagnostic reading,
@@ -192,7 +200,11 @@ const WIDGETS: Partial<Record<Kind, Spec[]>> = {
   microphone: [
     // The mute is what the microphone is, so it sits in the popup's header with its indicator rather
     // than taking a row below it. The header has the room for it.
-    { widget: "mute", place: "header", roles: { mute: "mic_mute", lamp: "mute_led_brightness" } },
+    {
+      widget: "mute",
+      place: "header",
+      roles: { mute: "mic_mute", lamp: "mute_led_brightness" },
+    },
     {
       widget: "array",
       roles: {
@@ -251,10 +263,12 @@ export interface Component {
 }
 
 export function components(state: Satellite): Component[] {
-  const found: Component[] = PROOF.filter(([, name]) => state.by.has(name)).map(([kind]) => ({
-    kind,
-    slot: 0,
-  }));
+  const found: Component[] = PROOF.filter(([, name]) => state.by.has(name)).map(
+    ([kind]) => ({
+      kind,
+      slot: 0,
+    }),
+  );
 
   for (const one of state.by.get("wake_threshold") ?? []) {
     found.push({ kind: "assistant", slot: one.slot });
@@ -285,16 +299,34 @@ export function compose(kind: Kind, state: Satellite, slot = 0): Composed {
       lists[list] = pick(state.by, name, slot).map((e) => e.entity_id);
     }
 
-    widgets.push({ widget: spec.widget, place: spec.place ?? "body", roles, lists });
-    [...Object.values(roles), ...Object.values(lists).flat()].forEach((id) => taken.add(id));
+    widgets.push({
+      widget: spec.widget,
+      place: spec.place ?? "body",
+      roles,
+      lists,
+    });
+    [...Object.values(roles), ...Object.values(lists).flat()].forEach((id) =>
+      taken.add(id),
+    );
   }
 
-  return { widgets, sections: order(LAYOUTS[kind] ?? [], state.by, slot, taken) };
+  return {
+    widgets,
+    sections: order(LAYOUTS[kind] ?? [], state.by, slot, taken),
+  };
 }
 
 // A setting is something there is something to set. A reading belongs to diagnostics and an event to the
 // activity it reports; echod's own categories disagree about which is which, so the domain decides.
-const SETTABLE = new Set(["switch", "select", "number", "button", "text", "time", "update"]);
+const SETTABLE = new Set([
+  "switch",
+  "select",
+  "number",
+  "button",
+  "text",
+  "time",
+  "update",
+]);
 
 // The device's own settings. A sub-device's belong to that component's popup, so this stays on the
 // entities the device itself declares — everything else would be the same rows a second time.
@@ -302,14 +334,16 @@ export function settings(state: Satellite): Section[] {
   return withRest(
     LAYOUTS.device ?? [],
     state.entities.filter(
-      (e) => e.device_id === state.device.id && SETTABLE.has(e.entity_id.split(".")[0])
+      (e) =>
+        e.device_id === state.device.id &&
+        SETTABLE.has(e.entity_id.split(".")[0]),
     ),
     new Set(),
 
     // A settable thing echod filed as a diagnostic is still a setting, and a row here names it. What is
     // left is a name this card has never heard of: diagnostics is where those are already shown, so
     // picking it up here as well would be the same row twice.
-    (e) => e.entity_category !== "diagnostic"
+    (e) => e.entity_category !== "diagnostic",
   );
 }
 
@@ -317,7 +351,10 @@ export function settings(state: Satellite): Section[] {
 export function diagnostics(state: Satellite): Composed {
   const mine = state.entities.filter((e) => e.entity_category === "diagnostic");
 
-  return { widgets: [], sections: withRest(LAYOUTS.diagnostics ?? [], mine, new Set()) };
+  return {
+    widgets: [],
+    sections: withRest(LAYOUTS.diagnostics ?? [], mine, new Set()),
+  };
 }
 
 // Home Assistant numbers its own pair wake_word and wake_word_2, so the first assistant's is slot 0 where
@@ -329,7 +366,12 @@ function pick(by: Index, name: string, slot: number): Tagged[] {
 
 // Where a name has several and the popup did not ask for one — the twelve segments, the two noise layers —
 // each becomes a row with its slot on the end of the label.
-function order(groups: Group[], by: Index, slot: number, taken: Set<string>): Section[] {
+function order(
+  groups: Group[],
+  by: Index,
+  slot: number,
+  taken: Set<string>,
+): Section[] {
   const out: Section[] = [];
 
   for (const group of groups) {
@@ -358,9 +400,11 @@ function order(groups: Group[], by: Index, slot: number, taken: Set<string>): Se
 const NAMED = new Set(
   Object.values(LAYOUTS).flatMap((groups) =>
     (groups ?? []).flatMap((group) =>
-      group.rows.flatMap(([name, , beside]) => (beside ? [name, beside] : [name]))
-    )
-  )
+      group.rows.flatMap(([name, , beside]) =>
+        beside ? [name, beside] : [name],
+      ),
+    ),
+  ),
 );
 
 // The two popups that stand for a whole device rather than one of its components, where a name the card
@@ -372,15 +416,19 @@ function withRest(
 
   // Which leftovers this popup will take. The rows above are unaffected: a layout that names something
   // shows it wherever it was named.
-  spare: (entity: Tagged) => boolean = () => true
+  spare: (entity: Tagged) => boolean = () => true,
 ): Section[] {
   const out = order(groups, index(entities), 0, taken);
   const shown = new Set(
-    out.flatMap((s) => s.rows.flatMap((r) => [r.entityId, r.reading ?? ""]))
+    out.flatMap((s) => s.rows.flatMap((r) => [r.entityId, r.reading ?? ""])),
   );
 
   const rest = entities.filter(
-    (e) => !shown.has(e.entity_id) && !taken.has(e.entity_id) && !NAMED.has(e.name) && spare(e)
+    (e) =>
+      !shown.has(e.entity_id) &&
+      !taken.has(e.entity_id) &&
+      !NAMED.has(e.name) &&
+      spare(e),
   );
   if (!rest.length) return out;
 
@@ -389,7 +437,11 @@ function withRest(
     {
       title: out.length ? "More" : null,
       rows: rest
-        .map((e) => ({ entityId: e.entity_id, name: e.name, label: e.name || e.entity_id }))
+        .map((e) => ({
+          entityId: e.entity_id,
+          name: e.name,
+          label: e.name || e.entity_id,
+        }))
         .sort((a, b) => a.label.localeCompare(b.label)),
     },
   ];
