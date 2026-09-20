@@ -15,6 +15,7 @@ import "./appearance";
 import { helpFor, helpForWidget } from "./help";
 import type { Widget } from "./layout";
 import "./history";
+import "./logs";
 import "./playback";
 import type { HomeAssistant, Row, Section } from "./types";
 
@@ -119,6 +120,12 @@ export class EchoLocalDialog extends LitElement {
           .mode=${roles.mode}
           .muted=${this.muted}
         ></echolocal-array>`;
+
+      case "logs":
+        return html`<echolocal-logs
+          .hass=${this.hass}
+          .device=${this.device}
+        ></echolocal-logs>`;
 
       case "history":
         return html`<echolocal-history

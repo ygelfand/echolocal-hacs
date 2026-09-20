@@ -1,0 +1,31 @@
+:host {
+  display: flex;
+}
+
+button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid color-mix(in srgb, var(--primary-text-color) 18%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary-text-color) 5%, transparent);
+  color: var(--primary-text-color);
+  font: inherit;
+  cursor: pointer;
+}
+
+button[disabled] {
+  cursor: default;
+  opacity: 0.6;
+}
+
+button ha-icon {
+  --mdc-icon-size: 18px;
+  color: var(--secondary-text-color);
+  display: flex;
+}
+
+.failed {
+  color: var(--error-color, #db4437);
+}

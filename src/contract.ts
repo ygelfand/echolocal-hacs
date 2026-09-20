@@ -15,6 +15,7 @@ export const TURN_EVENT = "esphome.echolocal_turn";
 // esphome.<device>_<action>.
 export const AUDIO_ACTION = "turn_audio";
 export const RECORDINGS_ACTION = "recordings";
+export const LOGS_ACTION = "logs";
 
 export interface Turn {
   // Bumped when a field changes meaning. A version we do not know is ignored rather than guessed at.
@@ -56,6 +57,15 @@ export interface Audio {
   pages: number;
   mime: string;
   data: string;
+}
+
+// The reply to logs(page). pages is the whole count, so a caller knows when to stop without a second
+// round trip. What the device holds outgrows one message, which is why it is paged at all.
+export interface Logs {
+  version: 1;
+  page: number;
+  pages: number;
+  lines: string[];
 }
 
 export interface Phase {

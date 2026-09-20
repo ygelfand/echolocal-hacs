@@ -236,7 +236,8 @@ export interface Widget {
     | "player"
     | "volume"
     | "noise"
-    | "history";
+    | "history"
+    | "logs";
   place?: "header" | "body";
   roles: Record<string, string>;
   lists: Record<string, string[]>;
@@ -352,7 +353,7 @@ export function diagnostics(state: Satellite): Composed {
   const mine = state.entities.filter((e) => e.entity_category === "diagnostic");
 
   return {
-    widgets: [],
+    widgets: [{ widget: "logs", roles: {}, lists: {} }],
     sections: withRest(LAYOUTS.diagnostics ?? [], mine, new Set()),
   };
 }
