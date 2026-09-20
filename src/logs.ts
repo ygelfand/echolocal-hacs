@@ -35,6 +35,7 @@ export class EchoLocalLogs extends LitElement {
         <ha-icon
           .icon=${this.busy ? "mdi:timer-outline" : "mdi:tray-arrow-down"}
         ></ha-icon>
+        <span>${this.failed ? "Could not read the logs" : "Diagnostic logs"}</span>
       </button>
     `;
   }

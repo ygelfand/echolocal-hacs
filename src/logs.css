@@ -6,14 +6,18 @@
 
 button {
   flex: 0 0 auto;
-  width: 34px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   height: 34px;
-  display: grid;
-  place-items: center;
-  padding: 0;
+  padding: 0 14px;
   border: 1px solid color-mix(in srgb, var(--primary-text-color) 18%, transparent);
-  border-radius: 50%;
+  border-radius: 999px;
   background: color-mix(in srgb, var(--primary-text-color) 5%, transparent);
+  color: var(--primary-text-color);
+  font: inherit;
+  font-size: 0.9em;
+  white-space: nowrap;
   cursor: pointer;
 }
 
