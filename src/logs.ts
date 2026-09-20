@@ -25,13 +25,16 @@ export class EchoLocalLogs extends LitElement {
     if (!this.action()) return nothing;
 
     return html`
-      <button ?disabled=${this.busy} @click=${this.save}>
+      <button
+        ?disabled=${this.busy}
+        class=${this.failed ? "failed" : ""}
+        title=${this.failed ? "Could not read the logs" : "Diagnostic logs"}
+        aria-label=${this.failed ? "Could not read the logs" : "Download diagnostic logs"}
+        @click=${this.save}
+      >
         <ha-icon
           .icon=${this.busy ? "mdi:timer-outline" : "mdi:tray-arrow-down"}
         ></ha-icon>
-        <span class=${this.failed ? "failed" : ""}>
-          ${this.failed ? "Could not read the log" : "Save the log"}
-        </span>
       </button>
     `;
   }

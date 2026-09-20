@@ -1,17 +1,19 @@
 :host {
   display: flex;
+  flex: 0 0 auto;
+  align-self: center;
 }
 
 button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  padding: 0;
   border: 1px solid color-mix(in srgb, var(--primary-text-color) 18%, transparent);
-  border-radius: 999px;
+  border-radius: 50%;
   background: color-mix(in srgb, var(--primary-text-color) 5%, transparent);
-  color: var(--primary-text-color);
-  font: inherit;
   cursor: pointer;
 }
 
@@ -26,6 +28,10 @@ button ha-icon {
   display: flex;
 }
 
-.failed {
+button.failed {
+  border-color: color-mix(in srgb, var(--error-color, #db4437) 50%, transparent);
+}
+
+button.failed ha-icon {
   color: var(--error-color, #db4437);
 }

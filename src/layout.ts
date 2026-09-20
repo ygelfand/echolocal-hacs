@@ -353,7 +353,7 @@ export function diagnostics(state: Satellite): Composed {
   const mine = state.entities.filter((e) => e.entity_category === "diagnostic");
 
   return {
-    widgets: [{ widget: "logs", roles: {}, lists: {} }],
+    widgets: [{ widget: "logs", place: "header", roles: {}, lists: {} }],
     sections: withRest(LAYOUTS.diagnostics ?? [], mine, new Set()),
   };
 }
