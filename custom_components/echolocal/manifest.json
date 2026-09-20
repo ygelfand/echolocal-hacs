@@ -1,14 +1,21 @@
 {
   "domain": "echolocal",
   "name": "EchoLocal",
-  "after_dependencies": ["assist_pipeline", "assist_satellite", "esphome"],
+  "after_dependencies": ["assist_satellite"],
   "codeowners": ["@ygelfand"],
   "config_flow": true,
-  "dependencies": ["frontend", "http", "panel_custom", "websocket_api"],
+  "dependencies": [
+    "assist_pipeline",
+    "esphome",
+    "frontend",
+    "http",
+    "panel_custom",
+    "websocket_api"
+  ],
   "documentation": "https://github.com/ygelfand/echolocal-hacs",
   "integration_type": "service",
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/ygelfand/echolocal-hacs/issues",
   "requirements": [],
-  "version": "0.0.6"
+  "version": "0.0.7"
 }
