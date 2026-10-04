@@ -20,6 +20,7 @@ export interface Satellite {
   // Every entity under echod's own name for it, built once, so anything looking for one does a get.
   by: Index;
 
+  board: string;
   satellite?: string;
   player?: string;
   update?: string;
@@ -91,10 +92,13 @@ export function resolve(
     if (at >= 0 && at < SEGMENTS) segments[at] = light.entity_id;
   }
 
+  const board = one("hardware_board");
+
   return {
     device,
     entities,
     by,
+    board: (board && hass.states?.[board]?.state) || "",
     satellite: one("assist_satellite"),
     player: one("speaker"),
     update: one("firmware"),
@@ -102,6 +106,10 @@ export function resolve(
     segments,
     mute: one("mic_mute"),
   };
+}
+
+export function hasScreen(state: Satellite): boolean {
+  return state.by.has("backlight");
 }
 
 // One per assistant, in slot order, which is what the action button presses.

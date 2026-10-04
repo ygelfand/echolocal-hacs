@@ -80,6 +80,87 @@ text.lux .unit {
   --el-warm: #e07b00;
 }
 
+.art[data-shell="charcoal"] {
+  --el-shell: #2b2d31;
+  --el-glass: #08090b;
+  --el-edge: rgba(255, 255, 255, 0.1);
+  --el-glyph: rgba(255, 255, 255, 0.58);
+  --el-btn: #3a3d42;
+  --el-lens: #1b222c;
+  --el-shutter: #5b5e63;
+}
+
+.frame[data-shape="show"] .art {
+  max-width: 300px;
+}
+
+.frame[data-shape="show"] .side {
+  display: grid;
+  grid-template-columns: repeat(2, 40px);
+  align-content: center;
+}
+
+.screen {
+  cursor: pointer;
+}
+
+.screen text {
+  font-family: var(--ha-font-family-body, inherit);
+  pointer-events: none;
+}
+
+.screen .clock {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+}
+
+.screen .line {
+  font-size: 6.5px;
+}
+
+.bar {
+  fill: #38a0ff;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.art[data-activity="listening"] .bar,
+.art[data-activity="processing"] .bar,
+.art[data-activity="responding"] .bar {
+  opacity: 1;
+}
+
+.art[data-activity="processing"] .bar {
+  animation: breathe 1.2s ease-in-out infinite;
+}
+
+.bar[data-muted="true"] {
+  fill: var(--error-color, #db4437);
+  opacity: 1;
+  animation: none;
+}
+
+.lens {
+  cursor: pointer;
+}
+
+.lens circle:not(.hit),
+.lens rect {
+  fill: var(--el-lens);
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-width: 0.5;
+}
+
+.lens[data-covered="true"] circle:not(.hit),
+.lens[data-covered="true"] rect {
+  fill: var(--el-shutter);
+}
+
+.key .glyph path {
+  stroke-width: 1.1;
+}
+
 svg {
   width: 100%;
   height: auto;

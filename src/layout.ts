@@ -43,11 +43,26 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
         ["vad_sensitivity", "End of speech"],
       ],
     },
-    { title: "Indicator", rows: [["mute_led_brightness", "Mute light"]] },
+    {
+      title: "Indicator",
+      rows: [
+        ["mute_led_brightness", "Mute light"],
+        ["mute_sound", "Mute sound"],
+      ],
+    },
   ],
 
   playback: [
     { title: null, rows: [["headphones", "Headphones"]] },
+    {
+      title: "Volume",
+      rows: [
+        ["volume_media", "Music"],
+        ["volume_voice", "Voice"],
+        ["volume_alerts", "Alerts"],
+        ["volume_feedback", "Beeps"],
+      ],
+    },
     { title: "Generated sound", rows: [["noise_layer", "Layer"]] },
     {
       title: "During a turn",
@@ -57,6 +72,131 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
       ],
     },
     { title: "Voice", rows: [["voice_resampling", "Resampling"]] },
+    {
+      title: "Cast",
+      rows: [
+        ["cast_receiver", "Cast receiver"],
+        ["youtube_lounge_on_demand", "YouTube on demand"],
+        ["youtube_live_delay", "YouTube live delay"],
+        ["youtube_sponsorblock", "SponsorBlock categories"],
+        ["cast_credentials", "Credentials"],
+        ["cast_credentials_expire", "Credentials expire"],
+        ["cast_oracle", "Credential server"],
+      ],
+    },
+  ],
+
+  screen: [
+    {
+      title: null,
+      rows: [
+        ["backlight", "Brightness"],
+        ["screen_mode", "Automatic brightness"],
+        ["screen_brightness", "Brightness now"],
+        ["ambient_light", "Room light"],
+      ],
+    },
+    {
+      title: "Look",
+      rows: [
+        ["theme", "Theme"],
+        ["screen_style", "Style"],
+        ["screen_size", "Size"],
+        ["drawer_edge", "Dock side"],
+        ["dashboard_logo", "Logo"],
+        ["privacy_marks", "Privacy marks"],
+      ],
+    },
+    {
+      title: "Clock",
+      rows: [
+        ["clock_face", "Face"],
+        ["clock_format", "Format"],
+        ["clock_size", "Size"],
+        ["clock_position", "Position"],
+        ["clock_color", "Color"],
+        ["clock_date", "Date"],
+      ],
+    },
+    {
+      title: "Visual",
+      rows: [
+        ["visual", "Visual"],
+        ["visual_label", "Label"],
+      ],
+    },
+    {
+      title: "When idle",
+      rows: [
+        ["idle_after", "Idle after"],
+        ["idle_face", "Clock face"],
+        ["idle_size", "Clock size"],
+        ["idle_position", "Vertical position"],
+        ["idle_align", "Horizontal position"],
+        ["idle_visual", "Visual"],
+        ["idle_visual_1_source", "Visual 1 listens to"],
+        ["idle_visual_2_source", "Visual 2 listens to"],
+      ],
+    },
+  ],
+
+  poster: [
+    {
+      title: null,
+      rows: [
+        ["poster", "Posters"],
+        ["poster_showing", "Showing"],
+        ["poster_every", "Changes"],
+        ["poster_next", "Next poster"],
+      ],
+    },
+    {
+      title: "Immich",
+      rows: [
+        ["poster_server", "Server"],
+        ["poster_key", "API key"],
+        ["poster_albums", "Albums"],
+        ["poster_tags", "Tags"],
+      ],
+    },
+  ],
+
+  camera: [
+    {
+      title: null,
+      rows: [
+        ["camera_covered", "Shutter closed"],
+        ["rtsp", "RTSP server"],
+        ["camera_main_on", "Main stream"],
+      ],
+    },
+    {
+      title: "Stream",
+      rows: [
+        ["camera_main_size", "Resolution"],
+        ["camera_quality", "Quality"],
+        ["camera_framerate", "Frame rate"],
+        ["camera_framerate_auto", "Automatic frame rate"],
+        ["camera_keyframe", "Keyframe interval"],
+      ],
+    },
+    {
+      title: "Picture",
+      rows: [
+        ["camera_brightness", "Brightness"],
+        ["camera_contrast", "Contrast"],
+        ["camera_saturation", "Saturation"],
+        ["camera_sharpness", "Sharpness"],
+        ["camera_hue", "Hue"],
+        ["camera_ev", "Exposure"],
+        ["camera_iso", "ISO"],
+        ["camera_whitebalance", "White balance"],
+        ["camera_scene", "Scene"],
+        ["camera_effect", "Effect"],
+        ["camera_banding", "Anti-banding"],
+        ["camera_reset", "Reset"],
+      ],
+    },
   ],
 
   // The wake word and pipeline selects are Home Assistant's own and sit on the device rather than on the
@@ -106,7 +246,13 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
         ["check_for_updates", "Check for updates"],
       ],
     },
-    { title: "Bluetooth", rows: [["bluetooth_proxy", "Proxy enabled"]] },
+    {
+      title: "Bluetooth",
+      rows: [
+        ["bluetooth_proxy", "Proxy enabled"],
+        ["bluetooth_speaker", "Speaker"],
+      ],
+    },
     {
       title: "Maintenance",
       rows: [
@@ -197,6 +343,8 @@ const WIDGETS: Partial<Record<Kind, Spec[]>> = {
     },
   ],
 
+  camera: [{ widget: "camera", place: "header", roles: { camera: "camera" } }],
+
   microphone: [
     // The mute is what the microphone is, so it sits in the popup's header with its indicator rather
     // than taking a row below it. The header has the room for it.
@@ -237,6 +385,7 @@ export interface Widget {
     | "volume"
     | "noise"
     | "history"
+    | "camera"
     | "logs";
   place?: "header" | "body";
   roles: Record<string, string>;
@@ -254,6 +403,9 @@ const PROOF: [Kind, string][] = [
   ["ring", "ring"],
   ["microphone", "mic_mute"],
   ["playback", "speaker"],
+  ["screen", "theme"],
+  ["poster", "poster"],
+  ["camera", "camera"],
 ];
 
 export interface Component {

@@ -13,10 +13,12 @@ import { helpForKind } from "./help";
 import { KEYS_READY } from "./keys";
 import { components, compose, diagnostics, settings, type Widget } from "./layout";
 import { disabledSegments, enable } from "./registry";
+import { DEFAULT_THEME, INKS, THEMES, lensOf, show, type Screen } from "./show";
 import {
   activity,
   deviceName,
   findSatellites,
+  hasScreen,
   isOn,
   lit,
   resolve,
@@ -36,6 +38,9 @@ const ICON: Record<Kind | "follow" | "close", string> = {
   ring: "mdi:record-circle-outline",
   microphone: "mdi:microphone",
   playback: "mdi:speaker",
+  screen: "mdi:monitor",
+  poster: "mdi:image-multiple",
+  camera: "mdi:camera",
   assistant: "mdi:account-voice",
   device: "mdi:cog-outline",
   diagnostics: "mdi:stethoscope",
@@ -88,6 +93,9 @@ export class EchoLocalSatelliteCard extends LitElement {
   // names the integration pushes, so switching one on redraws without the card tracking it.
   @state() private offering: number | null = null;
 
+  @state() private now = new Date();
+  private clock = 0;
+
   static getConfigElement() {
     return document.createElement("echolocal-satellite-card-editor");
   }
@@ -108,10 +116,12 @@ export class EchoLocalSatelliteCard extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     window.addEventListener(KEYS_READY, this.again);
+    this.clock = window.setInterval(() => (this.now = new Date()), 15_000);
   }
 
   disconnectedCallback() {
     window.removeEventListener(KEYS_READY, this.again);
+    clearInterval(this.clock);
     super.disconnectedCallback();
   }
 
@@ -131,6 +141,8 @@ export class EchoLocalSatelliteCard extends LitElement {
   }
 
   private shellFor(state: Satellite): Shell {
+    if (hasScreen(state)) return "charcoal";
+
     const forced = this.config?.shell;
     if (forced && forced !== "auto") return forced;
 
@@ -161,9 +173,9 @@ export class EchoLocalSatelliteCard extends LitElement {
 
     return html`
       <ha-card>
-        <div class="frame">
+        <div class="frame" data-shape=${hasScreen(state) ? "show" : "dot"}>
           <div class="art" data-shell=${this.shellFor(state)} data-activity=${doing}>
-            ${art(
+            ${hasScreen(state) ? this.show(state, doing) : art(
               {
                 segments: this.segments(state),
                 glow: this.glow(state),
@@ -195,6 +207,84 @@ export class EchoLocalSatelliteCard extends LitElement {
 
       ${this.popup(state)}
     `;
+  }
+
+  private show(state: Satellite, doing: string) {
+    const camera = state.by.has("camera");
+
+    return show(
+      {
+        lens: lensOf(state.board),
+        screen: this.screen(state, doing),
+        muted: isOn(this.hass, state.mute),
+        covered: isOn(this.hass, this.entity(state, "camera_covered")),
+      },
+      {
+        screen: () => this.open({ kind: "screen", slot: 0 }),
+        camera: () => (camera ? this.open({ kind: "camera", slot: 0 }) : undefined),
+        mute: () => this.toggle("switch", state.mute),
+        volume: (step) => this.volume(state, step),
+      }
+    );
+  }
+
+  private entity(state: Satellite, name: string): string | undefined {
+    return state.by.get(name)?.[0]?.entity_id;
+  }
+
+  private value(state: Satellite, name: string): string | undefined {
+    const id = this.entity(state, name);
+    return id ? this.hass.states[id]?.state : undefined;
+  }
+
+  private screen(state: Satellite, doing: string): Screen {
+    const palette = THEMES[this.value(state, "theme") ?? ""] ?? THEMES[DEFAULT_THEME];
+    const lit = Number(this.value(state, "screen_brightness") ?? this.value(state, "backlight"));
+    const zone = this.hass.config?.time_zone;
+
+    const parts = new Intl.DateTimeFormat(undefined, {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: this.value(state, "clock_format") === "12 hour",
+      timeZone: zone,
+    }).formatToParts(this.now);
+    const time = parts
+      .filter((p) => p.type === "hour" || p.type === "minute" || p.type === "literal")
+      .map((p) => p.value)
+      .join("")
+      .trim();
+
+    const date =
+      this.value(state, "clock_date") === "on"
+        ? new Intl.DateTimeFormat(undefined, {
+            weekday: "short",
+            month: "short",
+            day: "numeric",
+            timeZone: zone,
+          }).format(this.now)
+        : null;
+
+    return {
+      palette,
+      ink: INKS[this.value(state, "clock_color") ?? ""] ?? palette.text,
+      lit: Number.isNaN(lit) ? 1 : 0.15 + 0.85 * Math.min(1, Math.max(0, lit / 100)),
+      time,
+      date,
+      size: this.value(state, "clock_size") ?? "",
+      place: this.value(state, "clock_position") ?? "",
+      line: this.playing(state, doing),
+    };
+  }
+
+  private playing(state: Satellite, doing: string): string {
+    if (doing !== "idle" && doing !== "playing") return ACTIVITY[doing] ?? doing;
+
+    const player = state.player ? this.hass.states[state.player] : undefined;
+    const title = player?.attributes.media_title ?? this.value(state, "sendspin_title");
+    const artist = player?.attributes.media_artist ?? this.value(state, "sendspin_artist");
+    if (doing !== "playing" || !title) return "";
+
+    return artist ? `${title} · ${artist}` : String(title);
   }
 
   private foot(state: Satellite, doing: string) {
@@ -330,6 +420,9 @@ export class EchoLocalSatelliteCard extends LitElement {
       ring: "Ring",
       microphone: "Microphone",
       playback: "Playback",
+      screen: "Screen",
+      poster: "Posters",
+      camera: "Camera",
       assistant: "Assistant",
       device: "Settings",
       diagnostics: "Diagnostics",
@@ -437,6 +530,8 @@ export class EchoLocalSatelliteCardEditor extends LitElement {
   render() {
     if (!this.hass || !this.config) return nothing;
 
+    const chosen = resolve(this.hass, this.config.device_id);
+
     // Our own list of devices rather than a device selector's: being one of ours means having esphome
     // sub-devices, which no selector filter can ask for.
     const schema = [
@@ -468,7 +563,7 @@ export class EchoLocalSatelliteCardEditor extends LitElement {
         },
       },
       { name: "help", selector: { boolean: {} } },
-    ];
+    ].filter((field) => field.name !== "shell" || !chosen || !hasScreen(chosen));
 
     return html`<ha-form
       .hass=${this.hass}

@@ -67,6 +67,7 @@ export interface HomeAssistant {
   entities: Record<string, HassEntity>;
   states: Record<string, HassState>;
   user?: { is_admin?: boolean; name?: string };
+  config?: { time_zone?: string };
 
   // Every registered service, by domain. A device's own actions only appear here once it has advertised
   // them, which is how the frontend tells what a firmware can do without asking it.
@@ -100,7 +101,7 @@ export interface HomeAssistant {
   };
 }
 
-export type Shell = "grey" | "black" | "white";
+export type Shell = "grey" | "black" | "white" | "charcoal";
 
 export interface CardConfig {
   type?: string;
@@ -136,6 +137,9 @@ export type Kind =
   | "ring"
   | "microphone"
   | "playback"
+  | "screen"
+  | "poster"
+  | "camera"
   | "assistant"
   | "device"
   | "diagnostics"

@@ -60,6 +60,23 @@
   color: var(--primary-color);
 }
 
+.crown.picture {
+  margin-left: auto;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.crown.picture img {
+  display: block;
+  width: 160px;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 8px;
+  background: var(--secondary-background-color);
+}
+
 .title {
   display: flex;
   align-items: center;

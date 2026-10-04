@@ -23,6 +23,8 @@ const HELP: Record<string, string> = {
     "The quietest the room has been recently, which is the baseline the device compares against. It drifts with the room, so a fridge switching on raises it rather than fooling the device.",
   mute_led_brightness:
     "How bright the red ring is while the microphones are cut. Dim is enough to see in a dark room without lighting it up.",
+  mute_sound:
+    "What the device plays when the microphones are cut or restored. Mute tones fall for muting and rise for unmuting, so the two are told apart without looking; None mutes silently.",
   stop_word_sensitivity:
     "How sure the device has to be before it takes an interruption as the word stop. Lower it if saying stop over a reply does not land.",
 
@@ -46,6 +48,24 @@ const HELP: Record<string, string> = {
     "What happens to music when someone says the wake word. Ducking drops the volume and keeps playing, which resumes on the same note; stopping does not.",
   media_duck_level:
     "How far the volume drops while the device is listening or talking. Far enough that the microphones are not fighting the music, not so far that the room goes silent.",
+  cast_receiver: "Lets phones and browsers cast to the device.",
+  youtube_live_delay: "How far behind live a YouTube live stream plays, in seconds.",
+  youtube_sponsorblock:
+    "SponsorBlock categories to skip in YouTube videos, separated by commas.",
+
+  // The screen
+  backlight: "How bright the screen is.",
+  screen_mode: "Sets the brightness from the room's light.",
+  drawer_edge: "Which edge of the screen the dock sits on.",
+  idle_after: "How long the screen waits with nobody using it before the idle screen comes up.",
+  poster_every: "How often the next photo comes up.",
+
+  // The camera
+  rtsp: "Serves the camera as an RTSP stream on the network.",
+  camera_keyframe: "Seconds between full frames.",
+  camera_banding: "Set to your mains frequency if lights flicker in the picture.",
+  bluetooth_speaker: "Lets phones pair with the device and play through it.",
+
   voice_resampling:
     "How the reply's audio is resampled to what the speaker wants. Better quality costs a little more work on a device that has four small cores.",
 
@@ -126,6 +146,10 @@ const KINDS: Record<string, string> = {
   ring: "The twelve-segment light. None of it changes what the device does — it changes what somebody in the room can tell about it, which is why the muted and failed colours are worth setting.",
   playback:
     "The speaker: what comes out of it, how loud, and what happens to music when somebody talks to the device.",
+  screen:
+    "How the screen looks: brightness, theme, the clock, and what it shows when nobody is using it. Tap the screen on the card to open this.",
+  poster: "Photos from an Immich server. Fill in the server and API key, then pick albums or tags.",
+  camera: "The camera's picture and stream. Tap the picture for the live view.",
   assistant:
     "One wake word and the turn that follows it. A device can run more than one, each with its own word, sensitivity and timings, which is how one device answers to two names.",
   device:
