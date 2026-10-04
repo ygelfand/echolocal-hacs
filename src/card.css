@@ -41,7 +41,9 @@ text.lux .unit {
 .art {
   grid-area: 1 / 1;
   min-width: 0;
+  width: 100%;
   max-width: 240px;
+  height: 240px;
   margin: 0 auto;
 
   --el-shell: #4a4d52;
@@ -163,7 +165,7 @@ text.lux .unit {
 
 svg {
   width: 100%;
-  height: auto;
+  height: 100%;
   display: block;
 }
 
