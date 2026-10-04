@@ -13,12 +13,12 @@ import { helpForKind } from "./help";
 import { KEYS_READY } from "./keys";
 import { components, compose, diagnostics, settings, type Widget } from "./layout";
 import { disabledSegments, enable } from "./registry";
-import { DEFAULT_THEME, INKS, THEMES, lensOf, show, type Screen } from "./show";
+import { lookOf, type Lens } from "./boards";
+import { DEFAULT_THEME, INKS, THEMES, show, type Screen } from "./show";
 import {
   activity,
   deviceName,
   findSatellites,
-  hasScreen,
   isOn,
   lit,
   resolve,
@@ -141,7 +141,7 @@ export class EchoLocalSatelliteCard extends LitElement {
   }
 
   private shellFor(state: Satellite): Shell {
-    if (hasScreen(state)) return "charcoal";
+    if (lookOf(state.board).shape === "show") return "charcoal";
 
     const forced = this.config?.shell;
     if (forced && forced !== "auto") return forced;
@@ -170,12 +170,13 @@ export class EchoLocalSatelliteCard extends LitElement {
     }
 
     const doing = this.doing(state);
+    const look = lookOf(state.board);
 
     return html`
       <ha-card>
-        <div class="frame" data-shape=${hasScreen(state) ? "show" : "dot"}>
+        <div class="frame" data-shape=${look.shape}>
           <div class="art" data-shell=${this.shellFor(state)} data-activity=${doing}>
-            ${hasScreen(state) ? this.show(state, doing) : art(
+            ${look.shape === "show" ? this.show(state, doing, look.lens) : art(
               {
                 segments: this.segments(state),
                 glow: this.glow(state),
@@ -209,12 +210,12 @@ export class EchoLocalSatelliteCard extends LitElement {
     `;
   }
 
-  private show(state: Satellite, doing: string) {
+  private show(state: Satellite, doing: string, lens: Lens) {
     const camera = state.by.has("camera");
 
     return show(
       {
-        lens: lensOf(state.board),
+        lens,
         screen: this.screen(state, doing),
         muted: isOn(this.hass, state.mute),
         covered: isOn(this.hass, this.entity(state, "camera_covered")),
@@ -563,7 +564,7 @@ export class EchoLocalSatelliteCardEditor extends LitElement {
         },
       },
       { name: "help", selector: { boolean: {} } },
-    ].filter((field) => field.name !== "shell" || !chosen || !hasScreen(chosen));
+    ].filter((field) => field.name !== "shell" || !chosen || lookOf(chosen.board).shape === "dot");
 
     return html`<ha-form
       .hass=${this.hass}

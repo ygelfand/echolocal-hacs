@@ -1,0 +1,13 @@
+export type Lens = "round" | "square";
+
+export type Look = { shape: "dot" } | { shape: "show"; lens: Lens };
+
+const LOOKS: Record<string, Look> = {
+  biscuit: { shape: "dot" },
+  checkers: { shape: "show", lens: "round" },
+  cronos: { shape: "show", lens: "square" },
+};
+
+export function lookOf(board: string): Look {
+  return LOOKS[board] ?? LOOKS.biscuit;
+}

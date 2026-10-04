@@ -108,10 +108,6 @@ export function resolve(
   };
 }
 
-export function hasScreen(state: Satellite): boolean {
-  return state.by.has("backlight");
-}
-
 // One per assistant, in slot order, which is what the action button presses.
 export function wakeButtons(state: Satellite): string[] {
   return (state.by.get("wake_assistant") ?? []).map((e) => e.entity_id);

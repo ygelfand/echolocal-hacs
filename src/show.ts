@@ -1,15 +1,6 @@
 import { svg, type SVGTemplateResult } from "lit";
 
-export type Lens = "round" | "square";
-
-const LENS: Record<string, Lens> = {
-  checkers: "round",
-  cronos: "square",
-};
-
-export function lensOf(board: string): Lens | null {
-  return LENS[board] ?? null;
-}
+import type { Lens } from "./boards";
 
 export interface Palette {
   background: string;
@@ -66,7 +57,7 @@ export interface Screen {
 }
 
 export interface ShowState {
-  lens: Lens | null;
+  lens: Lens;
   screen: Screen;
   muted: boolean;
   covered: boolean;
@@ -174,9 +165,7 @@ function face(screen: Screen) {
   `;
 }
 
-function lens(shape: Lens | null, covered: boolean, tap: () => void) {
-  if (!shape) return "";
-
+function lens(shape: Lens, covered: boolean, tap: () => void) {
   const hole =
     shape === "round"
       ? svg`<circle cx="0" cy="0" r="3.4"></circle>`
