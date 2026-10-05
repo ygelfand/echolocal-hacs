@@ -2,6 +2,7 @@
 //
 // Roles come from the registry names in keys.ts, which echod owns. Nothing here reads an entity id.
 
+import { isBoard } from "./boards";
 import { index, tag, type Index, type Tagged } from "./keys";
 import type { HassDevice, HomeAssistant } from "./types";
 
@@ -98,7 +99,7 @@ export function resolve(
     device,
     entities,
     by,
-    board: (board && hass.states?.[board]?.state) || "",
+    board: isBoard(device.model) ? device.model : (board && hass.states?.[board]?.state) || "",
     satellite: one("assist_satellite"),
     player: one("speaker"),
     update: one("firmware"),

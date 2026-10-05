@@ -11,3 +11,7 @@ const LOOKS: Record<string, Look> = {
 export function lookOf(board: string): Look {
   return LOOKS[board] ?? LOOKS.biscuit;
 }
+
+export function isBoard(name?: string | null): name is string {
+  return !!name && name in LOOKS;
+}
