@@ -8,6 +8,8 @@ MANUFACTURER = "EchoLocal"
 
 CONF_SIDEBAR = "sidebar"
 
+TONES_DIR_NAME = "echolocal_tones"
+
 PANEL_URL_PATH = "echolocal"
 PANEL_TITLE = "EchoLocal"
 PANEL_ICON = "mdi:record-circle-outline"

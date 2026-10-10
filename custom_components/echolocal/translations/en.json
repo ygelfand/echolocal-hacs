@@ -22,5 +22,23 @@
         }
       }
     }
+  },
+  "services": {
+    "assign_tone": {
+      "name": "Send a tone",
+      "description": "Send a tone from the EchoLocal library to devices.",
+      "fields": {
+        "tone": { "name": "Tone", "description": "The tone's key." },
+        "device_id": { "name": "Devices", "description": "The devices to send it to." }
+      }
+    },
+    "unassign_tone": {
+      "name": "Remove a tone",
+      "description": "Remove a tone from devices. It stays in the library.",
+      "fields": {
+        "tone": { "name": "Tone", "description": "The tone's key." },
+        "device_id": { "name": "Devices", "description": "The devices to remove it from." }
+      }
+    }
   }
 }

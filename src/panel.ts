@@ -12,6 +12,7 @@ import "./tabs/groups";
 import "./tabs/activity";
 import "./tabs/health";
 import "./tabs/words";
+import "./tabs/tones";
 
 @customElement("echolocal-panel")
 export class EchoLocalPanel extends LitElement {

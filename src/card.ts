@@ -175,7 +175,12 @@ export class EchoLocalSatelliteCard extends LitElement {
     return html`
       <ha-card>
         <div class="frame" data-shape=${look.shape}>
-          <div class="art" data-shell=${this.shellFor(state)} data-activity=${doing}>
+          <div
+            class="art"
+            data-shell=${this.shellFor(state)}
+            data-activity=${doing}
+            style=${look.shape === "show" ? `max-width:${look.width}px` : ""}
+          >
             ${look.shape === "show" ? this.show(state, doing, look.lens) : art(
               {
                 segments: this.segments(state),

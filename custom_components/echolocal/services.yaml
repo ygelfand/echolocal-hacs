@@ -1,0 +1,30 @@
+assign_tone:
+  fields:
+    tone:
+      required: true
+      example: doorbell_chime
+      selector:
+        text:
+    device_id:
+      required: true
+      selector:
+        device:
+          multiple: true
+          filter:
+            - integration: esphome
+              manufacturer: EchoLocal
+unassign_tone:
+  fields:
+    tone:
+      required: true
+      example: doorbell_chime
+      selector:
+        text:
+    device_id:
+      required: true
+      selector:
+        device:
+          multiple: true
+          filter:
+            - integration: esphome
+              manufacturer: EchoLocal

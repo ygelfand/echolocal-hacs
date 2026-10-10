@@ -92,10 +92,6 @@ text.lux .unit {
   --el-shutter: #5b5e63;
 }
 
-.frame[data-shape="show"] .art {
-  max-width: 300px;
-}
-
 .frame[data-shape="show"] .side {
   display: grid;
   grid-template-columns: repeat(2, 40px);
