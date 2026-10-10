@@ -19,7 +19,7 @@ from homeassistant.exceptions import HomeAssistantError, ServiceValidationError,
 from homeassistant.helpers import config_validation as cv, device_registry as dr
 from homeassistant.util import slugify
 
-from .const import DOMAIN, MANUFACTURER, TONES_DIR_NAME
+from .const import ASSETS_DIR_NAME, DOMAIN, MANUFACTURER, TONES_DIR_NAME
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -40,8 +40,7 @@ ASSIGN_SCHEMA = vol.Schema(
 
 
 async def async_setup(hass: HomeAssistant) -> None:
-    store = _dir(hass)
-    await hass.async_add_executor_job(lambda: store.mkdir(parents=True, exist_ok=True))
+    await hass.async_add_executor_job(_prepare, hass)
 
     hass.http.register_view(ToneUploadView())
     hass.http.register_view(ToneFileView())
@@ -61,7 +60,11 @@ async def async_setup(hass: HomeAssistant) -> None:
 
 
 def _dir(hass: HomeAssistant) -> Path:
-    return Path(hass.config.path(TONES_DIR_NAME))
+    return Path(hass.config.path(ASSETS_DIR_NAME, TONES_DIR_NAME))
+
+
+def _prepare(hass: HomeAssistant) -> None:
+    _dir(hass).mkdir(parents=True, exist_ok=True)
 
 
 def _meta_path(store: Path, key: str) -> Path:

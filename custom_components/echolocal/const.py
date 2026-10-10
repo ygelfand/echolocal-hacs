@@ -8,7 +8,8 @@ MANUFACTURER = "EchoLocal"
 
 CONF_SIDEBAR = "sidebar"
 
-TONES_DIR_NAME = "echolocal_tones"
+ASSETS_DIR_NAME = "echolocal_assets"
+TONES_DIR_NAME = "tones"
 
 PANEL_URL_PATH = "echolocal"
 PANEL_TITLE = "EchoLocal"

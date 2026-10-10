@@ -30,6 +30,7 @@ interface Holder {
   id: string;
   name: string;
   online: boolean;
+  supported: boolean;
   tones: Set<string>;
 }
 
@@ -189,15 +190,20 @@ export class EchoLocalTones extends LitElement {
                 : nothing}
               ${shown.map((h) => {
                 const id = `${tone.key}:${h.id}`;
-                return html`<label class="device" data-offline=${String(!h.online)}>
+                const usable = h.online && h.supported;
+                return html`<label class="device" data-offline=${String(!usable)}>
                   <input
                     type="checkbox"
                     .checked=${h.tones.has(tone.name)}
-                    ?disabled=${!h.online || this.sending.has(id)}
+                    ?disabled=${!usable || this.sending.has(id)}
                     @change=${(e: Event) => void this.toggle(tone, h, (e.target as HTMLInputElement).checked)}
                   />
                   <span>${h.name}</span>
-                  ${!h.online ? html`<span class="state">offline</span>` : nothing}
+                  ${!h.online
+                    ? html`<span class="state">offline</span>`
+                    : !h.supported
+                      ? html`<span class="state">needs an update</span>`
+                      : nothing}
                   ${this.sending.has(id) ? html`<span class="state">sending…</span>` : nothing}
                 </label>`;
               })}
@@ -210,13 +216,16 @@ export class EchoLocalTones extends LitElement {
   private holders(): Holder[] {
     return findSatellites(this.hass)
       .map((device) => {
-        const select = resolve(this.hass, device.id)?.by.get("alerts_info")?.[0];
+        const own = resolve(this.hass, device.id);
+        const select = own?.by.get("alerts_info")?.[0];
         const entity = select ? this.hass.states[select.entity_id] : undefined;
         const options = (entity?.attributes?.options as string[] | undefined) ?? [];
+        const states = [...(own?.by.values() ?? [])].flat().map((e) => this.hass.states[e.entity_id]);
         return {
           id: device.id,
           name: deviceName(device),
-          online: !!entity && entity.state !== "unavailable",
+          online: states.some((s) => s && s.state !== "unavailable"),
+          supported: !!entity,
           tones: new Set(options),
         };
       })
