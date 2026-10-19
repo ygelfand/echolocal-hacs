@@ -28,3 +28,23 @@ unassign_tone:
           filter:
             - integration: esphome
               manufacturer: EchoLocal
+duck_room:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          multiple: true
+          filter:
+            - integration: esphome
+              manufacturer: EchoLocal
+unduck_room:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          multiple: true
+          filter:
+            - integration: esphome
+              manufacturer: EchoLocal

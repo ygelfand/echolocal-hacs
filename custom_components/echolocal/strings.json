@@ -39,6 +39,20 @@
         "tone": { "name": "Tone", "description": "The tone's key." },
         "device_id": { "name": "Devices", "description": "The devices to remove it from." }
       }
+    },
+    "duck_room": {
+      "name": "Quieten the room",
+      "description": "Drop every player in the device's room that is playing, by that device's own music ducking setting. Runs on its own when the device hears its wake word; this is for trying it by hand.",
+      "fields": {
+        "device_id": { "name": "Devices", "description": "The devices whose rooms to quieten." }
+      }
+    },
+    "unduck_room": {
+      "name": "Restore the room",
+      "description": "Put back what Quiet the room dropped. Runs on its own when the turn ends; this is for trying it by hand.",
+      "fields": {
+        "device_id": { "name": "Devices", "description": "The devices whose rooms to restore." }
+      }
     }
   }
 }
