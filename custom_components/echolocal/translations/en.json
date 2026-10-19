@@ -7,10 +7,19 @@
         "data": {
           "sidebar": "Show the EchoLocal dashboard in the sidebar"
         }
+      },
+      "device_added": {
+        "title": "EchoLocal device added",
+        "description": "**{name}** has been added. Which area is it in?",
+        "data": {
+          "area": "Area"
+        }
       }
     },
     "abort": {
-      "already_configured": "EchoLocal is already set up."
+      "already_configured": "EchoLocal is already set up.",
+      "area_assigned": "Area assigned.",
+      "device_not_found": "The device is no longer in the device registry."
     }
   },
   "options": {

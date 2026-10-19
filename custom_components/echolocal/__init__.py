@@ -7,7 +7,8 @@ from pathlib import Path
 from homeassistant.components import frontend, panel_custom
 from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from homeassistant.core import Event, HomeAssistant
+from homeassistant.helpers import device_registry as dr
 from homeassistant.loader import async_get_integration
 
 from . import entities, tones, wakewords
@@ -37,6 +38,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: EchoLocalEntry) -> bool:
         await wakewords.async_setup(hass)
         await tones.async_setup(hass)
         entities.async_setup(hass)
+        _async_watch_devices(hass)
 
     if entry.options.get(CONF_SIDEBAR, True):
         await _async_register_panel(hass, version)
@@ -53,6 +55,42 @@ async def async_unload_entry(hass: HomeAssistant, entry: EchoLocalEntry) -> bool
 
 async def _async_options_updated(hass: HomeAssistant, entry: EchoLocalEntry) -> None:
     await hass.config_entries.async_reload(entry.entry_id)
+
+
+def _async_watch_devices(hass: HomeAssistant) -> None:
+    """Ask which area a Dot is in, the moment it is added.
+
+    The main device of a Dot carries manufacturer "EchoLocal"; the ring,
+    microphone, playback and assistant devices hang off it via via_device_id.
+    Existing devices get no event, so this only ever fires for new Dots.
+    """
+    registry = dr.async_get(hass)
+
+    async def _on_registry_event(event: Event) -> None:
+        if event.data["action"] != "create":
+            return
+
+        device = registry.async_get(event.data["device_id"])
+        if (
+            device is None
+            or device.manufacturer != "EchoLocal"
+            or device.via_device_id is not None
+            or device.area_id is not None
+        ):
+            return
+
+        # One prompt per device, however many create events it produces.
+        for flow in hass.config_entries.async_progress(DOMAIN):
+            if flow["context"].get("data", {}).get("device_id") == device.id:
+                return
+
+        await hass.config_entries.flow.async_init(
+            DOMAIN,
+            context={"source": "device_added"},
+            data={"device_id": device.id},
+        )
+
+    hass.bus.async_listen(dr.EVENT_DEVICE_REGISTRY_UPDATED, _on_registry_event)
 
 
 async def _async_serve_frontend(hass: HomeAssistant, version: str) -> None:
