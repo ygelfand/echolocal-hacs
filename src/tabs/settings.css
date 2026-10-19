@@ -1,0 +1,295 @@
+:host {
+  display: block;
+}
+
+/* Scope: every device, or one group of them. */
+.filters {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.filters button {
+  padding: 5px 12px;
+  border: 1px solid color-mix(in srgb, var(--primary-text-color) 16%, transparent);
+  border-radius: 999px;
+  background: none;
+  color: var(--secondary-text-color);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.filters button:hover {
+  color: var(--primary-text-color);
+}
+
+.filters button[data-on="true"] {
+  color: var(--primary-color);
+  border-color: color-mix(in srgb, var(--primary-color) 50%, transparent);
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+}
+
+.filters .count {
+  margin-left: 6px;
+  font-size: 0.72rem;
+  color: var(--secondary-text-color);
+}
+
+/* What the last change did, said once for the whole page. */
+.said {
+  margin-bottom: 12px;
+  font-size: 0.82rem;
+  color: var(--primary-color);
+}
+
+.empty {
+  color: var(--secondary-text-color);
+  max-width: 52ch;
+  line-height: 1.5;
+}
+
+/* One component at a time, in the order the card's own squares show them. */
+.kind {
+  margin-bottom: 24px;
+}
+
+.kind .head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px 2px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--secondary-text-color);
+}
+
+.kind .head ha-icon {
+  --mdc-icon-size: 17px;
+  color: var(--primary-color);
+  display: flex;
+}
+
+/* Columns rather than a grid: sections are different heights, and a grid strands the short ones next
+   to a tall one instead of packing them — the same call the popup makes. */
+.columns {
+  columns: 2 340px;
+  column-gap: 24px;
+}
+
+.group {
+  break-inside: avoid;
+  margin-bottom: 14px;
+}
+
+.section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px 2px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--secondary-text-color);
+}
+
+.section::before {
+  content: "";
+  width: 3px;
+  height: 12px;
+  border-radius: 2px;
+  background: var(--primary-color);
+  opacity: 0.6;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 14px;
+  margin-bottom: 5px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--primary-text-color) 5%, transparent);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--primary-text-color) 7%, transparent);
+}
+
+.icon ha-icon {
+  --mdc-icon-size: 19px;
+  color: var(--secondary-text-color);
+  display: flex;
+}
+
+.named {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.name {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--primary-text-color);
+}
+
+/* Never squeezed below its content: the name gives up its room instead, which it can because it
+   ellipsizes. The same call the popup makes. */
+.trail {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.trail ha-control-switch {
+  width: 44px;
+  --control-switch-thickness: 26px;
+  --control-switch-border-radius: 13px;
+}
+
+ha-control-select {
+  --control-select-thickness: 34px;
+  white-space: nowrap;
+}
+
+.trail ha-control-select-menu {
+  min-width: 0;
+  max-width: 210px;
+  --control-select-menu-height: 34px;
+}
+
+ha-control-slider {
+  --control-slider-thickness: 30px;
+}
+
+.fold {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--secondary-text-color);
+  cursor: pointer;
+}
+
+.fold:hover,
+.fold[data-on="true"] {
+  color: var(--primary-color);
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+}
+
+.fold ha-icon {
+  --mdc-icon-size: 18px;
+  display: flex;
+}
+
+/* What the devices agree on, or the fact that they do not. */
+.state {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--secondary-text-color);
+}
+
+.state .agree {
+  font-variant-numeric: tabular-nums;
+  color: var(--primary-text-color);
+}
+
+.state .mix {
+  font-weight: 600;
+  color: var(--warning-color, #ffa600);
+}
+
+.state .count {
+  margin-left: auto;
+}
+
+/* The per-device view. A device that stands away from the rest says so. */
+.who {
+  display: grid;
+  gap: 3px;
+  padding-top: 8px;
+  border-top: 1px solid color-mix(in srgb, var(--primary-text-color) 10%, transparent);
+}
+
+.line {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 0.82rem;
+}
+
+.line .name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--secondary-text-color);
+}
+
+.line .gone {
+  font-size: 0.76rem;
+  color: var(--secondary-text-color);
+  opacity: 0.7;
+}
+
+.line .reading {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--primary-text-color);
+  cursor: pointer;
+}
+
+.line .reading:hover {
+  color: var(--primary-color);
+}
+
+/* "differs" is a plain observation — the value simply is not the shared one. "Local" is the pill's
+   verdict, in the same amber the card wears, and it outranks the observation: this device is meant
+   to be different, and this page will not change it. */
+.badge {
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  background: color-mix(in srgb, var(--primary-text-color) 8%, transparent);
+  color: var(--secondary-text-color);
+}
+
+.badge.local {
+  background: color-mix(in srgb, var(--warning-color, #ffa600) 15%, transparent);
+  color: var(--warning-color, #ffa600);
+}

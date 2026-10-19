@@ -339,6 +339,39 @@ svg {
   color: var(--secondary-text-color);
 }
 
+/* The Fleet/Local pill: quiet blue while the device follows the fleet, amber once it keeps its own
+   settings — the two states are read at a glance across a wall of cards. The auto margin parks it
+   against the button tail rather than drifting in the middle of whatever room is left. */
+.mode {
+  align-self: center;
+  flex: 0 0 auto;
+  margin-left: auto;
+  padding: 4px 12px;
+  border: 1px solid color-mix(in srgb, var(--primary-color) 45%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+  color: var(--primary-color);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mode[data-local="true"] {
+  border-color: color-mix(in srgb, var(--warning-color, #ffa600) 50%, transparent);
+  background: color-mix(in srgb, var(--warning-color, #ffa600) 14%, transparent);
+  color: var(--warning-color, #ffa600);
+}
+
+.mode:hover {
+  filter: brightness(1.1);
+}
+
+.mode:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
 /* The divider is what makes the L read as one shape: the name keeps its own compartment, and the buttons
    past it are the foot of the run that comes down the right. */
 .tail {

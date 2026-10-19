@@ -9,6 +9,7 @@ import { customElement, property, state } from "lit/decorators.js";
 import { HOLD, SEGMENTS, art, type Lux, type Segment } from "./art";
 import styles from "./card.css";
 import "./dialog";
+import { isLocal, LOCAL_READY, setLocal } from "./groups";
 import { helpForKind } from "./help";
 import { KEYS_READY } from "./keys";
 import { components, compose, diagnostics, settings, type Widget } from "./layout";
@@ -96,6 +97,9 @@ export class EchoLocalSatelliteCard extends LitElement {
   @state() private now = new Date();
   private clock = 0;
 
+  // While the Fleet/Local label is being written, so a second tap does not race the first.
+  @state() private moving = false;
+
   static getConfigElement() {
     return document.createElement("echolocal-satellite-card-editor");
   }
@@ -116,11 +120,13 @@ export class EchoLocalSatelliteCard extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     window.addEventListener(KEYS_READY, this.again);
+    window.addEventListener(LOCAL_READY, this.again);
     this.clock = window.setInterval(() => (this.now = new Date()), 15_000);
   }
 
   disconnectedCallback() {
     window.removeEventListener(KEYS_READY, this.again);
+    window.removeEventListener(LOCAL_READY, this.again);
     clearInterval(this.clock);
     super.disconnectedCallback();
   }
@@ -299,6 +305,7 @@ export class EchoLocalSatelliteCard extends LitElement {
         <div class="name">${deviceName(state.device)}</div>
         <div class="status">${ACTIVITY[doing] ?? doing}</div>
       </div>
+      ${this.pill(state)}
       <div class="tail">
         ${this.square(ICON.activity, "Activity", () => this.open({ kind: "activity", slot: 0 }))}
         ${this.square(ICON.device, "Settings", () => this.open({ kind: "device", slot: 0 }))}
@@ -307,6 +314,48 @@ export class EchoLocalSatelliteCard extends LitElement {
         )}
       </div>
     </div>`;
+  }
+
+  // Who wins when this device and the fleet disagree: Local keeps this device's own values past any
+  // Fleet change, Fleet lets the Fleet tab write to it. A label on the device, so it reads the same on
+  // every screen; only an administrator can flip it, since a label is the registry's to write.
+  private pill(state: Satellite) {
+    const local = isLocal(this.hass, state.device);
+    const admin = this.hass.user?.is_admin !== false;
+
+    return html`<button
+      class="mode"
+      data-local=${String(local)}
+      ?disabled=${!admin}
+      title=${admin
+        ? local
+          ? "Keeps its own settings — the Fleet tab leaves it alone"
+          : "Follows the fleet — the Fleet tab can change it"
+        : "Only an administrator can switch this"}
+      @click=${() => this.flip(state, local)}
+    >
+      ${local ? "Local" : "Fleet"}
+    </button>`;
+  }
+
+  private async flip(state: Satellite, local: boolean) {
+    if (this.moving) return;
+    this.moving = true;
+
+    try {
+      await setLocal(this.hass, state.device, !local);
+    } catch (error) {
+      const why = error instanceof Error ? error.message : String(error);
+      this.dispatchEvent(
+        new CustomEvent("hass-notification", {
+          detail: { message: `Could not save: ${why}` },
+          bubbles: true,
+          composed: true,
+        })
+      );
+    } finally {
+      this.moving = false;
+    }
   }
 
   private tapped(state: Satellite, i: number) {

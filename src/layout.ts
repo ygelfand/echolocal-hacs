@@ -15,6 +15,36 @@ interface Group {
   rows: ([string, string] | [string, string, string])[];
 }
 
+// The kinds a global change makes sense for, in popup order. The ring's lights are edited on the
+// artwork, diagnostics hold readings rather than settings and activity is history — none of them is
+// something to set on every device at once.
+export const GLOBAL: Kind[] = [
+  "microphone",
+  "playback",
+  "screen",
+  "poster",
+  "camera",
+  "assistant",
+  "device",
+];
+
+export interface Named {
+  kind: Kind;
+  section: string | null;
+  name: string;
+  label: string;
+}
+
+// Every setting name a popup shows, in order, for a page that lays the same rows out across many
+// devices at once. Exported for the settings tab; nothing here is discovered, it is the layouts above.
+export function named(): Named[] {
+  return GLOBAL.flatMap((kind) =>
+    (LAYOUTS[kind] ?? []).flatMap((group) =>
+      group.rows.map(([name, label]) => ({ kind, section: group.title, name, label }))
+    )
+  );
+}
+
 const LAYOUTS: Partial<Record<Kind, Group[]>> = {
   ring: [
     { title: null, rows: [["ring", "Ring"]] },

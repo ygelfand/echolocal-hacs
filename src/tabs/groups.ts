@@ -3,7 +3,7 @@
 import { LitElement, html, nothing, unsafeCSS } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
-import { createLabel, deleteLabel, group, labels, renameLabel, setLabels } from "../groups";
+import { createLabel, deleteLabel, group, labels, LOCAL_LABEL, renameLabel, setLabels } from "../groups";
 import { register } from "../nav";
 import { deviceName, findSatellites } from "../satellite";
 import type { HassDevice, HassLabel, HomeAssistant } from "../types";
@@ -59,8 +59,10 @@ export class EchoLocalGroups extends LitElement {
 
     const devices = findSatellites(this.hass);
     // Only the labels satellites carry are groups, plus every label that exists so a fresh one can be
-    // filled — otherwise a new group would have nowhere to put anybody.
-    const columns = this.known;
+    // filled — otherwise a new group would have nowhere to put anybody. The reserved Local config
+    // label is a flag on a device rather than somewhere it lives, so it earns no column: from here it
+    // could be renamed or deleted out from under the cards that read it.
+    const columns = this.known.filter((label) => label.name !== LOCAL_LABEL);
 
     return html`
       <div class="make">
@@ -141,7 +143,9 @@ export class EchoLocalGroups extends LitElement {
   // after a second one to list them all again.
   private async make() {
     const name = this.naming.trim();
-    if (!name || this.busy) return;
+    // The reserved name is how the cards find their flag; a second label wearing it would leave two
+    // candidates and no way to tell which the pill means.
+    if (!name || name === LOCAL_LABEL || this.busy) return;
 
     this.busy = true;
     this.naming = "";
@@ -154,7 +158,7 @@ export class EchoLocalGroups extends LitElement {
   }
 
   private async rename(label: HassLabel, name: string) {
-    if (!name.trim() || name === label.name) return;
+    if (!name.trim() || name === label.name || name.trim() === LOCAL_LABEL) return;
 
     this.known = this.known.map((one) =>
       one.label_id === label.label_id ? { ...one, name: name.trim() } : one

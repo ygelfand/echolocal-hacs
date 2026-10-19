@@ -9,6 +9,7 @@ import type { HomeAssistant, Route } from "./types";
 
 import "./tabs/home";
 import "./tabs/groups";
+import "./tabs/settings";
 import "./tabs/activity";
 import "./tabs/health";
 import "./tabs/words";
