@@ -28,12 +28,50 @@ import {
   type Satellite,
 } from "./satellite";
 import { SWATCHES } from "./swatches";
-import type { CardConfig, HomeAssistant, Kind, Section, Shell } from "./types";
+import type { CardConfig, CardElements, HomeAssistant, Kind, Section, Shell } from "./types";
 
 const LABELS: Record<string, string> = {
   device_id: "Device",
   shell: "Shell",
   help: "Explain each setting",
+
+  // The elements the card can hide, one label per flag. The group is titled by "elements" below.
+  elements: "Elements",
+  label: "Name and status",
+  activity: "Activity button",
+  settings: "Settings button",
+  diagnostics: "Diagnostics button",
+  call: "Call button",
+  action: "Action button",
+  volume: "Volume buttons",
+  mute: "Microphone button",
+  ring: "Ring",
+  microphone: "Microphone",
+  playback: "Playback",
+  screen: "Screen",
+  poster: "Posters",
+  camera: "Camera",
+  assistant: "Assistant",
+};
+
+// Every element on, so the editor shows each switch ticked for a card that never mentioned it. Matches
+// what the card draws when a flag is absent.
+const ELEMENTS_DEFAULT: Required<CardElements> = {
+  label: true,
+  activity: true,
+  settings: true,
+  diagnostics: true,
+  call: true,
+  action: true,
+  volume: true,
+  mute: true,
+  ring: true,
+  microphone: true,
+  playback: true,
+  screen: true,
+  poster: true,
+  camera: true,
+  assistant: true,
 };
 
 const ICON: Record<Kind | "follow" | "close", string> = {
@@ -175,6 +213,7 @@ export class EchoLocalSatelliteCard extends LitElement {
 
     const doing = this.doing(state);
     const look = lookOf(state.board);
+    const elements = this.config.elements ?? {};
 
     return html`
       <ha-card>
@@ -188,7 +227,7 @@ export class EchoLocalSatelliteCard extends LitElement {
             ${look.shape === "panel"
               ? this.panel(state, doing, look.picture, look.screen)
               : look.shape === "show"
-                ? this.show(state, doing, look.lens)
+                ? this.show(state, doing, look.lens, elements)
                 : art(
               {
                 segments: this.segments(state),
@@ -198,6 +237,11 @@ export class EchoLocalSatelliteCard extends LitElement {
                 picked: this.picked,
                 divisible: [...state.segments, ...this.switchedOff(state)].some(Boolean),
                 lux: this.lux(state),
+                controls: {
+                  action: elements.action,
+                  volume: elements.volume,
+                  mute: elements.mute,
+                },
               },
               {
                 ring: () => this.open({ kind: "ring", slot: 0 }),
@@ -209,12 +253,12 @@ export class EchoLocalSatelliteCard extends LitElement {
             )}
           </div>
 
-          <div class="side">${this.side(state)}</div>
+          <div class="side">${this.side(state, elements)}</div>
 
           ${this.offering !== null
             ? this.offer(state, this.offering)
             : this.picked === null
-              ? this.foot(state, doing)
+              ? this.foot(state, doing, elements)
               : this.palette(state)}
         </div>
       </ha-card>
@@ -232,7 +276,7 @@ export class EchoLocalSatelliteCard extends LitElement {
     `;
   }
 
-  private show(state: Satellite, doing: string, lens: Lens) {
+  private show(state: Satellite, doing: string, lens: Lens, elements: CardElements) {
     const camera = state.by.has("camera");
 
     return show(
@@ -241,6 +285,11 @@ export class EchoLocalSatelliteCard extends LitElement {
         screen: this.screen(state, doing),
         muted: isOn(this.hass, state.mute),
         covered: isOn(this.hass, this.entity(state, "camera_covered")),
+        controls: {
+          volume: elements.volume,
+          mute: elements.mute,
+          camera: elements.camera,
+        },
       },
       {
         screen: () => this.open({ kind: "screen", slot: 0 }),
@@ -317,22 +366,37 @@ export class EchoLocalSatelliteCard extends LitElement {
     return artist ? `${title} · ${artist}` : String(title);
   }
 
-  private foot(state: Satellite, doing: string) {
-    return html`<div class="foot">
-      <div class="label">
-        <div class="name">${deviceName(state.device)}</div>
-        <div class="status">${ACTIVITY[doing] ?? doing}</div>
-      </div>
-      <div class="tail">
-        ${actionOf(this.hass, state.device.name ?? "", "call_offer")
-          ? this.square("mdi:phone", "Call", () => (this.calling = true))
-          : nothing}
-        ${this.square(ICON.activity, "Activity", () => this.open({ kind: "activity", slot: 0 }))}
-        ${this.square(ICON.device, "Settings", () => this.open({ kind: "device", slot: 0 }))}
-        ${this.square(ICON.diagnostics, "Diagnostics", () =>
-          this.open({ kind: "diagnostics", slot: 0 })
-        )}
-      </div>
+  private foot(state: Satellite, doing: string, elements: CardElements) {
+    const label = elements.label !== false;
+    const squares = [
+      elements.call !== false && actionOf(this.hass, state.device.name ?? "", "call_offer")
+        ? this.square("mdi:phone", "Call", () => (this.calling = true))
+        : nothing,
+      elements.activity !== false
+        ? this.square(ICON.activity, "Activity", () => this.open({ kind: "activity", slot: 0 }))
+        : nothing,
+      elements.settings !== false
+        ? this.square(ICON.device, "Settings", () => this.open({ kind: "device", slot: 0 }))
+        : nothing,
+      elements.diagnostics !== false
+        ? this.square(ICON.diagnostics, "Diagnostics", () =>
+            this.open({ kind: "diagnostics", slot: 0 })
+          )
+        : nothing,
+    ].filter((s) => s !== nothing);
+
+    // Nothing left to say: no name, no status, no buttons. Then the foot does not exist at all, and the
+    // frame sits flush against the artwork.
+    if (!label && squares.length === 0) return nothing;
+
+    return html`<div class="foot" data-label=${String(label)}>
+      ${label
+        ? html`<div class="label">
+            <div class="name">${deviceName(state.device)}</div>
+            <div class="status">${ACTIVITY[doing] ?? doing}</div>
+          </div>`
+        : nothing}
+      ${squares.length > 0 ? html`<div class="tail">${squares}</div>` : nothing}
     </div>`;
   }
 
@@ -432,18 +496,20 @@ export class EchoLocalSatelliteCard extends LitElement {
 
   // One square per component. Assistants come one per wake word slot, so they are numbered — two of the
   // same icon would say nothing.
-  private side(state: Satellite) {
+  private side(state: Satellite, elements: CardElements) {
     const found = components(state);
     const many = found.filter((c) => c.kind === "assistant").length > 1;
 
-    return found.map(({ kind, slot }) =>
-      this.square(
-        ICON[kind],
-        this.titled(kind, slot),
-        () => this.open({ kind, slot }),
-        many && kind === "assistant" ? slot : null
-      )
-    );
+    return found
+      .filter(({ kind }) => (elements as Partial<Record<Kind, boolean>>)[kind] !== false)
+      .map(({ kind, slot }) =>
+        this.square(
+          ICON[kind],
+          this.titled(kind, slot),
+          () => this.open({ kind, slot }),
+          many && kind === "assistant" ? slot : null
+        )
+      );
   }
 
   // The card names its components, since it decides what is in each one. A device's own names belong to
@@ -596,11 +662,40 @@ export class EchoLocalSatelliteCardEditor extends LitElement {
         },
       },
       { name: "help", selector: { boolean: {} } },
+      {
+        // An expandable holds the element switches out of the way until somebody wants them. The nested
+        // form's change event bubbles up here, so the value arrives under "elements".
+        name: "elements",
+        type: "expandable",
+        icon: "mdi:eye-outline",
+        schema: [
+          { name: "label", selector: { boolean: {} } },
+          { name: "activity", selector: { boolean: {} } },
+          { name: "settings", selector: { boolean: {} } },
+          { name: "diagnostics", selector: { boolean: {} } },
+          { name: "call", selector: { boolean: {} } },
+          { name: "action", selector: { boolean: {} } },
+          { name: "volume", selector: { boolean: {} } },
+          { name: "mute", selector: { boolean: {} } },
+          { name: "ring", selector: { boolean: {} } },
+          { name: "microphone", selector: { boolean: {} } },
+          { name: "playback", selector: { boolean: {} } },
+          { name: "screen", selector: { boolean: {} } },
+          { name: "poster", selector: { boolean: {} } },
+          { name: "camera", selector: { boolean: {} } },
+          { name: "assistant", selector: { boolean: {} } },
+        ],
+      },
     ].filter((field) => field.name !== "shell" || !chosen || lookOf(chosen.board).shape === "dot");
 
     return html`<ha-form
       .hass=${this.hass}
-      .data=${{ help: true, shell: "auto", ...this.config }}
+      .data=${{
+        help: true,
+        shell: "auto",
+        ...this.config,
+        elements: { ...ELEMENTS_DEFAULT, ...this.config.elements },
+      }}
       .schema=${schema}
       .computeLabel=${(entry: { name: string }) => LABELS[entry.name] ?? entry.name}
       @value-changed=${(e: CustomEvent<{ value: CardConfig }>) => this.emit(e.detail.value)}
@@ -616,5 +711,20 @@ export class EchoLocalSatelliteCardEditor extends LitElement {
         composed: true,
       })
     );
+  }
+}
+
+// The same card under its own name, for a dashboard that wants to pick "the elements one". It draws
+// exactly as the original does — the element switches live on both — but a new card starts with an
+// explicit elements block, so the choices are visible in its YAML rather than implied by their absence.
+// The original echolocal-satellite-card is untouched and keeps working, so nothing already on a
+// dashboard has to change.
+@customElement("echolocal-elements-card")
+export class EchoLocalElementsCard extends EchoLocalSatelliteCard {
+  static getStubConfig(hass: HomeAssistant): CardConfig {
+    return {
+      ...EchoLocalSatelliteCard.getStubConfig(hass),
+      elements: { ...ELEMENTS_DEFAULT },
+    };
   }
 }

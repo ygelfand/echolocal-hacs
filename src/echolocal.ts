@@ -29,3 +29,16 @@ if (!window.customCards.some((card) => card.type === "echolocal-satellite-card")
     documentationURL: "https://github.com/ygelfand/echolocal-hacs",
   });
 }
+
+// The same card, listed separately so it can be chosen by name. It draws identically and both expose the
+// element switches; this one has its own type so a dashboard can opt in without touching the original.
+if (!window.customCards.some((card) => card.type === "echolocal-elements-card")) {
+  window.customCards.push({
+    type: "echolocal-elements-card",
+    name: "EchoLocal Satellite (Elements)",
+    description:
+      "An EchoLocal satellite with per-element visibility — turn any button, label or component off.",
+    preview: true,
+    documentationURL: "https://github.com/ygelfand/echolocal-hacs",
+  });
+}

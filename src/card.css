@@ -355,6 +355,17 @@ svg {
   border-left: 1px solid var(--divider-color);
 }
 
+/* With the name hidden there is no second compartment, so the divider and its padding go and the buttons
+   sit where the label would have been. */
+.foot[data-label="false"] {
+  justify-content: flex-end;
+}
+
+.foot[data-label="false"] .tail {
+  padding-left: 0;
+  border-left: none;
+}
+
 .sq {
   position: relative;
   width: 40px;

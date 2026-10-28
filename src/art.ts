@@ -31,6 +31,9 @@ export interface ArtState {
   // What the room measures, for the middle of the top face, which the four buttons leave empty. Null on
   // a device with no light sensor.
   lux: Lux | null;
+
+  // Which of the four buttons on the top are drawn. Absent, or a flag left off, keeps the button.
+  controls?: { action?: boolean; volume?: boolean; mute?: boolean };
 }
 
 export interface Lux {
@@ -59,6 +62,11 @@ export function art(
     const to = -90 + (360 / SEGMENTS) * (i + 1) - GAP / 2;
     return annulus(93, 82, from, to);
   });
+
+  const controls = state.controls ?? {};
+  const volume = controls.volume !== false;
+  const action = controls.action !== false;
+  const mute = controls.mute !== false;
 
   return svg`
     <svg viewBox="0 0 200 200" role="img" aria-label="Echo Dot">
@@ -108,33 +116,43 @@ export function art(
         : ""}
 
 
-      ${button(CX, CY - 46, svg`<path d="M-4.5 0h9M0 -4.5v9"></path>`, "Volume up", () =>
-        tap.volume(1)
-      )}
-      <g
-        class="btn"
-        data-lit=${String(state.holding)}
-        transform="translate(${CX + 46} ${CY})"
-        role="button"
-        tabindex="0"
-        aria-label=${state.holding ? "Wake the second assistant" : "Wake"}
-        @pointerdown=${() => tap.action("down")}
-        @pointerup=${() => tap.action("up")}
-        @pointerleave=${() => tap.action("cancel")}
-        @pointercancel=${() => tap.action("cancel")}
-      >
-        <circle class="face" cx="0" cy="0" r="13"></circle>
-        <g class="glyph"><circle cx="0" cy="0" r="4.5"></circle></g>
-      </g>
-      ${button(CX, CY + 46, svg`<path d="M-4.5 0h9"></path>`, "Volume down", () => tap.volume(-1))}
-      ${button(
-        CX - 46,
-        CY,
-        micOff(state.muted),
-        state.muted ? "Microphone muted" : "Microphone live",
-        tap.mute,
-        state.muted
-      )}
+      ${volume
+        ? button(CX, CY - 46, svg`<path d="M-4.5 0h9M0 -4.5v9"></path>`, "Volume up", () =>
+            tap.volume(1)
+          )
+        : ""}
+      ${action
+        ? svg`<g
+            class="btn"
+            data-lit=${String(state.holding)}
+            transform="translate(${CX + 46} ${CY})"
+            role="button"
+            tabindex="0"
+            aria-label=${state.holding ? "Wake the second assistant" : "Wake"}
+            @pointerdown=${() => tap.action("down")}
+            @pointerup=${() => tap.action("up")}
+            @pointerleave=${() => tap.action("cancel")}
+            @pointercancel=${() => tap.action("cancel")}
+          >
+            <circle class="face" cx="0" cy="0" r="13"></circle>
+            <g class="glyph"><circle cx="0" cy="0" r="4.5"></circle></g>
+          </g>`
+        : ""}
+      ${volume
+        ? button(CX, CY + 46, svg`<path d="M-4.5 0h9"></path>`, "Volume down", () =>
+            tap.volume(-1)
+          )
+        : ""}
+      ${mute
+        ? button(
+            CX - 46,
+            CY,
+            micOff(state.muted),
+            state.muted ? "Microphone muted" : "Microphone live",
+            tap.mute,
+            state.muted
+          )
+        : ""}
     </svg>
   `;
 }

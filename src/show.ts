@@ -62,6 +62,9 @@ export interface ShowState {
   screen: Screen;
   muted: boolean;
   covered: boolean;
+
+  // Which of the picture's controls are drawn. Absent, or a flag left off, keeps the control.
+  controls?: { volume?: boolean; mute?: boolean; camera?: boolean };
 }
 
 export interface Box {
@@ -103,18 +106,25 @@ export function show(
 ): SVGTemplateResult {
   const { screen } = state;
 
+  const controls = state.controls ?? {};
+  const volume = controls.volume !== false;
+  const mute = controls.mute !== false;
+  const camera = controls.camera !== false;
+
   return svg`
     <svg viewBox="0 0 240 150" role="img" aria-label="Echo Show">
-      ${key(140, svg`<path d="M-3 0h6"></path>`, "Volume down", () => tap.volume(-1))}
-      ${key(166, svg`<path d="M-3 0h6M0 -3v6"></path>`, "Volume up", () => tap.volume(1))}
-      ${key(
-        192,
-        svg`<path d="M-1.6 -2.6a1.6 1.6 0 0 1 3.2 0v1.8a1.6 1.6 0 0 1-3.2 0z"></path>
-          <path d="M-2.8 -0.6a2.8 2.8 0 0 0 5.6 0"></path>`,
-        state.muted ? "Microphone muted" : "Microphone live",
-        tap.mute,
-        state.muted
-      )}
+      ${volume ? key(140, svg`<path d="M-3 0h6"></path>`, "Volume down", () => tap.volume(-1)) : ""}
+      ${volume ? key(166, svg`<path d="M-3 0h6M0 -3v6"></path>`, "Volume up", () => tap.volume(1)) : ""}
+      ${mute
+        ? key(
+            192,
+            svg`<path d="M-1.6 -2.6a1.6 1.6 0 0 1 3.2 0v1.8a1.6 1.6 0 0 1-3.2 0z"></path>
+              <path d="M-2.8 -0.6a2.8 2.8 0 0 0 5.6 0"></path>`,
+            state.muted ? "Microphone muted" : "Microphone live",
+            tap.mute,
+            state.muted
+          )
+        : ""}
 
       <rect x="4" y="14" width="232" height="130" rx="16" fill="var(--el-shell)"></rect>
       <rect x="4" y="14" width="232" height="130" rx="16" fill="none" stroke="var(--el-edge)"></rect>
@@ -122,7 +132,7 @@ export function show(
 
       ${display(screen, SHOW, state.muted, tap.screen)}
 
-      ${lens(state.lens, state.covered, tap.camera)}
+      ${camera ? lens(state.lens, state.covered, tap.camera) : ""}
     </svg>
   `;
 }

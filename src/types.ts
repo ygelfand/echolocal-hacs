@@ -103,6 +103,34 @@ export interface HomeAssistant {
 
 export type Shell = "grey" | "black" | "white" | "charcoal";
 
+// Which parts of the card are drawn. Every flag is on unless it is set to false, so a config that never
+// mentions an element keeps it: a card written before this existed looks exactly as it did.
+export interface CardElements {
+  // The device's name and what it is doing, at the foot.
+  label?: boolean;
+
+  // The shortcuts at the foot of the card.
+  activity?: boolean;
+  settings?: boolean;
+  diagnostics?: boolean;
+  call?: boolean;
+
+  // The buttons drawn on the artwork, the ones a hand would reach for on the real device.
+  action?: boolean;
+  volume?: boolean;
+  mute?: boolean;
+
+  // The component shortcuts down the side, one per kind the device reports. The camera also draws the
+  // lens on an Echo Show.
+  ring?: boolean;
+  microphone?: boolean;
+  playback?: boolean;
+  screen?: boolean;
+  poster?: boolean;
+  camera?: boolean;
+  assistant?: boolean;
+}
+
 export interface CardConfig {
   type?: string;
   device_id: string;
@@ -113,6 +141,9 @@ export interface CardConfig {
 
   // The "?" beside each setting. On unless this says otherwise.
   help?: boolean;
+
+  // Which elements are drawn. Absent means all of them; each flag is on unless it is false.
+  elements?: CardElements;
 }
 
 // The card names its own rows, since every name in Home Assistant belongs to the user.
