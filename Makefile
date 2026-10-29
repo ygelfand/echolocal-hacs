@@ -114,10 +114,14 @@ clean: ## Remove build output and caches
 	rm -rf node_modules $(COMPONENT)/__pycache__ $(BUNDLE).map
 
 .PHONY: release
-release: check ## Tag the manifest version and publish a GitHub release (gh)
+release: check ## Tag the manifest version, publish a GitHub release (gh), then start the next patch version
 	@git diff --quiet HEAD || { echo "working tree dirty — commit first"; exit 1; }
 	@git rev-parse "v$(VERSION)" >/dev/null 2>&1 && { echo "tag v$(VERSION) already exists"; exit 1; } || true
 	git push
 	gh release create "v$(VERSION)" --title "v$(VERSION)" --generate-notes
 	@git rev-parse -q --verify "refs/tags/v$(VERSION)" >/dev/null || git fetch origin tag "v$(VERSION)"
 	@echo "released v$(VERSION)"
+	@next=$$(echo $(VERSION) | awk -F. -v OFS=. '{$$NF += 1; print}'); \
+		python3 -c "import re, sys; p = sys.argv[1]; s = open(p).read(); open(p, 'w').write(re.sub(r'(\"version\": \")[^\"]*', r'\g<1>' + sys.argv[2], s))" $(COMPONENT)/manifest.json "$$next"; \
+		git commit -q -m "Start $$next" $(COMPONENT)/manifest.json; \
+		echo "version is now $$next (committed, not pushed)"
