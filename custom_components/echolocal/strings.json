@@ -18,12 +18,28 @@
       "init": {
         "title": "EchoLocal",
         "data": {
-          "sidebar": "Show the EchoLocal dashboard in the sidebar"
+          "sidebar": "Show the EchoLocal dashboard in the sidebar",
+          "panel_users": "Users device screens may show dashboards as"
         }
       }
     }
   },
   "services": {
+    "dashboards": {
+      "name": "List dashboards",
+      "description": "The users a device's screen may sign in as, and the dashboards and views it can show.",
+      "fields": {
+        "node": { "name": "Device", "description": "The device's ESPHome name." }
+      }
+    },
+    "dashboard_token": {
+      "name": "Dashboard sign-in",
+      "description": "A short-lived token and Home Assistant's address for a device's screen.",
+      "fields": {
+        "node": { "name": "Device", "description": "The device's ESPHome name." },
+        "user": { "name": "User", "description": "The user id to sign in as." }
+      }
+    },
     "assign_tone": {
       "name": "Send a tone",
       "description": "Send a tone from the EchoLocal library to devices.",
@@ -38,6 +54,15 @@
       "fields": {
         "tone": { "name": "Tone", "description": "The tone's key." },
         "device_id": { "name": "Devices", "description": "The devices to remove it from." }
+      }
+    },
+    "fetch": {
+      "name": "Download a file",
+      "description": "Download part of a release file for an EchoLocal device that cannot reach the internet.",
+      "fields": {
+        "url": { "name": "URL", "description": "The release file to download." },
+        "offset": { "name": "Offset", "description": "The first byte to return." },
+        "length": { "name": "Length", "description": "How many bytes to return." }
       }
     },
     "ping": {

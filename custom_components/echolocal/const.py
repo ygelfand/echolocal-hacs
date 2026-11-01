@@ -8,6 +8,7 @@ MANUFACTURER = "EchoLocal"
 MANUFACTURERS = frozenset({MANUFACTURER, "LANovo"})
 
 CONF_SIDEBAR = "sidebar"
+CONF_PANEL_USERS = "panel_users"
 
 ASSETS_DIR_NAME = "echolocal_assets"
 TONES_DIR_NAME = "tones"

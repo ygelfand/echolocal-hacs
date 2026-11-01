@@ -28,6 +28,42 @@ unassign_tone:
           filter:
             - integration: esphome
               manufacturer: EchoLocal
+dashboards:
+  fields:
+    node:
+      required: true
+      example: blueberry
+      selector:
+        text:
+dashboard_token:
+  fields:
+    node:
+      required: true
+      example: blueberry
+      selector:
+        text:
+    user:
+      required: true
+      selector:
+        text:
+fetch:
+  fields:
+    url:
+      required: true
+      example: https://github.com/ygelfand/echolocal/releases/download/1.0.0/manifest.json
+      selector:
+        text:
+    offset:
+      selector:
+        number:
+          min: 0
+          mode: box
+    length:
+      selector:
+        number:
+          min: 1
+          max: 40960
+          mode: box
 ping:
   fields:
     protocol:

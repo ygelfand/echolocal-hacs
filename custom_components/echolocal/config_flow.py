@@ -11,8 +11,14 @@ from homeassistant.config_entries import (
     OptionsFlow,
 )
 from homeassistant.core import callback
+from homeassistant.helpers.selector import (
+    SelectOptionDict,
+    SelectSelector,
+    SelectSelectorConfig,
+    SelectSelectorMode,
+)
 
-from .const import CONF_SIDEBAR, DOMAIN, PANEL_TITLE
+from .const import CONF_PANEL_USERS, CONF_SIDEBAR, DOMAIN, PANEL_TITLE
 
 SCHEMA = vol.Schema({vol.Required(CONF_SIDEBAR, default=True): bool})
 
@@ -47,8 +53,28 @@ class EchoLocalOptionsFlow(OptionsFlow):
         if user_input is not None:
             return self.async_create_entry(data=user_input)
 
-        current = self.config_entry.options.get(CONF_SIDEBAR, True)
+        users = {
+            u.id: u.name or u.id
+            for u in await self.hass.auth.async_get_users()
+            if u.is_active and not u.system_generated
+        }
+        options = self.config_entry.options
+        chosen = [u for u in options.get(CONF_PANEL_USERS, []) if u in users]
         return self.async_show_form(
             step_id="init",
-            data_schema=vol.Schema({vol.Required(CONF_SIDEBAR, default=current): bool}),
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_SIDEBAR, default=options.get(CONF_SIDEBAR, True)): bool,
+                    vol.Optional(CONF_PANEL_USERS, default=chosen): SelectSelector(
+                        SelectSelectorConfig(
+                            options=[
+                                SelectOptionDict(value=uid, label=name)
+                                for uid, name in sorted(users.items(), key=lambda u: u[1].lower())
+                            ],
+                            multiple=True,
+                            mode=SelectSelectorMode.DROPDOWN,
+                        )
+                    ),
+                }
+            ),
         )

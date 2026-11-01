@@ -9,6 +9,7 @@
     "esphome",
     "frontend",
     "http",
+    "lovelace",
     "media_source",
     "panel_custom",
     "tts",

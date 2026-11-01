@@ -39,15 +39,26 @@ def wait(base):
         try:
             call(base, "/api/onboarding")
             return
+        except urllib.error.HTTPError:
+            return
         except (urllib.error.URLError, ConnectionError, TimeoutError):
             time.sleep(1)
     sys.exit(f"{base} never answered")
 
 
+def onboarded(base):
+    try:
+        steps = call(base, "/api/onboarding")
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            return True
+        raise
+    return any(s["step"] == "user" and s["done"] for s in steps)
+
+
 def tokens(base, store):
     saved = store / "refresh_token"
-    steps = {s["step"]: s["done"] for s in call(base, "/api/onboarding")}
-    if not steps.get("user"):
+    if not onboarded(base):
         code = call(base, "/api/onboarding/users", {"client_id": CLIENT, **USER})["auth_code"]
         got = call(
             base,
