@@ -72,6 +72,22 @@
         "protocol": { "name": "Protocol", "description": "The device's protocol version." }
       }
     },
+    "music_queue": {
+      "name": "Music Assistant queue",
+      "description": "Returns the tracks after the one playing on a device's Music Assistant player.",
+      "fields": {
+        "player": { "name": "Player", "description": "The device's Sendspin client ID." },
+        "limit": { "name": "Limit", "description": "How many tracks to return." }
+      }
+    },
+    "music_play": {
+      "name": "Play from the Music Assistant queue",
+      "description": "Plays a track from a device's Music Assistant queue.",
+      "fields": {
+        "player": { "name": "Player", "description": "The device's Sendspin client ID." },
+        "queue_item_id": { "name": "Queue item", "description": "The track to play." }
+      }
+    },
     "camera_webrtc": {
       "name": "Camera WebRTC",
       "description": "Opens a WebRTC session to a camera and returns the answer.",

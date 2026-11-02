@@ -74,6 +74,31 @@ ping:
           min: 1
           max: 1000
           mode: box
+music_queue:
+  fields:
+    player:
+      required: true
+      example: "aabbccddeeff"
+      selector:
+        text:
+    limit:
+      example: 50
+      selector:
+        number:
+          min: 1
+          max: 200
+          mode: box
+music_play:
+  fields:
+    player:
+      required: true
+      example: "aabbccddeeff"
+      selector:
+        text:
+    queue_item_id:
+      required: true
+      selector:
+        text:
 camera_webrtc:
   fields:
     entity_id:
