@@ -4,10 +4,20 @@ from typing import Any
 
 import voluptuous as vol
 from homeassistant.components.esphome import DOMAIN as ESPHOME_DOMAIN
+from homeassistant.components.esphome.const import CONF_DEVICE_NAME
+from homeassistant.components.frontend import DATA_THEMES
 from homeassistant.components.lovelace.const import LOVELACE_DATA
 from homeassistant.const import __version__ as HA_VERSION
-from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
+from homeassistant.core import (
+    Event,
+    HomeAssistant,
+    ServiceCall,
+    ServiceResponse,
+    SupportsResponse,
+    callback,
+)
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.network import NoURLAvailableError, get_url
 from homeassistant.helpers.service import async_register_admin_service
 
@@ -69,6 +79,15 @@ async def _dashboards(hass: HomeAssistant) -> list[dict[str, Any]]:
     return found
 
 
+def _themes(hass: HomeAssistant) -> list[dict[str, Any]]:
+    themes = hass.data.get(DATA_THEMES) or {}
+    return [
+        {"name": name, "dark": "dark" in (theme.get("modes") or {})}
+        for name, theme in sorted(themes.items(), key=lambda item: item[0].casefold())
+        if isinstance(theme, dict)
+    ]
+
+
 async def _users(hass: HomeAssistant) -> list[dict[str, Any]]:
     users = []
     for user_id in allowed(hass):
@@ -91,17 +110,43 @@ async def _forget(hass: HomeAssistant, keep: Any = None, node: str | None = None
             hass.auth.async_remove_refresh_token(token)
 
 
+def _nodes(hass: HomeAssistant) -> set[str]:
+    names = (
+        str(entry.data.get(CONF_DEVICE_NAME) or "")
+        for entry in hass.config_entries.async_entries(ESPHOME_DOMAIN)
+    )
+    return {name.replace("-", "_") for name in names if name}
+
+
+async def _orphans(hass: HomeAssistant) -> None:
+    nodes = _nodes(hass)
+    for user in await hass.auth.async_get_users():
+        for token in list(user.refresh_tokens.values()):
+            client = token.client_id or ""
+            if client.startswith(CLIENT) and client.removeprefix(CLIENT) not in nodes:
+                hass.auth.async_remove_refresh_token(token)
+
+
 async def async_prune(hass: HomeAssistant) -> None:
     await _forget(hass)
+    await _orphans(hass)
 
 
 def async_setup(hass: HomeAssistant) -> None:
+    @callback
+    def removed(event: Event[dr.EventDeviceRegistryUpdatedData]) -> None:
+        if event.data["action"] == "remove":
+            hass.async_create_task(_orphans(hass))
+
+    hass.bus.async_listen(dr.EVENT_DEVICE_REGISTRY_UPDATED, removed)
+
     async def dashboards(call: ServiceCall) -> ServiceResponse:
         _node(hass, call.data["node"])
         return {
             "version": HA_VERSION,
             "users": await _users(hass),
             "dashboards": await _dashboards(hass),
+            "themes": _themes(hass),
         }
 
     async def dashboard_token(call: ServiceCall) -> ServiceResponse:

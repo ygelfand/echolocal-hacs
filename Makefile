@@ -37,13 +37,24 @@ typecheck: node_modules ## Typecheck the frontend
 
 .PHONY: lint
 lint: node_modules ## Lint the Python and typecheck the frontend
-	ruff check $(COMPONENT)
-	ruff format --check $(COMPONENT)
+	ruff check $(COMPONENT) tests
+	ruff format --check $(COMPONENT) tests
 	npm run typecheck
 
 .PHONY: fmt
 fmt: ## Format the Python
-	ruff format $(COMPONENT)
+	ruff format $(COMPONENT) tests
+
+TEST_PY := dev/.test-venv/bin/python
+
+$(TEST_PY): requirements_test.txt
+	python3.14 -m venv dev/.test-venv
+	dev/.test-venv/bin/pip install -q -r requirements_test.txt
+	@touch $(TEST_PY)
+
+.PHONY: test
+test: $(TEST_PY) ## Run the Python tests against Home Assistant's test harness
+	$(TEST_PY) -m pytest -q
 
 .PHONY: zip
 zip: build ## Build echolocal.zip, what HACS installs (VERSION=x.y.z stamps the manifest)
