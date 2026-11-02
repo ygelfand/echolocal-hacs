@@ -99,6 +99,34 @@ music_play:
       required: true
       selector:
         text:
+music_players:
+  fields:
+    player:
+      example: "aabbccddeeff"
+      selector:
+        text:
+music_recent:
+  fields:
+    player:
+      example: "media_player.kitchen"
+      selector:
+        text:
+    limit:
+      example: 20
+      selector:
+        number:
+          min: 1
+          max: 100
+          mode: box
+music_recommendations:
+  fields:
+    limit:
+      example: 20
+      selector:
+        number:
+          min: 1
+          max: 100
+          mode: box
 camera_webrtc:
   fields:
     entity_id:

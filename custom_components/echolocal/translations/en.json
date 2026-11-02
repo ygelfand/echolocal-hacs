@@ -74,18 +74,40 @@
     },
     "music_queue": {
       "name": "Music Assistant queue",
-      "description": "Returns the tracks after the one playing on a device's Music Assistant player.",
+      "description": "Returns the tracks after the one playing on a Music Assistant player.",
       "fields": {
-        "player": { "name": "Player", "description": "The device's Sendspin client ID." },
+        "player": { "name": "Player", "description": "A Music Assistant player entity, player ID, or a device's Sendspin client ID." },
         "limit": { "name": "Limit", "description": "How many tracks to return." }
       }
     },
     "music_play": {
       "name": "Play from the Music Assistant queue",
-      "description": "Plays a track from a device's Music Assistant queue.",
+      "description": "Plays a track from a Music Assistant player's queue.",
       "fields": {
-        "player": { "name": "Player", "description": "The device's Sendspin client ID." },
+        "player": { "name": "Player", "description": "A Music Assistant player entity, player ID, or a device's Sendspin client ID." },
         "queue_item_id": { "name": "Queue item", "description": "The track to play." }
+      }
+    },
+    "music_players": {
+      "name": "Music Assistant players",
+      "description": "Lists Music Assistant's players and marks the one that holds a device.",
+      "fields": {
+        "player": { "name": "Player", "description": "A device's Sendspin client ID." }
+      }
+    },
+    "music_recent": {
+      "name": "Recently played in Music Assistant",
+      "description": "Returns what Music Assistant played most recently.",
+      "fields": {
+        "player": { "name": "Player", "description": "Only what this player's queue played." },
+        "limit": { "name": "Limit", "description": "How many items to return." }
+      }
+    },
+    "music_recommendations": {
+      "name": "Music Assistant recommendations",
+      "description": "Returns Music Assistant's recommendations, grouped in folders.",
+      "fields": {
+        "limit": { "name": "Limit", "description": "How many items to return in each folder." }
       }
     },
     "camera_webrtc": {
