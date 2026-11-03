@@ -97,7 +97,8 @@ def speakers(registry: Any, players: list[Any], player: str) -> list[dict[str, A
     for p in players:
         entity = registry.async_get_entity_id("media_player", MUSIC_ASSISTANT, p.player_id)
         if entity:
-            out.append({"entity_id": entity, "name": p.name, "mine": p is mine})
+            ids = [plain(p.player_id)] + [plain(o.output_protocol_id) for o in p.output_protocols]
+            out.append({"entity_id": entity, "name": p.name, "mine": p is mine, "ids": ids})
     return out
 
 

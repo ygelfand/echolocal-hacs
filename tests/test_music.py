@@ -51,8 +51,18 @@ def test_speakers_list_entities_and_mark_ours():
         NS(name="ghost", **vars(hidden)),
     ]
     assert speakers(registry, players, "aabbcc001122") == [
-        {"entity_id": "media_player.athena_2", "name": "athena", "mine": True},
-        {"entity_id": "media_player.kitchen", "name": "Kitchen", "mine": False},
+        {
+            "entity_id": "media_player.athena_2",
+            "name": "athena",
+            "mine": True,
+            "ids": ["up1a2b3c4d", "aabbcc001122", "ap1234"],
+        },
+        {
+            "entity_id": "media_player.kitchen",
+            "name": "Kitchen",
+            "mine": False,
+            "ids": ["ddeeff334455"],
+        },
     ]
     assert not any(s["mine"] for s in speakers(registry, players, ""))
 
