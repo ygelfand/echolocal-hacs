@@ -101,32 +101,26 @@ def speakers(registry: Any, players: list[Any], player: str) -> list[dict[str, A
     return out
 
 
-def text(value: str | None) -> str:
-    if not value:
-        return ""
-    return value.encode("utf-16", "surrogatepass").decode("utf-16", "replace")
-
-
 def row(mass: Any, item: Any) -> dict[str, Any]:
     media = item.media_item
     artists = getattr(media, "artists", None) or []
     return {
-        "id": text(item.queue_item_id),
-        "title": text(media.name if media else item.name),
-        "artist": text(", ".join(a.name for a in artists)),
+        "id": item.queue_item_id,
+        "title": media.name if media else item.name,
+        "artist": ", ".join(a.name for a in artists),
         "duration": item.duration or 0,
-        "image": text(mass.get_media_item_image_url(item)),
+        "image": mass.get_media_item_image_url(item) or "",
     }
 
 
 def media(mass: Any, item: Any) -> dict[str, Any]:
     artists = getattr(item, "artists", None) or []
     return {
-        "uri": text(item.uri),
+        "uri": item.uri,
         "type": str(item.media_type.value),
-        "name": text(item.name),
-        "artist": text(", ".join(a.name for a in artists)),
-        "image": text(mass.get_media_item_image_url(item)),
+        "name": item.name,
+        "artist": ", ".join(a.name for a in artists),
+        "image": mass.get_media_item_image_url(item) or "",
     }
 
 
@@ -147,7 +141,7 @@ async def contents(mass: Any, uri: str, limit: int) -> dict[str, Any]:
         items = list(await mass.music.get_artist_albums(*args))
         items += await mass.music.get_artist_tracks(*args)
     return {
-        "name": text(item.name),
+        "name": item.name,
         "type": kind,
         "items": [media(mass, i) for i in playable(items)[:limit]],
     }
@@ -188,11 +182,7 @@ async def recommended(mass: Any, limit: int, parse: Any) -> dict[str, Any]:
     for f, items in zip(folders, filled, strict=True):
         if shown := playable(items)[:limit]:
             out.append(
-                {
-                    "name": text(f.name),
-                    "icon": f.icon or "",
-                    "items": [media(mass, i) for i in shown],
-                }
+                {"name": f.name, "icon": f.icon or "", "items": [media(mass, i) for i in shown]}
             )
     return {"folders": out}
 
