@@ -67,6 +67,8 @@ async def _dashboards(hass: HomeAssistant) -> list[dict[str, Any]]:
         return []
     found = []
     for path, config in data.dashboards.items():
+        if path is None and "lovelace" in data.dashboards:
+            continue
         info = config.config or {}
         found.append(
             {

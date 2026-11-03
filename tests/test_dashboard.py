@@ -1,4 +1,7 @@
+from types import SimpleNamespace
+
 from homeassistant.components.frontend import DATA_THEMES
+from homeassistant.components.lovelace.const import LOVELACE_DATA
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
 from pytest_homeassistant_custom_component.common import MockConfigEntry
@@ -39,6 +42,31 @@ async def test_themes_are_listed_by_name_with_their_dark_mode(hass: HomeAssistan
         {"name": "Kitchen", "dark": True},
         {"name": "plain", "dark": False},
     ]
+
+
+class Board:
+    def __init__(self, title: str, views: int) -> None:
+        self.config = {"title": title}
+        self.views = views
+
+    async def async_load(self, force: bool) -> dict:
+        return {"views": [{"path": f"v{i}"} for i in range(self.views)]}
+
+
+async def test_migrated_default_dashboard_is_listed_once(hass: HomeAssistant) -> None:
+    hass.data[LOVELACE_DATA] = SimpleNamespace(
+        dashboards={None: Board("Overview", 0), "lovelace": Board("Overview", 19)}
+    )
+    found = await dashboard._dashboards(hass)
+    assert [(d["path"], len(d["views"])) for d in found] == [("lovelace", 19)]
+
+
+async def test_unmigrated_default_dashboard_is_lovelace(hass: HomeAssistant) -> None:
+    hass.data[LOVELACE_DATA] = SimpleNamespace(
+        dashboards={None: Board("Overview", 2), "map": Board("Map", 0)}
+    )
+    found = await dashboard._dashboards(hass)
+    assert [d["path"] for d in found] == ["lovelace", "map"]
 
 
 async def test_only_allowed_users_are_offered(hass: HomeAssistant) -> None:
