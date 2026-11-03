@@ -99,6 +99,20 @@ music_play:
       required: true
       selector:
         text:
+music_browse:
+  fields:
+    uri:
+      required: true
+      example: "spotify://album/1"
+      selector:
+        text:
+    limit:
+      example: 100
+      selector:
+        number:
+          min: 1
+          max: 500
+          mode: box
 music_players:
   fields:
     player:

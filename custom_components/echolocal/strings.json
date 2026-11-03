@@ -88,6 +88,14 @@
         "queue_item_id": { "name": "Queue item", "description": "The track to play." }
       }
     },
+    "music_browse": {
+      "name": "Inside a Music Assistant item",
+      "description": "Returns an album's or playlist's tracks, or an artist's albums and tracks.",
+      "fields": {
+        "uri": { "name": "Item", "description": "The Music Assistant URI of the album, playlist or artist." },
+        "limit": { "name": "Limit", "description": "How many items to return." }
+      }
+    },
     "music_players": {
       "name": "Music Assistant players",
       "description": "Lists Music Assistant's players and marks the one that holds a device.",

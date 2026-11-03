@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 
 import voluptuous as vol
@@ -13,6 +14,7 @@ MUSIC_ASSISTANT = "music_assistant"
 AHEAD = 50
 RECENT = 20
 PER_FOLDER = 20
+FOLDERS = 8
 FOLDER = "folder"
 
 QUEUE_SCHEMA = vol.Schema(
@@ -29,6 +31,13 @@ RECENT_SCHEMA = vol.Schema(
     }
 )
 PLAYERS_SCHEMA = vol.Schema({vol.Optional("player"): str})
+BROWSE = 100
+BROWSE_SCHEMA = vol.Schema(
+    {
+        vol.Required("uri"): str,
+        vol.Optional("limit", default=BROWSE): vol.All(vol.Coerce(int), vol.Range(min=1, max=500)),
+    }
+)
 RECOMMENDATIONS_SCHEMA = vol.Schema(
     {
         vol.Optional("limit", default=PER_FOLDER): vol.All(
@@ -98,6 +107,54 @@ def playable(items: list[Any]) -> list[Any]:
     return [i for i in items if str(i.media_type.value) != FOLDER and getattr(i, "uri", "")]
 
 
+async def contents(mass: Any, uri: str, limit: int) -> dict[str, Any]:
+    item = await mass.music.get_item_by_uri(uri)
+    kind = str(item.media_type.value)
+    args = (item.item_id, item.provider)
+    items: list[Any] = []
+    if kind == "album":
+        items = await mass.music.get_album_tracks(*args)
+    elif kind == "playlist":
+        items = await mass.music.get_playlist_tracks(*args)
+    elif kind == "artist":
+        items = list(await mass.music.get_artist_albums(*args))
+        items += await mass.music.get_artist_tracks(*args)
+    return {
+        "name": item.name,
+        "type": kind,
+        "items": [media(mass, i) for i in playable(items)[:limit]],
+    }
+
+
+async def folder_items(mass: Any, folder: Any, parse: Any) -> list[Any]:
+    if held := list(folder.items):
+        return held
+    raw = await mass.send_command(
+        "music/recommendations/items", provider=folder.provider, item_id=folder.item_id
+    )
+    out = []
+    for d in raw or []:
+        if d.get("media_type") == FOLDER or not d.get("uri"):
+            continue
+        try:
+            out.append(parse(d))
+        except Exception:
+            continue
+    return out
+
+
+async def recommended(mass: Any, limit: int, parse: Any) -> dict[str, Any]:
+    folders = (await mass.music.recommendations())[:FOLDERS]
+    filled = await asyncio.gather(*(folder_items(mass, f, parse) for f in folders))
+    out = []
+    for f, items in zip(folders, filled, strict=True):
+        if shown := playable(items)[:limit]:
+            out.append(
+                {"name": f.name, "icon": f.icon or "", "items": [media(mass, i) for i in shown]}
+            )
+    return {"folders": out}
+
+
 def clients(hass: HomeAssistant) -> list[Any]:
     return [e.runtime_data.mass for e in hass.config_entries.async_loaded_entries(MUSIC_ASSISTANT)]
 
@@ -149,19 +206,10 @@ def async_setup(hass: HomeAssistant) -> None:
         return {"items": [media(mass, i) for i in playable(items)]}
 
     async def music_recommendations(call: ServiceCall) -> ServiceResponse:
+        from music_assistant_models.media_items import media_from_dict
+
         mass = first_client(hass)
-        folders = []
-        for f in await mass.music.recommendations():
-            items = playable(list(f.items))[: call.data["limit"]]
-            if items:
-                folders.append(
-                    {
-                        "name": f.name,
-                        "icon": f.icon or "",
-                        "items": [media(mass, i) for i in items],
-                    }
-                )
-        return {"folders": folders}
+        return await recommended(mass, call.data["limit"], media_from_dict)
 
     async def music_players(call: ServiceCall) -> ServiceResponse:
         registry = er.async_get(hass)
@@ -171,7 +219,11 @@ def async_setup(hass: HomeAssistant) -> None:
             out += speakers(registry, mass.players.players, player)
         return {"players": out}
 
+    async def music_browse(call: ServiceCall) -> ServiceResponse:
+        return await contents(first_client(hass), call.data["uri"], call.data["limit"])
+
     for name, handler, schema in (
+        ("music_browse", music_browse, BROWSE_SCHEMA),
         ("music_players", music_players, PLAYERS_SCHEMA),
         ("music_queue", music_queue, QUEUE_SCHEMA),
         ("music_recent", music_recent, RECENT_SCHEMA),
