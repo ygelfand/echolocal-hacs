@@ -9,6 +9,8 @@ from custom_components.echolocal.music import (
     playable,
     recommended,
     row,
+    searched,
+    shelf,
     speakers,
 )
 
@@ -106,6 +108,19 @@ def test_media_rows_keep_playable_items_only():
     assert media(mass, station)["artist"] == ""
 
 
+def test_media_joins_split_surrogates_into_utf8_text():
+    mass = NS(get_media_item_image_url=lambda item: "")
+    mix = NS(
+        uri="ytmusic://playlist/RDTMAK🎵ytmusic",
+        media_type=kind("playlist"),
+        name="Supermix \udfb5",
+    )
+    got = media(mass, mix)
+    assert got["uri"] == "ytmusic://playlist/RDTMAK🎵ytmusic"
+    assert got["name"] == "Supermix �"
+    got["uri"].encode()
+
+
 class FakeRecommendations:
     def __init__(self, folders, rows):
         self.music = NS(recommendations=self.listing)
@@ -154,6 +169,31 @@ async def test_recommendations_fetch_each_empty_folders_items():
         ("music/recommendations/items", "spotify", "mix"),
         ("music/recommendations/items", "library", "none"),
     ]
+
+
+async def test_search_flattens_kinds_and_shelf_lists_one_kind():
+    track = NS(uri="t://1", media_type=kind("track"), name="Lose Yourself")
+    artist = NS(uri="a://1", media_type=kind("artist"), name="Eminem")
+    mix = NS(uri="p://1\ud83c\udfb5", media_type=kind("playlist"), name="Supermix")
+    asked = []
+
+    async def search(query, kinds, limit):
+        asked.append((query, kinds, limit))
+        return NS(artists=[artist], albums=[], tracks=[track], playlists=[mix], radio=[])
+
+    async def playlists(limit, order_by):
+        asked.append(("playlists", limit, order_by))
+        return [mix]
+
+    mass = NS(
+        music=NS(search=search, get_library_playlists=playlists),
+        get_media_item_image_url=lambda item: None,
+    )
+    got = await searched(mass, "eminem", 5, ["artist"])
+    assert [i["name"] for i in got["items"]] == ["Eminem", "Lose Yourself", "Supermix"]
+    assert got["items"][2]["uri"] == "p://1🎵"
+    assert (await shelf(mass, "playlist", 7))["items"][0]["name"] == "Supermix"
+    assert asked == [("eminem", ["artist"], 5), ("playlists", 7, "sort_name")]
 
 
 class FakeLibrary:

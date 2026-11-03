@@ -96,6 +96,22 @@
         "limit": { "name": "Limit", "description": "How many items to return." }
       }
     },
+    "music_library": {
+      "name": "Music Assistant library",
+      "description": "Returns the library's playlists, albums, artists, radio stations or tracks.",
+      "fields": {
+        "media_type": { "name": "Kind", "description": "Which part of the library to list." },
+        "limit": { "name": "Limit", "description": "How many items to return." }
+      }
+    },
+    "music_search": {
+      "name": "Search Music Assistant",
+      "description": "Returns artists, albums, tracks, playlists and radio stations matching a query.",
+      "fields": {
+        "query": { "name": "Query", "description": "What to search for." },
+        "limit": { "name": "Limit", "description": "How many items to return of each kind." }
+      }
+    },
     "music_players": {
       "name": "Music Assistant players",
       "description": "Lists Music Assistant's players and marks the one that holds a device.",

@@ -38,6 +38,27 @@ BROWSE_SCHEMA = vol.Schema(
         vol.Optional("limit", default=BROWSE): vol.All(vol.Coerce(int), vol.Range(min=1, max=500)),
     }
 )
+SEARCH = 10
+SEARCH_KINDS = ("artist", "album", "track", "playlist", "radio")
+SEARCH_SCHEMA = vol.Schema(
+    {
+        vol.Required("query"): str,
+        vol.Optional("limit", default=SEARCH): vol.All(vol.Coerce(int), vol.Range(min=1, max=50)),
+    }
+)
+SHELVES = {
+    "playlist": "get_library_playlists",
+    "album": "get_library_albums",
+    "artist": "get_library_artists",
+    "radio": "get_library_radios",
+    "track": "get_library_tracks",
+}
+LIBRARY_SCHEMA = vol.Schema(
+    {
+        vol.Required("media_type"): vol.In(list(SHELVES)),
+        vol.Optional("limit", default=BROWSE): vol.All(vol.Coerce(int), vol.Range(min=1, max=500)),
+    }
+)
 RECOMMENDATIONS_SCHEMA = vol.Schema(
     {
         vol.Optional("limit", default=PER_FOLDER): vol.All(
@@ -80,26 +101,32 @@ def speakers(registry: Any, players: list[Any], player: str) -> list[dict[str, A
     return out
 
 
+def text(value: str | None) -> str:
+    if not value:
+        return ""
+    return value.encode("utf-16", "surrogatepass").decode("utf-16", "replace")
+
+
 def row(mass: Any, item: Any) -> dict[str, Any]:
     media = item.media_item
     artists = getattr(media, "artists", None) or []
     return {
-        "id": item.queue_item_id,
-        "title": media.name if media else item.name,
-        "artist": ", ".join(a.name for a in artists),
+        "id": text(item.queue_item_id),
+        "title": text(media.name if media else item.name),
+        "artist": text(", ".join(a.name for a in artists)),
         "duration": item.duration or 0,
-        "image": mass.get_media_item_image_url(item) or "",
+        "image": text(mass.get_media_item_image_url(item)),
     }
 
 
 def media(mass: Any, item: Any) -> dict[str, Any]:
     artists = getattr(item, "artists", None) or []
     return {
-        "uri": item.uri,
+        "uri": text(item.uri),
         "type": str(item.media_type.value),
-        "name": item.name,
-        "artist": ", ".join(a.name for a in artists),
-        "image": mass.get_media_item_image_url(item) or "",
+        "name": text(item.name),
+        "artist": text(", ".join(a.name for a in artists)),
+        "image": text(mass.get_media_item_image_url(item)),
     }
 
 
@@ -120,10 +147,21 @@ async def contents(mass: Any, uri: str, limit: int) -> dict[str, Any]:
         items = list(await mass.music.get_artist_albums(*args))
         items += await mass.music.get_artist_tracks(*args)
     return {
-        "name": item.name,
+        "name": text(item.name),
         "type": kind,
         "items": [media(mass, i) for i in playable(items)[:limit]],
     }
+
+
+async def searched(mass: Any, query: str, limit: int, kinds: list[Any]) -> dict[str, Any]:
+    found = await mass.music.search(query, kinds, limit)
+    items = [*found.artists, *found.albums, *found.tracks, *found.playlists, *found.radio]
+    return {"items": [media(mass, i) for i in playable(items)]}
+
+
+async def shelf(mass: Any, kind: str, limit: int) -> dict[str, Any]:
+    items = await getattr(mass.music, SHELVES[kind])(limit=limit, order_by="sort_name")
+    return {"items": [media(mass, i) for i in playable(items)]}
 
 
 async def folder_items(mass: Any, folder: Any, parse: Any) -> list[Any]:
@@ -150,7 +188,11 @@ async def recommended(mass: Any, limit: int, parse: Any) -> dict[str, Any]:
     for f, items in zip(folders, filled, strict=True):
         if shown := playable(items)[:limit]:
             out.append(
-                {"name": f.name, "icon": f.icon or "", "items": [media(mass, i) for i in shown]}
+                {
+                    "name": text(f.name),
+                    "icon": f.icon or "",
+                    "items": [media(mass, i) for i in shown],
+                }
             )
     return {"folders": out}
 
@@ -222,8 +264,19 @@ def async_setup(hass: HomeAssistant) -> None:
     async def music_browse(call: ServiceCall) -> ServiceResponse:
         return await contents(first_client(hass), call.data["uri"], call.data["limit"])
 
+    async def music_search(call: ServiceCall) -> ServiceResponse:
+        from music_assistant_models.enums import MediaType
+
+        kinds = [MediaType(k) for k in SEARCH_KINDS]
+        return await searched(first_client(hass), call.data["query"], call.data["limit"], kinds)
+
+    async def music_library(call: ServiceCall) -> ServiceResponse:
+        return await shelf(first_client(hass), call.data["media_type"], call.data["limit"])
+
     for name, handler, schema in (
         ("music_browse", music_browse, BROWSE_SCHEMA),
+        ("music_library", music_library, LIBRARY_SCHEMA),
+        ("music_search", music_search, SEARCH_SCHEMA),
         ("music_players", music_players, PLAYERS_SCHEMA),
         ("music_queue", music_queue, QUEUE_SCHEMA),
         ("music_recent", music_recent, RECENT_SCHEMA),

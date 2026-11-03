@@ -113,6 +113,40 @@ music_browse:
           min: 1
           max: 500
           mode: box
+music_library:
+  fields:
+    media_type:
+      required: true
+      example: "playlist"
+      selector:
+        select:
+          options:
+            - playlist
+            - album
+            - artist
+            - radio
+            - track
+    limit:
+      example: 100
+      selector:
+        number:
+          min: 1
+          max: 500
+          mode: box
+music_search:
+  fields:
+    query:
+      required: true
+      example: "eminem"
+      selector:
+        text:
+    limit:
+      example: 10
+      selector:
+        number:
+          min: 1
+          max: 50
+          mode: box
 music_players:
   fields:
     player:
