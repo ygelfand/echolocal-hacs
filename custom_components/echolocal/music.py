@@ -6,7 +6,7 @@ from typing import Any
 import voluptuous as vol
 from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
 from homeassistant.exceptions import ServiceValidationError
-from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers import config_validation as cv, entity_registry as er
 
 from .const import DOMAIN
 
@@ -24,6 +24,7 @@ QUEUE_SCHEMA = vol.Schema(
     }
 )
 PLAY_SCHEMA = vol.Schema({vol.Required("player"): str, vol.Required("queue_item_id"): str})
+FAVORITE_SCHEMA = vol.Schema({vol.Required("player"): str, vol.Optional("favorite"): cv.boolean})
 RECENT_SCHEMA = vol.Schema(
     {
         vol.Optional("player"): str,
@@ -206,6 +207,27 @@ def found(hass: HomeAssistant, player: str) -> tuple[Any, Any]:
     raise ServiceValidationError(f"no Music Assistant player for {player}")
 
 
+async def library_item(mass: Any, item: Any) -> Any | None:
+    if item.provider == "library":
+        return item
+    return await mass.music.get_library_item_by_prov_id(
+        item.media_type, item.item_id, item.provider
+    )
+
+
+async def favorite(mass: Any, queue: Any, want: bool | None) -> dict[str, Any]:
+    current = queue.current_item
+    item = current.media_item if current else None
+    if item is None:
+        return {"known": False, "favorite": False, "title": ""}
+    if want is True:
+        await mass.music.add_item_to_favorites(item)
+    elif want is False and (held := await library_item(mass, item)):
+        await mass.music.remove_item_from_favorites(held.media_type, held.item_id)
+    held = await library_item(mass, item)
+    return {"known": True, "favorite": bool(held and held.favorite), "title": item.name}
+
+
 async def queue_of(hass: HomeAssistant, player: str) -> tuple[Any, Any]:
     mass, p = found(hass, player)
     if queue := await mass.player_queues.get_active_queue(p.player_id):
@@ -264,8 +286,13 @@ def async_setup(hass: HomeAssistant) -> None:
     async def music_library(call: ServiceCall) -> ServiceResponse:
         return await shelf(first_client(hass), call.data["media_type"], call.data["limit"])
 
+    async def music_favorite(call: ServiceCall) -> ServiceResponse:
+        mass, queue = await queue_of(hass, call.data["player"])
+        return await favorite(mass, queue, call.data.get("favorite"))
+
     for name, handler, schema in (
         ("music_browse", music_browse, BROWSE_SCHEMA),
+        ("music_favorite", music_favorite, FAVORITE_SCHEMA),
         ("music_library", music_library, LIBRARY_SCHEMA),
         ("music_search", music_search, SEARCH_SCHEMA),
         ("music_players", music_players, PLAYERS_SCHEMA),

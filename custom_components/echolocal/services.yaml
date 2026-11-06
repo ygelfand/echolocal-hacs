@@ -88,6 +88,16 @@ music_queue:
           min: 1
           max: 200
           mode: box
+music_favorite:
+  fields:
+    player:
+      required: true
+      example: "aabbccddeeff"
+      selector:
+        text:
+    favorite:
+      selector:
+        boolean:
 music_play:
   fields:
     player:

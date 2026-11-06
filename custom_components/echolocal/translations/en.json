@@ -80,6 +80,14 @@
         "limit": { "name": "Limit", "description": "How many tracks to return." }
       }
     },
+    "music_favorite": {
+      "name": "Music Assistant favorite",
+      "description": "Returns whether the track playing on a Music Assistant player is a favorite, and adds or removes it.",
+      "fields": {
+        "player": { "name": "Player", "description": "A Music Assistant player entity, player ID, or a device's Sendspin client ID." },
+        "favorite": { "name": "Favorite", "description": "Add the track to favorites, or remove it. Leave out to only read." }
+      }
+    },
     "music_play": {
       "name": "Play from the Music Assistant queue",
       "description": "Plays a track from a Music Assistant player's queue.",

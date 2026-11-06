@@ -22,7 +22,13 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
   ],
 
   microphone: [
-    { title: null, rows: [["mic_mute", "Mute"]] },
+    {
+      title: null,
+      rows: [
+        ["mic_mute", "Mute"],
+        ["microphone_muted", "Muted"],
+      ],
+    },
     {
       title: "Capture",
       rows: [
@@ -30,7 +36,7 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
         ["microphone_mixing", "Mixing"],
         ["microphone_leveling", "Leveling"],
         ["microphone_cancel_echo", "Echo cancellation"],
-        ["microphone_noise_reduction", "Noise reduction"],
+        ["microphone_denoise", "Noise reduction"],
       ],
     },
     {
@@ -57,6 +63,7 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
     {
       title: "Volume",
       rows: [
+        ["volume_main", "Main"],
         ["volume_media", "Music"],
         ["volume_voice", "Voice"],
         ["volume_alerts", "Alerts"],
@@ -67,7 +74,6 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
     {
       title: "During a turn",
       rows: [
-        ["media_on_turn", "Music"],
         ["media_duck_level", "Ducking"],
       ],
     },
@@ -76,8 +82,7 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
       title: "Cast",
       rows: [
         ["cast_receiver", "Cast receiver"],
-        ["youtube_lounge_on_demand", "YouTube on demand"],
-        ["youtube_live_delay", "YouTube live delay"],
+        ["cast_youtube_lounge", "YouTube lounge"],
         ["youtube_sponsorblock", "SponsorBlock categories"],
         ["cast_credentials", "Credentials"],
         ["cast_credentials_expire", "Credentials expire"],
@@ -94,6 +99,7 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
         ["screen_mode", "Automatic brightness"],
         ["screen_brightness", "Brightness now"],
         ["ambient_light", "Room light"],
+        ["presence_wake", "Wake on presence"],
       ],
     },
     {
@@ -102,8 +108,8 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
         ["theme", "Theme"],
         ["screen_style", "Style"],
         ["screen_size", "Size"],
+        ["screen_font", "Font"],
         ["drawer_edge", "Dock side"],
-        ["dashboard_logo", "Logo"],
         ["privacy_marks", "Privacy marks"],
       ],
     },
@@ -153,12 +159,14 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
     {
       title: "Immich",
       rows: [
-        ["poster_server", "Server"],
-        ["poster_key", "API key"],
-        ["poster_albums", "Albums"],
-        ["poster_tags", "Tags"],
+        ["photos_immich_enabled", "Immich"],
+        ["photos_immich_server", "Server"],
+        ["photos_immich_key", "API key"],
+        ["photos_immich_albums", "Albums"],
+        ["photos_immich_tags", "Tags"],
       ],
     },
+    { title: "Google Photos", rows: [["photos_google_enabled", "Google Photos"]] },
   ],
 
   camera: [
@@ -168,12 +176,14 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
         ["camera_covered", "Shutter closed"],
         ["rtsp", "RTSP server"],
         ["camera_main_on", "Main stream"],
+        ["camera_sub_on", "Sub stream"],
       ],
     },
     {
       title: "Stream",
       rows: [
         ["camera_main_size", "Resolution"],
+        ["camera_sub_size", "Sub stream resolution"],
         ["camera_quality", "Quality"],
         ["camera_framerate", "Frame rate"],
         ["camera_framerate_auto", "Automatic frame rate"],
@@ -187,6 +197,7 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
         ["camera_contrast", "Contrast"],
         ["camera_saturation", "Saturation"],
         ["camera_sharpness", "Sharpness"],
+        ["camera_noise", "Noise reduction"],
         ["camera_hue", "Hue"],
         ["camera_ev", "Exposure"],
         ["camera_iso", "ISO"],
@@ -260,7 +271,8 @@ const LAYOUTS: Partial<Record<Kind, Group[]>> = {
         ["purge_cache", "Purge cache", "cached_data"],
         ["test_playback", "Test playback"],
         ["remote_adb", "Remote adb"],
-        ["insecure_tls", "Insecure TLS"],
+        ["verify_certificates", "Verify certificates"],
+        ["network_via_home", "Download through Home Assistant"],
       ],
     },
   ],
@@ -399,13 +411,13 @@ export interface Composed {
 
 // Which components a device has, and the name that proves each one. A square per component rather than
 // per sub-device: how echod groups its entities in Home Assistant is not the card's business.
-const PROOF: [Kind, string][] = [
-  ["ring", "ring"],
-  ["microphone", "mic_mute"],
-  ["playback", "speaker"],
-  ["screen", "theme"],
-  ["poster", "poster"],
-  ["camera", "camera"],
+const PROOF: [Kind, string[]][] = [
+  ["ring", ["ring"]],
+  ["microphone", ["mic_mute", "microphone_gain"]],
+  ["playback", ["speaker"]],
+  ["screen", ["theme"]],
+  ["poster", ["poster"]],
+  ["camera", ["camera"]],
 ];
 
 export interface Component {
@@ -416,7 +428,7 @@ export interface Component {
 }
 
 export function components(state: Satellite): Component[] {
-  const found: Component[] = PROOF.filter(([, name]) => state.by.has(name)).map(
+  const found: Component[] = PROOF.filter(([, names]) => names.some((n) => state.by.has(n))).map(
     ([kind]) => ({
       kind,
       slot: 0,

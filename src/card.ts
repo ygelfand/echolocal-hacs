@@ -531,7 +531,7 @@ export class EchoLocalSatelliteCard extends LitElement {
   }
 
   private toggle(domain: string, entityId?: string) {
-    if (entityId) this.hass.callService(domain, "toggle", { entity_id: entityId });
+    if (entityId?.startsWith(`${domain}.`)) this.hass.callService(domain, "toggle", { entity_id: entityId });
   }
 
   private volume(state: Satellite, step: number) {

@@ -4,6 +4,7 @@ import pytest
 
 from custom_components.echolocal.music import (
     contents,
+    favorite,
     media,
     owner,
     playable,
@@ -231,3 +232,50 @@ async def test_contents_list_what_an_item_holds(what, names, asked):
     assert got["name"] == "Recovery" and got["type"] == what
     assert [i["name"] for i in got["items"]] == names
     assert library.asked == asked
+
+
+class FakeFavorites:
+    def __init__(self, library):
+        self.library = library
+        self.done = []
+
+    async def get_library_item_by_prov_id(self, media_type, item_id, provider):
+        return self.library.get((provider, item_id))
+
+    async def add_item_to_favorites(self, item):
+        self.done.append(("add", item.name))
+        held = self.library.setdefault((item.provider, item.item_id), NS(**vars(item)))
+        held.favorite = True
+
+    async def remove_item_from_favorites(self, media_type, item_id):
+        self.done.append(("remove", item_id))
+        for held in self.library.values():
+            if held.item_id == item_id:
+                held.favorite = False
+
+
+def playing(item):
+    return NS(current_item=NS(media_item=item) if item else None)
+
+
+async def test_a_provider_track_is_found_through_the_library():
+    track = NS(provider="ytmusic", item_id="yt1", media_type="track", name="Song", favorite=False)
+    held = NS(provider="library", item_id="42", media_type="track", name="Song", favorite=True)
+    music = FakeFavorites({("ytmusic", "yt1"): held})
+    got = await favorite(NS(music=music), playing(track), None)
+    assert got == {"known": True, "favorite": True, "title": "Song"}
+    got = await favorite(NS(music=music), playing(track), False)
+    assert got["favorite"] is False and music.done == [("remove", "42")]
+
+
+async def test_liking_a_track_not_in_the_library_adds_it():
+    track = NS(provider="ytmusic", item_id="yt2", media_type="track", name="New", favorite=False)
+    music = FakeFavorites({})
+    assert (await favorite(NS(music=music), playing(track), None))["favorite"] is False
+    got = await favorite(NS(music=music), playing(track), True)
+    assert got["favorite"] is True and music.done == [("add", "New")]
+
+
+async def test_nothing_playing_is_unknown():
+    got = await favorite(NS(music=FakeFavorites({})), playing(None), True)
+    assert got == {"known": False, "favorite": False, "title": ""}

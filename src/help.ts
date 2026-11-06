@@ -44,12 +44,9 @@ const HELP: Record<string, string> = {
     "Sends audio out of the jack instead of the speaker. The speaker goes quiet while this is on.",
   noise_layer:
     "Plays a generated sound the device makes itself — rain, a fan, a brook. Nothing is streamed and nothing is stored: it is synthesised as it plays, so it never loops or runs out. Two layers can overlap, so rain over a fan is one choice in each.",
-  media_on_turn:
-    "What happens to music when someone says the wake word. Ducking drops the volume and keeps playing, which resumes on the same note; stopping does not.",
   media_duck_level:
     "How far the volume drops while the device is listening or talking. Far enough that the microphones are not fighting the music, not so far that the room goes silent.",
   cast_receiver: "Lets phones and browsers cast to the device.",
-  youtube_live_delay: "How far behind live a YouTube live stream plays, in seconds.",
   youtube_sponsorblock:
     "SponsorBlock categories to skip in YouTube videos, separated by commas.",
 
@@ -108,8 +105,8 @@ const HELP: Record<string, string> = {
     "Plays a short sound, which is the quickest way to find out whether the speaker, the volume and the output route are all what you think they are.",
   remote_adb:
     "Opens Android's debugging port over the network. Off by default, and worth leaving off: it is an unauthenticated way onto the device for anything on the same network.",
-  insecure_tls:
-    "Lets the device accept a certificate it cannot verify, which is what talking to a Home Assistant with a self-signed one needs. It also means anything on the network can pose as that server, so it is worth turning off again once a certificate the device trusts is in place.",
+  verify_certificates:
+    "Checks the certificates of the servers the device talks to. Turn it off only for a Home Assistant with a self-signed certificate, and back on once it has one the device trusts.",
   vad_sensitivity:
     "How readily the device decides somebody has stopped talking. Tighter ends a turn sooner and can cut you off mid-sentence.",
 

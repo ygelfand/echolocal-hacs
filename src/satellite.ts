@@ -105,7 +105,7 @@ export function resolve(
     update: one("firmware"),
     ring: one("ring"),
     segments,
-    mute: one("mic_mute"),
+    mute: one("mic_mute") ?? one("microphone_muted"),
   };
 }
 
