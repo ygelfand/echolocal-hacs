@@ -358,10 +358,8 @@ def _node(hass: HomeAssistant, device_id: str) -> str:
     device = dr.async_get(hass).async_get(device_id)
     if device is None:
         raise ServiceValidationError(f"no device {device_id!r}")
-    for entry_id in device.config_entries:
-        entry = hass.config_entries.async_get_entry(entry_id)
-        if entry is None or entry.domain != ESPHOME_DOMAIN:
-            continue
+    entry = hass.config_entries.async_get_entry(device.config_entry_id)
+    if entry is not None and entry.domain == ESPHOME_DOMAIN:
         info = getattr(getattr(entry, "runtime_data", None), "device_info", None)
         if info is not None:
             return info.name.replace("-", "_")

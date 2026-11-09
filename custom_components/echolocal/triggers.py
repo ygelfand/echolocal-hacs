@@ -272,13 +272,12 @@ def _node(hass: HomeAssistant, device_id: str | None) -> str | None:
     device = dr.async_get(hass).async_get(device_id)
     if device is None:
         return None
-    for entry_id in device.config_entries:
-        entry = hass.config_entries.async_get_entry(entry_id)
-        if entry is None or entry.domain != ESPHOME_DOMAIN:
-            continue
-        info = getattr(getattr(entry, "runtime_data", None), "device_info", None)
-        if info is not None and info.manufacturer in MANUFACTURERS:
-            return info.name.replace("-", "_")
+    entry = hass.config_entries.async_get_entry(device.config_entry_id)
+    if entry is None or entry.domain != ESPHOME_DOMAIN:
+        return None
+    info = getattr(getattr(entry, "runtime_data", None), "device_info", None)
+    if info is not None and info.manufacturer in MANUFACTURERS:
+        return info.name.replace("-", "_")
     return None
 
 
