@@ -8,13 +8,14 @@ import type { Box } from "./show";
 export type Lens = "round" | "square" | "wide";
 
 export type Look =
-  | { shape: "dot" }
+  | { shape: "dot"; body?: boolean }
   | { shape: "show"; lens: Lens; width: number }
   | { shape: "panel"; picture: string; width: number; screen: Box };
 
 const LOOKS: Record<string, Look> = {
   athena: { shape: "show", lens: "wide", width: 360 },
   biscuit: { shape: "dot" },
+  radar: { shape: "dot", body: true },
   checkers: { shape: "show", lens: "round", width: 300 },
   cronos: { shape: "show", lens: "square", width: 300 },
   crown: { shape: "show", lens: "round", width: 360 },

@@ -198,6 +198,7 @@ export class EchoLocalSatelliteCard extends LitElement {
                 picked: this.picked,
                 divisible: [...state.segments, ...this.switchedOff(state)].some(Boolean),
                 lux: this.lux(state),
+                body: look.body === true,
               },
               {
                 ring: () => this.open({ kind: "ring", slot: 0 }),

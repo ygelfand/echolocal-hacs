@@ -31,6 +31,8 @@ export interface ArtState {
   // What the room measures, for the middle of the top face, which the four buttons leave empty. Null on
   // a device with no light sensor.
   lux: Lux | null;
+
+  body: boolean;
 }
 
 export interface Lux {
@@ -71,6 +73,8 @@ export function art(
           <feGaussianBlur stdDeviation="4"></feGaussianBlur>
         </filter>
       </defs>
+
+      ${state.body ? body() : nothingPath()}
 
       <circle cx=${CX} cy=${CY} r="97" fill="var(--el-shell)"></circle>
       <circle cx=${CX} cy=${CY} r="97" fill="none" stroke="var(--el-edge)" stroke-width="1"></circle>
@@ -165,6 +169,32 @@ function micOff(muted: boolean) {
 
 function nothingPath() {
   return svg``;
+}
+
+const BODY_BOTTOM = CY + 70;
+const FOOT = 16;
+
+function body() {
+  const side = `M3 ${CY}V${BODY_BOTTOM}A97 ${FOOT} 0 0 0 197 ${BODY_BOTTOM}V${CY}Z`;
+  const foot = `M3 ${BODY_BOTTOM - 10}A97 ${FOOT} 0 0 0 197 ${BODY_BOTTOM - 10}V${BODY_BOTTOM}A97 ${FOOT} 0 0 1 3 ${BODY_BOTTOM}Z`;
+  return svg`
+    <defs>
+      <linearGradient id="cloth" x1="0" x2="1">
+        <stop offset="0%" stop-color="var(--el-cloth-dark)"></stop>
+        <stop offset="38%" stop-color="var(--el-cloth)"></stop>
+        <stop offset="62%" stop-color="var(--el-cloth)"></stop>
+        <stop offset="100%" stop-color="var(--el-cloth-dark)"></stop>
+      </linearGradient>
+      <pattern id="weave" width="4" height="4" patternUnits="userSpaceOnUse">
+        <circle cx="1" cy="1" r="0.7" fill="var(--el-weave)"></circle>
+        <circle cx="3" cy="3" r="0.7" fill="var(--el-weave)"></circle>
+      </pattern>
+    </defs>
+    <ellipse cx=${CX} cy=${BODY_BOTTOM + 6} rx="92" ry=${FOOT} fill="var(--el-cast)"></ellipse>
+    <path d=${side} fill="url(#cloth)"></path>
+    <path d=${side} fill="url(#weave)"></path>
+    <path d=${foot} fill="var(--el-foot)"></path>
+  `;
 }
 
 // annulus is one segment of the ring: an arc out at the rim, an arc back at the inner edge.

@@ -55,6 +55,11 @@ text.lux .unit {
   --el-btn: rgba(255, 255, 255, 0.07);
   --el-read: rgba(255, 255, 255, 0.78);
   --el-warm: #ffc061;
+  --el-cloth: #55595f;
+  --el-cloth-dark: #36393d;
+  --el-weave: rgba(255, 255, 255, 0.08);
+  --el-foot: rgba(42, 44, 48, 0.55);
+  --el-cast: rgba(0, 0, 0, 0.18);
 }
 
 .art[data-shell="black"] {
@@ -67,6 +72,10 @@ text.lux .unit {
   --el-btn: rgba(255, 255, 255, 0.05);
   --el-read: rgba(255, 255, 255, 0.72);
   --el-warm: #ffc061;
+  --el-cloth: #2b2d31;
+  --el-cloth-dark: #141518;
+  --el-weave: rgba(255, 255, 255, 0.06);
+  --el-foot: rgba(13, 14, 16, 0.55);
 }
 
 .art[data-shell="white"] {
@@ -80,6 +89,10 @@ text.lux .unit {
 
   --el-read: rgba(0, 0, 0, 0.72);
   --el-warm: #e07b00;
+  --el-cloth: #dedad2;
+  --el-cloth-dark: #bdb8ae;
+  --el-weave: rgba(0, 0, 0, 0.07);
+  --el-foot: rgba(169, 164, 155, 0.55);
 }
 
 .art[data-shell="charcoal"] {
