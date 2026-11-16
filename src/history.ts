@@ -10,6 +10,7 @@ import { LitElement, html, nothing, unsafeCSS } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
 import { phases, total, type Turn } from "./contract";
+import { speaker, speakerStyles } from "./speaker";
 import { streamTurns } from "./turns";
 import styles from "./history.css";
 import "./recording";
@@ -27,7 +28,7 @@ const DAYS = 14;
 
 @customElement("echolocal-history")
 export class EchoLocalHistory extends LitElement {
-  static styles = unsafeCSS(styles);
+  static styles = [unsafeCSS(styles), speakerStyles];
 
   @property({ attribute: false }) hass!: HomeAssistant;
 
@@ -116,7 +117,9 @@ export class EchoLocalHistory extends LitElement {
             ></echolocal-recording>`
           : nothing}
       </div>
-      ${row.heard ? html`<div class="said">${row.heard}</div>` : nothing}
+      ${row.heard || turn?.speaker
+        ? html`<div class="said">${speaker(this.hass, turn)}${row.heard ?? ""}</div>`
+        : nothing}
       ${row.reply ? html`<div class="said-back">${row.reply}</div>` : nothing}
       ${spans.length
         ? html`<div class="bar">

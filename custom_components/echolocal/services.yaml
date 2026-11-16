@@ -74,6 +74,14 @@ ping:
           min: 1
           max: 1000
           mode: box
+voices:
+  fields:
+    changes:
+      required: false
+      example: '[{"remove": "person.yuri"}]'
+      selector:
+        text:
+          multiline: true
 music_queue:
   fields:
     player:

@@ -36,6 +36,10 @@ export interface Turn {
 
   outcome: "completed" | "cancelled" | "timeout" | "failed";
 
+  speaker?: string;
+  speaker_person?: string;
+  speaker_score?: number;
+
   // Durations rather than clock times: the device may have no set clock, and a wall clock nobody set is
   // worse than none. Milliseconds.
   listen_ms?: number;
@@ -109,8 +113,16 @@ export function fromEvent(data: unknown): Turn | null {
 
   if (raw.heard) turn.heard = raw.heard;
   if (raw.reply) turn.reply = raw.reply;
+  if (raw.speaker) turn.speaker = raw.speaker;
+  if (raw.speaker_person) turn.speaker_person = raw.speaker_person;
 
-  for (const key of ["listen_ms", "think_ms", "speak_ms", "audio_seconds"] as const) {
+  for (const key of [
+    "listen_ms",
+    "think_ms",
+    "speak_ms",
+    "audio_seconds",
+    "speaker_score",
+  ] as const) {
     const value = number(raw[key]);
     if (value !== undefined) turn[key] = value;
   }

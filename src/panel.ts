@@ -15,6 +15,7 @@ import "./tabs/words";
 import "./tabs/tones";
 import "./tabs/actions";
 import "./tabs/fleet";
+import "./tabs/voices";
 
 @customElement("echolocal-panel")
 export class EchoLocalPanel extends LitElement {

@@ -1,0 +1,235 @@
+:host {
+  display: block;
+  --tint: color-mix(in srgb, var(--primary-text-color) 5%, transparent);
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+h2 {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--secondary-text-color);
+}
+
+.list {
+  display: grid;
+  gap: 8px;
+}
+
+.panel {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--tint);
+}
+
+.note {
+  color: var(--secondary-text-color);
+}
+
+.bad {
+  margin-bottom: 12px;
+  color: var(--error-color, #db4437);
+}
+
+.voice {
+  display: grid;
+  gap: 12px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.face {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: none;
+}
+
+.initials {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary-color, #fff);
+  background: var(--primary-color);
+}
+
+.name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+  color: var(--primary-text-color);
+}
+
+.ask {
+  font-size: 0.85rem;
+  color: var(--secondary-text-color);
+}
+
+.settings {
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.person {
+  flex: 0 1 260px;
+  min-width: 200px;
+}
+
+.threshold {
+  flex: 1 1 280px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 460px;
+}
+
+.label {
+  font-size: 0.85rem;
+  color: var(--secondary-text-color);
+  white-space: nowrap;
+}
+
+.threshold input {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--primary-color);
+}
+
+.value {
+  min-width: 3.5ch;
+  font-variant-numeric: tabular-nums;
+  color: var(--primary-text-color);
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+button.icon {
+  display: inline-flex;
+  padding: 4px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--secondary-text-color);
+  --mdc-icon-size: 20px;
+}
+
+button.icon:hover:not(:disabled) {
+  color: var(--primary-text-color);
+  background: var(--tint);
+}
+
+button.icon.danger:hover {
+  color: var(--error-color, #db4437);
+}
+
+button.icon:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.enrol {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.end {
+  justify-content: flex-end;
+}
+
+.live {
+  justify-items: center;
+  text-align: center;
+  padding-block: 24px 14px;
+}
+
+.live .end {
+  justify-self: stretch;
+}
+
+.lead {
+  color: var(--secondary-text-color);
+}
+
+.phrase {
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--primary-color);
+  text-wrap: balance;
+}
+
+.dots {
+  display: flex;
+  gap: 10px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--primary-text-color) 20%, transparent);
+}
+
+.dot.done {
+  background: var(--primary-color);
+}
+
+.dot.now {
+  background: none;
+  box-shadow: inset 0 0 0 3px var(--primary-color);
+}
+
+.status {
+  min-height: 1.4em;
+  color: var(--primary-text-color);
+}
+
+.result {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--primary-text-color);
+  --mdc-icon-size: 28px;
+}
+
+button.text {
+  padding: 4px 12px;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: var(--primary-color);
+}
+
+button.text:hover {
+  background: var(--tint);
+}
+
+button.text.danger {
+  color: var(--error-color, #db4437);
+}

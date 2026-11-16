@@ -8,6 +8,7 @@ import { phases, total, type Turn } from "../contract";
 import { register } from "../nav";
 import "../recording";
 import { deviceName, findSatellites } from "../satellite";
+import { speaker, speakerStyles } from "../speaker";
 import { streamTurns } from "../turns";
 import type { HomeAssistant } from "../types";
 import styles from "./activity.css";
@@ -29,7 +30,7 @@ interface Seen {
 
 @customElement("echolocal-activity")
 export class EchoLocalActivity extends LitElement {
-  static styles = unsafeCSS(styles);
+  static styles = [unsafeCSS(styles), speakerStyles];
 
   @property({ attribute: false }) hass!: HomeAssistant;
 
@@ -105,7 +106,9 @@ export class EchoLocalActivity extends LitElement {
       <div class="who">${who}</div>
       <div class="content">
         <div class="wake">${one.turn.wake_word}</div>
-        ${one.turn.heard ? html`<div class="said">${one.turn.heard}</div>` : nothing}
+        ${one.turn.heard || one.turn.speaker
+          ? html`<div class="said">${speaker(this.hass, one.turn)}${one.turn.heard ?? ""}</div>`
+          : nothing}
         ${one.turn.reply ? html`<div class="said-back">${one.turn.reply}</div>` : nothing}
       </div>
       <div class="right">

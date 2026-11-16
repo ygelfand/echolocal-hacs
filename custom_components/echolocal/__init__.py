@@ -20,6 +20,7 @@ from . import (
     ping,
     tones,
     triggers,
+    voices,
     wakewords,
     webrtc,
 )
@@ -50,6 +51,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: EchoLocalEntry) -> bool:
         await tones.async_setup(hass)
         await triggers.async_setup(hass)
         await fleet.async_setup(hass)
+        await voices.async_setup(hass)
         entities.async_setup(hass)
         ping.async_setup(hass)
         webrtc.async_setup(hass)

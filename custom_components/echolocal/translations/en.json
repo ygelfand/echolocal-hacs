@@ -72,6 +72,16 @@
         "protocol": { "name": "Protocol", "description": "The device's protocol version." }
       }
     },
+    "voices": {
+      "name": "Voices",
+      "description": "Applies a device's voice match changes and returns the household's voices.",
+      "fields": {
+        "changes": {
+          "name": "Changes",
+          "description": "JSON list of {\"save\": profile} and {\"remove\": id}, oldest first."
+        }
+      }
+    },
     "music_queue": {
       "name": "Music Assistant queue",
       "description": "Returns the tracks after the one playing on a Music Assistant player.",

@@ -35,6 +35,9 @@ FIELDS = (
     "think_ms",
     "speak_ms",
     "audio_seconds",
+    "speaker",
+    "speaker_person",
+    "speaker_score",
 )
 
 
@@ -61,6 +64,13 @@ def async_describe_events(
 
 def _sentence(data: dict[str, Any]) -> str:
     """What the logbook itself shows, for somebody reading the feed rather than the card."""
+    speaker = data.get("speaker")
+    if speaker and speaker != "Unknown":
+        return f"{speaker}: {_said(data)}"
+    return _said(data)
+
+
+def _said(data: dict[str, Any]) -> str:
     heard = data.get("heard")
     reply = data.get("reply")
     outcome = data.get("outcome")
