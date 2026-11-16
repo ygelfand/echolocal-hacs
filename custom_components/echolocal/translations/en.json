@@ -78,7 +78,7 @@
       "fields": {
         "changes": {
           "name": "Changes",
-          "description": "JSON list of {\"save\": profile} and {\"remove\": id}, oldest first."
+          "description": "JSON list of save and remove changes, oldest first."
         }
       }
     },
