@@ -7,5 +7,6 @@ dev/*
 !dev/testha.py
 !dev/devices.example.yaml
 
-custom_components/echolocal/frontend/*.map
 .ruff_cache/
+dist/
+echolocal.zip

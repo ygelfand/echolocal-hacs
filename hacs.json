@@ -1,6 +1,8 @@
 {
   "name": "EchoLocal",
   "content_in_root": false,
+  "zip_release": true,
+  "filename": "echolocal.zip",
   "render_readme": true,
   "homeassistant": "2026.8.0"
 }

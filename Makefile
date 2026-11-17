@@ -62,6 +62,7 @@ zip: build ## Build echolocal.zip, what HACS installs (VERSION=x.y.z stamps the 
 	@mkdir -p dist
 	@/bin/cp -R $(COMPONENT) dist/echolocal
 	@find dist -name __pycache__ -prune -exec /bin/rm -rf {} +
+	@find dist \( -name '*.map' -o -name .gitignore \) -delete
 	@python3 -c "import json, sys; p = 'dist/echolocal/manifest.json'; m = json.load(open(p)); \
 		m['version'] = sys.argv[1]; open(p, 'w').write(json.dumps(m, indent=2) + '\n')" "$(VERSION)"
 	@cd dist/echolocal && zip -qr ../../echolocal.zip .

@@ -13,7 +13,7 @@ import styles from "./card.css";
 import "./dialog";
 import { helpForKind } from "./help";
 import { KEYS_READY } from "./keys";
-import { components, compose, diagnostics, settings, type Widget } from "./layout";
+import { components, compose, diagnostics, settings, wakeWordOf, type Widget } from "./layout";
 import { disabledSegments, enable } from "./registry";
 import { lookOf, type Lens } from "./boards";
 import { DEFAULT_THEME, INKS, THEMES, panel, show, type Box, type Screen } from "./show";
@@ -75,6 +75,11 @@ type Opened = {
   slot: number;
 };
 
+interface SatelliteConfiguration {
+  active_wake_words: string[];
+  available_wake_words: { id: string; wake_word: string }[];
+}
+
 @customElement("echolocal-satellite-card")
 export class EchoLocalSatelliteCard extends LitElement {
   static styles = unsafeCSS(styles);
@@ -82,6 +87,8 @@ export class EchoLocalSatelliteCard extends LitElement {
   @property({ attribute: false }) hass!: HomeAssistant;
   @state() private config!: CardConfig;
   @state() private opened: Opened | null = null;
+  @state() private running: string[] = [];
+  private asked = "";
 
   // Which ring segment is being given a color. Editing happens on the artwork, since that is the ring:
   // the foot of the card turns into the palette while one is picked.
@@ -131,6 +138,38 @@ export class EchoLocalSatelliteCard extends LitElement {
 
   // The names arrive after the first paint, and everything on the card is looked up by one.
   private again = () => this.requestUpdate();
+
+  protected willUpdate() {
+    if (this.opened?.kind !== "assistant" || !this.hass || !this.config) return;
+    const state = resolve(this.hass, this.config.device_id);
+    if (!state?.satellite) return;
+
+    const chosen = (state.by.get("wake_word") ?? []).map((e) => this.hass.states[e.entity_id]?.state);
+    const key = [state.satellite, ...chosen].join("\n");
+    if (key === this.asked) return;
+    this.asked = key;
+    void this.ask(state.satellite);
+  }
+
+  private async ask(satellite: string) {
+    try {
+      const answer = await this.hass.callWS<SatelliteConfiguration>({
+        type: "assist_satellite/get_configuration",
+        entity_id: satellite,
+      });
+      const names = new Map(answer.available_wake_words.map((w) => [w.id, w.wake_word]));
+      this.running = answer.active_wake_words.map((id) => names.get(id) ?? id);
+    } catch {
+      this.running = [];
+    }
+  }
+
+  private slotOf(state: Satellite, assistant: number): number {
+    const id = wakeWordOf(state, assistant);
+    const chosen = id ? this.hass.states[id]?.state : undefined;
+    const found = chosen ? this.running.indexOf(chosen) : -1;
+    return found < 0 ? assistant : found + 1;
+  }
 
   // The shell the artwork wears: a real colour set in the config forces it, otherwise the device's own
   // detected colour, and grey when it has not reported one (or reads unknown).
@@ -486,7 +525,8 @@ export class EchoLocalSatelliteCard extends LitElement {
     } else if (kind === "diagnostics") {
       ({ widgets, sections: list } = diagnostics(state));
     } else {
-      ({ widgets, sections: list } = compose(kind, state, slot));
+      const device = kind === "assistant" && slot ? this.slotOf(state, slot) : slot;
+      ({ widgets, sections: list } = compose(kind, state, slot, device));
     }
 
     return html`<echolocal-dialog
@@ -505,6 +545,7 @@ export class EchoLocalSatelliteCard extends LitElement {
   }
 
   private open(opened: Opened) {
+    this.asked = "";
     this.opened = opened;
   }
 

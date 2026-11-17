@@ -52,12 +52,4 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run typecheck
-
-      # The bundle is committed because HACS installs the repository as it is and never builds anything, so
-      # a source change without a rebuild ships the old frontend. Rebuilding here and diffing is the only
-      # thing that catches it.
       - run: npm run build
-      - name: Bundle is current
-        run: |
-          git diff --exit-code -- custom_components/echolocal/frontend/echolocal.js \
-            || { echo "::error::the committed bundle is stale — run make build and commit it"; exit 1; }

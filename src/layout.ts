@@ -443,9 +443,15 @@ export function components(state: Satellite): Component[] {
 
 // Every row is looked up against the whole device. An assistant's popup passes its slot, and then every
 // row in it is that assistant's — the second one's timings never show up under the first.
-export function compose(kind: Kind, state: Satellite, slot = 0): Composed {
+export function compose(
+  kind: Kind,
+  state: Satellite,
+  slot = 0,
+  device = slot,
+): Composed {
   const widgets: Widget[] = [];
   const taken = new Set<string>();
+  const at = (name: string) => (BY_ASSISTANT.has(name) ? slot : device);
 
   // Looked up against everything, not against what is left: the ring's light belongs to both the header
   // switch and the picture of the ring. taken only decides what no longer needs a row.
@@ -453,7 +459,7 @@ export function compose(kind: Kind, state: Satellite, slot = 0): Composed {
     const roles: Record<string, string> = {};
 
     for (const [role, name] of Object.entries(spec.roles)) {
-      const found = pick(state.by, name, slot)[0];
+      const found = pick(state.by, name, at(name))[0];
       if (found) roles[role] = found.entity_id;
     }
 
@@ -461,7 +467,7 @@ export function compose(kind: Kind, state: Satellite, slot = 0): Composed {
 
     const lists: Record<string, string[]> = {};
     for (const [list, name] of Object.entries(spec.lists ?? {})) {
-      lists[list] = pick(state.by, name, slot).map((e) => e.entity_id);
+      lists[list] = pick(state.by, name, at(name)).map((e) => e.entity_id);
     }
 
     widgets.push({
@@ -477,8 +483,14 @@ export function compose(kind: Kind, state: Satellite, slot = 0): Composed {
 
   return {
     widgets,
-    sections: order(LAYOUTS[kind] ?? [], state.by, slot, taken),
+    sections: order(LAYOUTS[kind] ?? [], state.by, at, taken),
   };
+}
+
+const BY_ASSISTANT = new Set(["wake_word", "pipeline"]);
+
+export function wakeWordOf(state: Satellite, assistant: number): string | undefined {
+  return pick(state.by, "wake_word", assistant)[0]?.entity_id;
 }
 
 // A setting is something there is something to set. A reading belongs to diagnostics and an event to the
@@ -534,7 +546,7 @@ function pick(by: Index, name: string, slot: number): Tagged[] {
 function order(
   groups: Group[],
   by: Index,
-  slot: number,
+  at: (name: string) => number,
   taken: Set<string>,
 ): Section[] {
   const out: Section[] = [];
@@ -543,7 +555,7 @@ function order(
     const rows: Row[] = [];
 
     for (const [name, label, beside] of group.rows) {
-      const mine = pick(by, name, slot);
+      const mine = pick(by, name, at(name));
 
       for (const entity of mine) {
         if (taken.has(entity.entity_id)) continue;
@@ -551,7 +563,7 @@ function order(
           entityId: entity.entity_id,
           name,
           label: mine.length > 1 ? `${label} ${entity.slot}` : label,
-          reading: beside ? pick(by, beside, slot)[0]?.entity_id : undefined,
+          reading: beside ? pick(by, beside, at(beside))[0]?.entity_id : undefined,
         });
       }
     }
@@ -583,7 +595,7 @@ function withRest(
   // shows it wherever it was named.
   spare: (entity: Tagged) => boolean = () => true,
 ): Section[] {
-  const out = order(groups, index(entities), 0, taken);
+  const out = order(groups, index(entities), () => 0, taken);
   const shown = new Set(
     out.flatMap((s) => s.rows.flatMap((r) => [r.entityId, r.reading ?? ""])),
   );
