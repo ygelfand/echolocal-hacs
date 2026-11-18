@@ -4,7 +4,7 @@
   <img src="custom_components/echolocal/brand/icon.png" width="96" alt="EchoLocal for Home Assistant icon">
 </p>
 
-[![hacs][hacs-badge]][hacs] [![Validate](https://github.com/ygelfand/echolocal-hacs/actions/workflows/validate.yml/badge.svg)](https://github.com/ygelfand/echolocal-hacs/actions/workflows/validate.yml)
+[![hacs][hacs-badge]][hacs] [![Validate](https://github.com/ygelfand/echolocal-ha/actions/workflows/validate.yml/badge.svg)](https://github.com/ygelfand/echolocal-ha/actions/workflows/validate.yml)
 
 An optional companion to [EchoLocal](https://github.com/ygelfand/echolocal), which turns Amazon Echo
 Dots and Echo Shows into Home Assistant voice satellites, and to its sister project
@@ -97,12 +97,12 @@ Needs Home Assistant **2026.8** or newer.
 
 ### HACS (custom repository)
 
-[![My Home Assistant](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=ygelfand&repository=echolocal-hacs&category=Integration)
+[![My Home Assistant](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=ygelfand&repository=echolocal-ha&category=Integration)
 
 Click the badge to add this repo to HACS, or add it manually:
 
 1. HACS → ⋮ → **Custom repositories**
-2. Add `https://github.com/ygelfand/echolocal-hacs` with category **Integration**
+2. Add `https://github.com/ygelfand/echolocal-ha` with category **Integration**
 3. Install **EchoLocal**, then restart Home Assistant
 
 ### Manual

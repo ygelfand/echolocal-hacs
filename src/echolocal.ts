@@ -26,6 +26,6 @@ if (!window.customCards.some((card) => card.type === "echolocal-satellite-card")
     name: "EchoLocal Satellite",
     description: "An EchoLocal satellite, drawn as itself, with its controls live.",
     preview: true,
-    documentationURL: "https://github.com/ygelfand/echolocal-hacs",
+    documentationURL: "https://github.com/ygelfand/echolocal-ha",
   });
 }
