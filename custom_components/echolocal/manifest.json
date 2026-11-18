@@ -2,6 +2,7 @@
   "domain": "echolocal",
   "name": "EchoLocal",
   "after_dependencies": ["assist_satellite"],
+  "categories": ["ai_voice.voice_assistants", "media_entertainment.speakers_audio"],
   "codeowners": ["@ygelfand"],
   "config_flow": true,
   "dependencies": [
