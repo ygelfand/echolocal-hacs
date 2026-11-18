@@ -103,6 +103,7 @@ export class EchoLocalFleet extends LitElement {
   @state() private everything = false;
   @state() private picking = false;
   @state() private search = "";
+  @state() private find = "";
   @state() private busy = false;
   @state() private results = new Map<string, Result>();
 
@@ -233,6 +234,12 @@ export class EchoLocalFleet extends LitElement {
       <thead>
         <tr>
           <th class="corner">
+            <input
+              class="search find"
+              placeholder="Search settings"
+              .value=${this.find}
+              @input=${(e: Event) => (this.find = (e.target as HTMLInputElement).value)}
+            />
             <div class="corner-picks">
               <label>
                 <ha-checkbox
@@ -268,7 +275,11 @@ export class EchoLocalFleet extends LitElement {
           ? sections.map((s) => this.renderSection(s, master, others))
           : html`<tr>
               <td class="note" colspan=${others.length + 2}>
-                ${this.everything ? "Nothing to compare" : "Every device matches the primary"}
+                ${this.find.trim()
+                  ? "No setting matches the search"
+                  : this.everything
+                    ? "Nothing to compare"
+                    : "Every device matches the primary"}
               </td>
             </tr>`}
       </tbody>
@@ -290,7 +301,9 @@ export class EchoLocalFleet extends LitElement {
           ? html`<span class="tag">offline</span>`
           : d.error === "update"
             ? html`<span class="tag">needs an update</span>`
-            : d.error
+            : d.error === "timeout"
+              ? html`<span class="tag">didn't answer</span>`
+              : d.error
               ? html`<span class="tag">unreadable</span>`
               : nothing}
         ${result ? html`<span class="result">${this.renderResult(result)}</span>` : nothing}
@@ -447,10 +460,12 @@ export class EchoLocalFleet extends LitElement {
 
   private sections(master: Device): Section[] {
     const local = new Set(this.fleet!.local);
+    const wanted = this.find.trim().toLowerCase();
     const out = new Map<string, Section>();
     for (const s of master.settings) {
       const key = keyOf(s);
       if (local.has(key)) continue;
+      if (wanted && !this.fullTitle(s).toLowerCase().includes(wanted) && !key.includes(wanted)) continue;
       const row = { key, setting: s };
       if (!this.everything && !this.differs(row, master)) continue;
       const section = out.get(s.section) ?? { title: s.section, rows: [] };
@@ -556,15 +571,21 @@ export class EchoLocalFleet extends LitElement {
     this.busy = true;
     this.said = "";
     try {
+      const targets = [...this.targets];
       const reply = await this.hass.callWS<{ results: Result[] }>({
         type: "echolocal/fleet/sync",
         primary: master.id,
-        targets: [...this.targets],
+        targets,
         keys: this.chosen(sections),
       });
       this.results = new Map(reply.results.map((r) => [r.id, r]));
       const kept = this.keys;
-      this.fleet = await this.hass.callWS<Fleet>({ type: "echolocal/fleet" });
+      const fresh = await this.hass.callWS<Fleet>({ type: "echolocal/fleet", devices: targets });
+      const read = new Map(fresh.devices.map((d) => [d.id, d]));
+      this.fleet = {
+        devices: this.fleet!.devices.map((d) => read.get(d.id) ?? d),
+        local: fresh.local,
+      };
       this.keys = kept;
     } catch (err) {
       this.said = `Sync failed: ${(err as Error).message ?? err}`;

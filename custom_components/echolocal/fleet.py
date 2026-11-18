@@ -119,20 +119,27 @@ async def _read_one(
     else:
         try:
             out["settings"] = await _export(hass, node)
-        except (HomeAssistantError, TimeoutError) as err:
+        except TimeoutError:
+            _LOGGER.warning("%s didn't answer for its settings within %d s", node, WAIT)
+            out["error"] = "timeout"
+        except HomeAssistantError as err:
             _LOGGER.warning("reading settings from %s failed: %s", node, err)
             out["error"] = "failed"
     out["settings"] += _ha_settings(hass, device.id)
     return out
 
 
-@websocket_api.websocket_command({vol.Required("type"): "echolocal/fleet"})
+@websocket_api.websocket_command(
+    {vol.Required("type"): "echolocal/fleet", vol.Optional("devices"): [str]}
+)
 @websocket_api.require_admin
 @websocket_api.async_response
 async def ws_read(
     hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]
 ) -> None:
-    devices = await asyncio.gather(*(_read_one(hass, *d) for d in _devices(hass)))
+    wanted = msg.get("devices")
+    picked = [d for d in _devices(hass) if wanted is None or d[0].id in wanted]
+    devices = await asyncio.gather(*(_read_one(hass, *d) for d in picked))
     connection.send_result(msg["id"], {"devices": list(devices), "local": hass.data[DATA]["local"]})
 
 

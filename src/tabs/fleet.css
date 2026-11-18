@@ -134,6 +134,13 @@ th.gutter {
   border-bottom: none;
 }
 
+.find {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
 .corner-picks {
   display: flex;
   align-items: center;
